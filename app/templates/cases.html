@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}案例库 - LexAd{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h1 class="page-title">案例库</h1>
+    <p class="page-desc">历史广告合规案例参考库，用于辅助审查判断。</p>
+
+    <div id="cases-content"
+         hx-get="/partial/cases"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+        <div class="loading-placeholder">
+            <span class="spinner"></span> 加载中…
+        </div>
+    </div>
+</section>
+{% endblock %}

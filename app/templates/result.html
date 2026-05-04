@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}审查结果 - {{ request_id }} - LexAd{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h1 class="page-title">审查结果详情</h1>
+    <p class="page-desc">请求 ID: <code>{{ request_id }}</code></p>
+
+    <div id="final-result-content"
+         hx-get="/partial/final-result?request_id={{ request_id }}"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+        <div class="loading-placeholder">
+            <span class="spinner"></span> 加载中…
+        </div>
+    </div>
+
+    <div class="result-back">
+        <a href="/review" class="btn btn-outline">返回审查页面</a>
+    </div>
+</section>
+{% endblock %}

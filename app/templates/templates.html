@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}模板库 - LexAd{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h1 class="page-title">模板库</h1>
+    <p class="page-desc">合规改写模板库，帮助快速调整广告文案。</p>
+
+    <div id="templates-content"
+         hx-get="/partial/templates"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+        <div class="loading-placeholder">
+            <span class="spinner"></span> 加载中…
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+<div class="data-section">
+    <h2>案例库</h2>
+    {% if cases %}
+    <div class="data-list">
+        {% for c in cases %}
+        <div class="data-item">
+            <div class="data-item-header">
+                <strong>{{ c.case_id or c.title or "案例 " + loop.index|string }}</strong>
+            </div>
+            <p class="data-item-body">
+                {{ c.summary or c.title or "—" }}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p class="no-data">暂无数据 / 待补充</p>
+        <p class="text-muted">案例库数据文件为空。请编辑 <code>data/case_library.json</code> 添加真实案例。</p>
+    </div>
+    {% endif %}
+</div>

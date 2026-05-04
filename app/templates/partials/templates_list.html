@@ -1,0 +1,28 @@
+<div class="data-section">
+    <h2>模板库</h2>
+    {% if templates %}
+    <div class="data-list">
+        {% for t in templates %}
+        <div class="data-item">
+            <div class="data-item-header">
+                <strong>{{ t.template_id or t.title or "模板 " + loop.index|string }}</strong>
+            </div>
+            <p class="data-item-body">
+                {{ t.title or "—" }}
+                {% if t.before %}
+                <br><span class="text-muted">改写前: {{ t.before }}</span>
+                {% endif %}
+                {% if t.after %}
+                <br><span class="text-success">改写后: {{ t.after }}</span>
+                {% endif %}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p class="no-data">暂无模板 / 待补充</p>
+        <p class="text-muted">模板库数据文件为空。请编辑 <code>data/rewrite_templates.json</code> 添加模板。</p>
+    </div>
+    {% endif %}
+</div>

@@ -1,0 +1,13 @@
+<div class="final-result-container">
+    {% if result %}
+    <div class="json-display">
+        <h2>完整审查结果 — {{ request_id }}</h2>
+        <pre class="json-block"><code>{{ result.model_dump_json(indent=2) }}</code></pre>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p class="no-data">未找到审查结果</p>
+        <p class="text-muted">请求 ID: {{ request_id }} 不存在或已过期。</p>
+    </div>
+    {% endif %}
+</div>

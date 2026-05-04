@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LexAd - 广告合规审查平台{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">LexAd</a>
+            <div class="nav-links">
+                <a href="/review">审查</a>
+                <a href="/cases">案例库</a>
+                <a href="/templates">模板库</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>LexAd Demo v0.1.0 — 广告合规审查平台第一版骨架</p>
+        <p class="footer-note">本系统为 Demo，所有审查结论均为占位结果，不构成真实合规意见。</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

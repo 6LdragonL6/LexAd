@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}LexAd - 广告合规审查平台{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">LexAd</h1>
+        <p class="hero-subtitle">广告合规审查平台</p>
+        <p class="hero-desc">
+            覆盖法律、行业、平台三层审查体系，支持文本与图片广告合规检测。
+            本版本为 Demo 第一版骨架，审查结果均为占位示例。
+        </p>
+        <a href="/review" class="btn btn-primary btn-lg">开始审查</a>
+    </div>
+</section>
+
+<section class="features">
+    <h2 class="section-title">核心功能</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">&#128269;</div>
+            <h3>三层审查</h3>
+            <p>法律层面 · 行业层面 · 平台层面<br>分层评估广告合规风险</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#128196;</div>
+            <h3>案例库</h3>
+            <p>历史违规案例参考<br>辅助判断风险类型</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#128221;</div>
+            <h3>模板库</h3>
+            <p>合规改写模板<br>快速调整广告文案</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">&#128178;</div>
+            <h3>罚金评估</h3>
+            <p>基于规则评估潜在罚金<br>辅助决策参考</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <h2 class="section-title">开始使用</h2>
+    <p>输入广告文案或上传广告图片，即刻获得合规审查结果。</p>
+    <a href="/review" class="btn btn-primary">进入审查页面</a>
+</section>
+{% endblock %}
