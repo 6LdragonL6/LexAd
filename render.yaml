@@ -1,15 +1,36 @@
 services:
+  # ── Backend API ──────────────────────────────────────────────────────────
   - type: web
-    name: lexad
+    name: lexad-api
     runtime: python
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: APP_ENV
         value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
       - key: DEEPSEEK_API_KEY
         sync: false
       - key: DEEPSEEK_BASE_URL
         sync: false
       - key: DEEPSEEK_MODEL
+        sync: false
+
+  # ── Frontend Static Site ─────────────────────────────────────────────────
+  - type: web
+    name: lexad-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_BASE_URL
         sync: false
