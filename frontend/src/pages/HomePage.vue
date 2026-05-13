@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 首页 —— 展示平台介绍和功能卡片，提供审查入口
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

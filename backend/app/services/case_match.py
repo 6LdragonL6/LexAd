@@ -1,4 +1,4 @@
-"""Case matching service: references similar cases from the case library."""
+"""案例匹配服务 —— 从案例库中查找相似历史案例。"""
 
 from __future__ import annotations
 
@@ -8,6 +8,7 @@ from app.utils.json_reader import read_json_list
 
 
 def match_cases(review: ThreeLayerReview) -> list[CaseReference]:
+    """根据三层审查结果从案例库匹配相关案例引用。当前为 Mock 实现。"""
     case_file = DATA_DIR / "case_library.json"
     cases_data = read_json_list(case_file)
 

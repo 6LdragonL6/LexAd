@@ -1,6 +1,6 @@
-"""LexAd — Advertising Compliance Review Platform.
+"""LexAd —— 广告合规审查平台。
 
-FastAPI application entry point with API versioning, CORS, and middleware.
+FastAPI 应用入口，配置 API 版本管理、CORS 跨域和全局异常处理。
 """
 
 from __future__ import annotations
@@ -19,11 +19,13 @@ from app.core.logging import setup_logging
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """应用生命周期管理：启动时初始化日志，关闭时清理资源。"""
     setup_logging()
     yield
 
 
 def create_app() -> FastAPI:
+    """创建并配置 FastAPI 应用（CORS、异常处理、路由注册）。"""
     settings = get_settings()
 
     app = FastAPI(
@@ -33,7 +35,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # ── CORS ────────────────────────────────────────────────────────────────
+    # ── CORS 跨域配置 ────────────────────────────────────────────────────────
     origins = [settings.FRONTEND_ORIGIN]
     if settings.CORS_ORIGINS:
         origins.extend(o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip())
@@ -45,7 +47,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # ── Exception handler ───────────────────────────────────────────────────
+    # ── 全局异常处理器 ───────────────────────────────────────────────────────
     @app.exception_handler(LexAdError)
     async def lexad_error_handler(_: Request, exc: LexAdError):
         return JSONResponse(
@@ -53,15 +55,17 @@ def create_app() -> FastAPI:
             content={"detail": exc.detail},
         )
 
-    # ── Routes ──────────────────────────────────────────────────────────────
+    # ── 注册路由 ─────────────────────────────────────────────────────────────
     app.include_router(api_router, prefix="/api/v1")
 
-    # ── Health check (outside versioned API) ────────────────────────────────
+    # ── 健康检查（在版本化 API 之外） ─────────────────────────────────────────
     @app.get("/health")
     async def health():
+        """健康检查端点，返回应用运行状态。"""
         return {"status": "ok", "app": settings.APP_NAME, "version": settings.APP_VERSION}
 
     return app
 
 
+# 模块级应用实例（供 uvicorn 直接引用）
 app = create_app()

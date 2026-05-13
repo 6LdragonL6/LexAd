@@ -20,6 +20,9 @@ dist/
 backend/app/static/uploads/*
 !backend/app/static/uploads/.gitkeep
 
+# ── OCR language data ──────────────────────────────────────────────────
+tessdata/
+
 # ── IDE ────────────────────────────────────────────────────────────────
 .vscode/
 .idea/

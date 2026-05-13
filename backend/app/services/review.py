@@ -1,4 +1,4 @@
-"""Review service: runs three-layer compliance review (legal, industry, platform)."""
+"""审查服务 —— 执行法律、行业、平台三层合规审查（当前为 Mock 占位）。"""
 
 from __future__ import annotations
 
@@ -11,6 +11,7 @@ from app.schemas.models import (
 
 
 def run_review(request: StandardRequest) -> ThreeLayerReview:
+    """对标准化请求执行三层合规审查，返回各层级的审查结果。当前为 Mock 实现。"""
     has_text = bool(request.input.raw_text.strip())
 
     return ThreeLayerReview(

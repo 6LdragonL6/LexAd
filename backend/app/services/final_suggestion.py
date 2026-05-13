@@ -1,4 +1,4 @@
-"""Final suggestion service: generates overall recommendations."""
+"""最终建议服务 —— 基于全流程结果生成合规结论和修改建议。"""
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ def generate_final_suggestion(
     templates: list[RewriteTemplate],
     penalty: PenaltyAssessment,
 ) -> FinalResult:
+    """汇总预处理、审查、案例、模板和罚金结果，生成最终合规建议。当前为 Mock 占位。"""
     warnings_count = len(preprocess.warnings)
 
     return FinalResult(

@@ -1,4 +1,4 @@
-"""Preprocess service: handles text + optional image."""
+"""预处理服务 —— 文本校验 + 可选的图片 OCR 识别。"""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from app.utils.ocr import extract_ocr_text
 
 
 def run_preprocess(raw_text: str, image_file: UploadFile | None = None) -> PreprocessResult:
+    """对输入文本和图片执行预处理：校验文本非空、验证图片格式并提取 OCR 文本。"""
     warnings: list[str] = []
     ocr_text = ""
     image_summary = ""
@@ -42,9 +43,13 @@ def run_preprocess(raw_text: str, image_file: UploadFile | None = None) -> Prepr
                 temp_path = tmp.name
             ocr_result = extract_ocr_text(temp_path)
             ocr_text = ocr_result.text
-            image_summary = f"Image received: {image_file.filename}"
+            image_summary = f"已接收图片: {image_file.filename}"
             if ocr_result.status == "mock":
                 warnings.append("Tesseract 未安装，OCR 返回占位结果。")
+            elif ocr_result.status == "error":
+                warnings.append(f"OCR 识别失败: {ocr_result.error_message}")
+            elif ocr_result.status == "ok" and ocr_text:
+                image_summary += f"，OCR 识别 {len(ocr_text)} 字，置信度 {ocr_result.confidence:.0%}"
             Path(temp_path).unlink(missing_ok=True)
         except Exception:
             warnings.append("图片处理失败，继续使用空 OCR 结果。")

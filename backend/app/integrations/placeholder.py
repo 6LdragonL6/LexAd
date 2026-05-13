@@ -1,12 +1,11 @@
-"""Third-party integration adapters.
+"""第三方集成适配器层 —— 封装外部 API 调用（DeepSeek、支付、通知等）。
 
-Encapsulate external API calls (DeepSeek, payment gateways, notification services, etc.).
-Each integration should be isolated behind a clear interface.
+每个集成都应通过清晰的接口进行隔离。
 """
 
 from __future__ import annotations
 
 
 class BaseIntegration:
-    """Base class for all third-party integrations."""
+    """所有第三方集成适配器的基类。"""
     pass

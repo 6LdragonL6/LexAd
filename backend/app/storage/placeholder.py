@@ -1,12 +1,11 @@
-"""File and object storage abstraction.
+"""文件与对象存储抽象层 —— 封装文件系统和 S3 兼容对象存储等。
 
-Encapsulate file system operations, S3-compatible object storage, etc.
-Provides a uniform interface regardless of storage backend.
+提供统一的接口，屏蔽底层存储差异。
 """
 
 from __future__ import annotations
 
 
 class BaseStorage:
-    """Base class for storage backends."""
+    """所有存储后端的基类。"""
     pass

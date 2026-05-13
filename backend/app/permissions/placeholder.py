@@ -1,12 +1,11 @@
-"""Permission and authorization logic.
+"""权限与授权逻辑 —— 封装基于角色的访问控制、权限检查和策略。
 
-Encapsulate role-based access control, permission checking, and policies.
-Keep authorization rules separate from business logic and HTTP layer.
+将授权规则与业务逻辑和 HTTP 层解耦。
 """
 
 from __future__ import annotations
 
 
 class BasePermission:
-    """Base class for permission checks."""
+    """所有权限检查的基类。"""
     pass

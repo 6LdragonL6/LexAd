@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 默认布局组件 —— 包含顶部导航栏、主内容区和底部页脚
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

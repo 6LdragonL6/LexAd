@@ -1,10 +1,11 @@
 <script setup lang="ts">
+// 案例库页 —— 展示历史违规案例列表，辅助合规判断
 import { onMounted, ref } from 'vue'
 import { listCases } from '@/api/review'
 import type { CaseItem } from '@/types'
 
-const cases = ref<CaseItem[]>([])
-const loading = ref(false)
+const cases = ref<CaseItem[]>([])  // 案例列表
+const loading = ref(false)         // 加载状态
 
 onMounted(async () => {
   loading.value = true

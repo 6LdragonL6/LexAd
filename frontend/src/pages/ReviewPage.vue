@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 审查提交页 —— 提供文本输入和图片上传表单，提交后跳转到结果页
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/stores/review'
@@ -6,15 +7,17 @@ import { useReviewStore } from '@/stores/review'
 const router = useRouter()
 const store = useReviewStore()
 
-const rawText = ref('')
-const imageFile = ref<File | null>(null)
-const fileInput = ref<HTMLInputElement | null>(null)
+const rawText = ref('')                             // 广告文案文本
+const imageFile = ref<File | null>(null)            // 上传的图片文件
+const fileInput = ref<HTMLInputElement | null>(null) // 文件输入框引用
 
+/** 处理文件选择变更 */
 function onFileChange(e: Event) {
   const target = e.target as HTMLInputElement
   imageFile.value = target.files?.[0] || null
 }
 
+/** 提交审查表单，成功后跳转到结果页 */
 async function handleSubmit() {
   if (!rawText.value.trim()) return
   try {
@@ -23,7 +26,7 @@ async function handleSubmit() {
       router.push(`/result/${store.currentResult.request_id}`)
     }
   } catch {
-    // error handled in store
+    // 错误已在 store 中处理
   }
 }
 </script>

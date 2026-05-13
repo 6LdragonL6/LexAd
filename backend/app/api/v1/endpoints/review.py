@@ -1,4 +1,4 @@
-"""Review endpoints — advertising compliance review API."""
+"""广告审查端点 —— 提交审查、获取结果、查询案例库和模板库。"""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from app.utils.json_reader import read_json_list
 
 router = APIRouter()
 
-# In-memory store for demo purposes (resets on restart)
+# 内存存储（仅用于 Demo，重启后清空）
 _result_store: dict[str, StandardResponse] = {}
 
 
@@ -20,7 +20,7 @@ async def review_submit(
     raw_text: str = Form(default=""),
     image_file: UploadFile | None = None,
 ):
-    """Submit advertising content for compliance review."""
+    """提交广告内容进行合规审查，返回包含三层审查的完整结果。"""
     result = run_full_pipeline(raw_text, image_file)
     _result_store[result.request_id] = result
     return result
@@ -28,7 +28,7 @@ async def review_submit(
 
 @router.get("/result/{request_id}", response_model=StandardResponse)
 async def review_result(request_id: str):
-    """Get review result by request ID."""
+    """根据请求 ID 查询广告合规审查结果。"""
     from app.core.exceptions import NotFoundError
     result = _result_store.get(request_id)
     if result is None:
@@ -38,13 +38,13 @@ async def review_result(request_id: str):
 
 @router.get("/cases")
 async def list_cases():
-    """Get case library entries."""
+    """获取案例库列表，返回所有历史违规案例条目。"""
     cases = read_json_list(DATA_DIR / "case_library.json")
     return {"items": cases, "total": len(cases)}
 
 
 @router.get("/templates")
 async def list_templates():
-    """Get rewrite template library entries."""
+    """获取改写模板库列表，返回所有广告文案合规改写模板。"""
     templates = read_json_list(DATA_DIR / "rewrite_templates.json")
     return {"items": templates, "total": len(templates)}

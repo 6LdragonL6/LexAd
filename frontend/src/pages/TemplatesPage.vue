@@ -1,10 +1,11 @@
 <script setup lang="ts">
+// 改写模板库页 —— 展示合规改写模板列表，帮助广告文案快速修正风险点
 import { onMounted, ref } from 'vue'
 import { listTemplates } from '@/api/review'
 import type { TemplateItem } from '@/types'
 
-const templates = ref<TemplateItem[]>([])
-const loading = ref(false)
+const templates = ref<TemplateItem[]>([])  // 模板列表
+const loading = ref(false)                 // 加载状态
 
 onMounted(async () => {
   loading.value = true

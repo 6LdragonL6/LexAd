@@ -1,4 +1,4 @@
-"""Penalty assessment service: estimates penalties based on risk level and matched rules."""
+"""罚金评估服务 —— 根据风险等级和命中规则估算罚金。"""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ from app.schemas.models import PenaltyAssessment
 
 
 def assess_penalty(risk_level: str, matched_rules: list[str]) -> PenaltyAssessment:
+    """根据风险等级和命中规则列表评估罚金等级与金额。当前为 Mock 占位。"""
     if not matched_rules:
         return PenaltyAssessment(
             penalty_level="none",

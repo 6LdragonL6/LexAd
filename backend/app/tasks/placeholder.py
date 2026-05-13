@@ -1,12 +1,11 @@
-"""Async task definitions.
+"""异步任务定义模块 —— Celery / ARQ / 后台任务的占位。
 
-Placeholder for Celery / ARQ / background task definitions.
-Examples: sending emails, generating reports, batch processing.
+未来用于：发送邮件、生成报告、批处理等。
 """
 
 from __future__ import annotations
 
 
 class BaseTask:
-    """Base class for all async tasks."""
+    """所有异步任务的基类。"""
     pass

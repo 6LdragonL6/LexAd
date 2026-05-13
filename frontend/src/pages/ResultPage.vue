@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 审查结果页 —— 展示完整的三层审查结果、案例、模板、罚金和最终结论
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useReviewStore } from '@/stores/review'
@@ -8,6 +9,7 @@ const store = useReviewStore()
 const requestId = route.params.requestId as string
 
 onMounted(() => {
+  // 仅在当前结果不匹配时重新请求
   if (!store.currentResult || store.currentResult.request_id !== requestId) {
     store.fetchResult(requestId)
   }
