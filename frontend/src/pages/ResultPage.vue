@@ -1,166 +1,75 @@
 <script setup lang="ts">
-// 审查结果页 —— 展示完整的三层审查结果、案例、模板、罚金和最终结论
-import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useReviewStore } from '@/stores/review'
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { materialsApi } from '@/api/materials'
+import { reviewsApi } from '@/api/reviews'
+import ReviewLayout from '@/layouts/ReviewLayout.vue'
+import ScoreBox from '@/components/review/ScoreBox.vue'
+import IssueList from '@/components/review/IssueList.vue'
+import EngineReport from '@/components/review/EngineReport.vue'
+import SummaryPanel from '@/components/review/SummaryPanel.vue'
+import type { Material, Review, MatchedRule } from '@/types'
 
 const route = useRoute()
-const store = useReviewStore()
-const requestId = route.params.requestId as string
+const router = useRouter()
+const material = ref<Material | null>(null)
+const review = ref<Review | null>(null)
+const loading = ref(true)
+const selectedRule = ref<MatchedRule | null>(null)
+const highlightText = ref('')
 
-onMounted(() => {
-  // 仅在当前结果不匹配时重新请求
-  if (!store.currentResult || store.currentResult.request_id !== requestId) {
-    store.fetchResult(requestId)
+function getAllIssues(): MatchedRule[] {
+  if (!review.value) return []
+  const r = review.value.ai_result
+  return [...r.layer1.matched_rules, ...r.layer2.matched_rules, ...r.layer3.matched_rules]
+}
+
+function getHighlightedHtml(): string {
+  if (!material.value) return ''
+  let text = material.value.raw_text
+  const allIssues = getAllIssues()
+  for (const issue of allIssues) {
+    const cls = issue === selectedRule.value ? 'highlight-active' : 'highlight'
+    const colorMap: Record<string, string> = {
+      '绝对化用语': '#ef4444', '涉医用语': '#ef4444', 'high': '#ef4444',
+      '效果保证': '#f97316', '功效宣称': '#f97316', 'medium': '#f97316',
+      '需证明材料': '#3b82f6',
+    }
+    const color = colorMap[issue.match_type] || '#6b7280'
+    text = text.replace(issue.rule_text, `<mark data-rule-id="${issue.rule_id}" style="background:${color}20;border-bottom:2px solid ${color};cursor:pointer" class="px-0.5 rounded">${issue.rule_text}</mark>`)
   }
+  return text
+}
+
+onMounted(async () => {
+  const reviewId = route.params.id as string
+  const rRes = await reviewsApi.get(reviewId)
+  review.value = rRes.data
+  const mRes = await materialsApi.get(rRes.data.material_id)
+  material.value = mRes.data
+  loading.value = false
 })
 </script>
 
 <template>
-  <div class="result-page">
-    <h1>审查结果</h1>
-
-    <div v-if="store.loading" class="status-msg">加载中...</div>
-    <div v-else-if="store.error" class="status-msg error">{{ store.error }}</div>
-
-    <template v-else-if="store.currentResult">
-      <div class="meta">
-        <span>请求 ID：{{ store.currentResult.request_id }}</span>
-        <span>时间：{{ store.currentResult.created_at }}</span>
+  <ReviewLayout v-if="!loading && material && review">
+    <template #left>
+      <ScoreBox :score="review.ai_risk_score" />
+      <IssueList :issues="getAllIssues()" @select="selectedRule = $event" />
+      <div class="mt-6 space-y-2">
+        <button class="btn-primary w-full text-sm" @click="router.push(`/legal/${review.id}`)">提交法务审核</button>
+        <button class="btn-outline w-full text-sm" @click="router.push(`/submit`)">重新编辑</button>
       </div>
-
-      <!-- Input -->
-      <section class="card">
-        <h2>输入内容</h2>
-        <pre>{{ store.currentResult.input.raw_text || '(无文本)' }}</pre>
-        <p v-if="store.currentResult.input.image_meta.status === 'has_image'">
-          图片：{{ store.currentResult.input.image_meta.filename }}
-        </p>
-        <p v-if="store.currentResult.preprocess.warnings.length" class="warnings">
-          ⚠ {{ store.currentResult.preprocess.warnings.join('；') }}
-        </p>
-      </section>
-
-      <!-- Three-layer Review -->
-      <section class="card" v-for="layer in [
-        { key: 'legal_review', label: '法律层面审查' },
-        { key: 'industry_review', label: '行业层面审查' },
-        { key: 'platform_review', label: '平台层面审查' },
-      ]" :key="layer.key">
-        <h2>{{ layer.label }}</h2>
-        <p>状态：<span :class="store.currentResult.review[layer.key].status">
-          {{ store.currentResult.review[layer.key].status }}
-        </span></p>
-        <p>风险评分：{{ store.currentResult.review[layer.key].risk_score }}</p>
-        <p v-if="store.currentResult.review[layer.key].explanations.length">
-          {{ store.currentResult.review[layer.key].explanations.join('；') }}
-        </p>
-        <p v-if="store.currentResult.review[layer.key].suggestions.length">
-          建议：{{ store.currentResult.review[layer.key].suggestions.join('；') }}
-        </p>
-      </section>
-
-      <!-- Case References -->
-      <section class="card" v-if="store.currentResult.case_references.length">
-        <h2>案例参考 ({{ store.currentResult.case_references.length }})</h2>
-        <ul>
-          <li v-for="c in store.currentResult.case_references" :key="c.case_id">
-            <strong>{{ c.title }}</strong> — {{ c.summary }}
-          </li>
-        </ul>
-      </section>
-
-      <!-- Rewrite Templates -->
-      <section class="card" v-if="store.currentResult.rewrite_templates.length">
-        <h2>改写模板 ({{ store.currentResult.rewrite_templates.length }})</h2>
-        <div v-for="t in store.currentResult.rewrite_templates" :key="t.template_id" class="template-item">
-          <strong>{{ t.title }}</strong>
-          <p>修改前：{{ t.before }}</p>
-          <p>修改后：{{ t.after }}</p>
-          <p class="note">{{ t.note }}</p>
-        </div>
-      </section>
-
-      <!-- Penalty Assessment -->
-      <section class="card">
-        <h2>罚金评估</h2>
-        <p>
-          等级：{{ store.currentResult.penalty_assessment.penalty_level }} &mdash;
-          金额：{{ store.currentResult.penalty_assessment.penalty_amount }}
-        </p>
-        <p>{{ store.currentResult.penalty_assessment.assessment_notes }}</p>
-      </section>
-
-      <!-- Final Result -->
-      <section class="card final">
-        <h2>最终结论</h2>
-        <p class="overall-status">{{ store.currentResult.final_result.overall_status }}</p>
-        <p>{{ store.currentResult.final_result.summary }}</p>
-        <ul>
-          <li v-for="(rec, i) in store.currentResult.final_result.recommendations" :key="i">
-            {{ rec }}
-          </li>
-        </ul>
-        <p class="note">{{ store.currentResult.final_result.notes }}</p>
-      </section>
     </template>
+    <template #center>
+      <SummaryPanel :result="review.ai_result" :material-name="material.name" />
+      <div class="mt-4 p-4 bg-white rounded-lg border text-sm leading-relaxed" v-html="highlightText || getHighlightedHtml()" />
+    </template>
+    <template #right>
+      <EngineReport :result="review.ai_result" />
+    </template>
+  </ReviewLayout>
+  <div v-else-if="loading" class="flex items-center justify-center h-screen">
+    <p class="text-gray-500">审查进行中，请稍候...</p>
   </div>
 </template>
-
-<style scoped>
-.result-page { max-width: 800px; margin: 0 auto; }
-
-h1 { color: #1a1a2e; }
-
-.meta {
-  display: flex;
-  gap: 1.5rem;
-  font-size: 0.8rem;
-  color: #999;
-  margin-bottom: 1.5rem;
-}
-
-.card {
-  background: #f8f8f8;
-  padding: 1.25rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.card h2 {
-  margin: 0 0 0.75rem;
-  font-size: 1.05rem;
-  color: #1a1a2e;
-}
-
-pre {
-  white-space: pre-wrap;
-  font-family: inherit;
-  margin: 0;
-  color: #444;
-}
-
-.status-msg { text-align: center; padding: 2rem; color: #888; }
-.status-msg.error { color: #e94560; }
-
-.warnings { color: #e67e22; font-size: 0.9rem; }
-
-.template-item {
-  border-top: 1px solid #ddd;
-  padding-top: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-.note { font-size: 0.8rem; color: #999; }
-
-.overall-status {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  background: #27ae60;
-  color: #fff;
-  font-weight: 600;
-}
-
-.final { border: 2px solid #27ae60; }
-</style>
