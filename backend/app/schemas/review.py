@@ -55,3 +55,4 @@ class ReviewQueueItem(BaseModel):
     priority: str
     status: str
     created_at: datetime
+    waiting_hours: float = 0
