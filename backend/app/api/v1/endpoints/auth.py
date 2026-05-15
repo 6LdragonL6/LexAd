@@ -1,32 +1,21 @@
-"""认证端点 —— 当前为占位，待接入真实用户认证系统。"""
-
-from __future__ import annotations
-
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from app.db.session import get_db
+from app.schemas.user import LoginRequest, TokenResponse, UserOut
+from app.services.auth import authenticate_user, create_user_token
+from app.api.deps import get_current_user
+from app.models.user import User
 
 router = APIRouter()
 
-
-class LoginRequest(BaseModel):
-    """登录请求体：用户名和密码。"""
-    username: str
-    password: str
-
-
-class TokenResponse(BaseModel):
-    """登录令牌响应体：访问令牌和令牌类型。"""
-    access_token: str
-    token_type: str = "bearer"
-
-
 @router.post("/login", response_model=TokenResponse)
-async def login(_body: LoginRequest):
-    """登录接口（占位）—— 验证用户凭据并返回 JWT 令牌。"""
-    raise HTTPException(status_code=501, detail="Authentication not yet implemented")
+def login(body: LoginRequest, db: Session = Depends(get_db)):
+    user = authenticate_user(db, body.username, body.password)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
+    token = create_user_token(user)
+    return TokenResponse(access_token=token)
 
-
-@router.post("/register")
-async def register():
-    """注册接口（占位）—— 创建新用户账号。"""
-    raise HTTPException(status_code=501, detail="Registration not yet implemented")
+@router.get("/me", response_model=UserOut)
+def me(current_user: User = Depends(get_current_user)):
+    return current_user
