@@ -1,0 +1,10 @@
+# OTC药品、医疗器械、保健食品、特殊医学用途配方食品审核规则险”等保证性内容，怂恿消费者任意、过量使用的内容。 试用抢购热销 14、不得含有医疗机构的名称、地址
+ID: 128128
+来源: 巨量引擎帮助中心
+URL: https://support.oceanengine.com/support/content/128128
+
+---
+
+OTC药品、医疗器械、保健食品、特殊医学用途配方食品审核规则 - 巨量广告规则中心window.gfdatav1={"env":"prod","envName":"prod","runtime":"node","ver":"1.0.0.2706","canary":0,"idc":"hl","region":"cn","vdc":"hl","vregion":"China-North","extra":{"canaryType":null}}
+
+[代码段已清理]

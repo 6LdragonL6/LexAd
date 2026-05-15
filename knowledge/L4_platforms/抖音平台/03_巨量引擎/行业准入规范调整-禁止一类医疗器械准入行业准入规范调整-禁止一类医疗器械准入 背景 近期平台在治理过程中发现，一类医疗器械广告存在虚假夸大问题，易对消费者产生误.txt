@@ -1,0 +1,10 @@
+# 行业准入规范调整-禁止一类医疗器械准入行业准入规范调整-禁止一类医疗器械准入 背景 近期平台在治理过程中发现，一类医疗器械广告存在虚假夸大问题，易对消费者产生误
+ID: 141544
+来源: 巨量引擎帮助中心
+URL: https://support.oceanengine.com/support/content/141544
+
+---
+
+行业准入规范调整-禁止一类医疗器械准入 - 巨量广告规则中心window.gfdatav1={"env":"prod","envName":"prod","runtime":"node","ver":"1.0.0.2706","canary":0,"idc":"lq","region":"cn","vdc":"lq","vregion":"China-North","extra":{"canaryType":null}}
+
+[代码段已清理]

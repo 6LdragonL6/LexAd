@@ -1,0 +1,10 @@
+# ETC资质-资质审核规则调整ETC资质-资质审核规则调整 背景 为有效防范无资质客户的风险扩散，现对 ETC 资质管控要求进行明确。 执行内容 投放ETC 相关
+ID: 145964
+来源: 巨量引擎帮助中心
+URL: https://support.oceanengine.com/support/content/145964
+
+---
+
+ETC资质-资质审核规则调整 - 巨量广告规则中心window.gfdatav1={"env":"prod","envName":"prod","runtime":"node","ver":"1.0.0.2706","canary":0,"idc":"hl","region":"cn","vdc":"hl","vregion":"China-North","extra":{"canaryType":null}}
+
+[代码段已清理]
