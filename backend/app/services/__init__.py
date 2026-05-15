@@ -1,1 +1,1 @@
-from app.services import auth
+from app.services import auth, material_service
