@@ -1,36 +1,37 @@
-// Vue Router 路由配置 —— 定义 5 条懒加载路由
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/',                           // 首页
-      name: 'home',
-      component: () => import('@/pages/HomePage.vue'),
-    },
-    {
-      path: '/review',                     // 广告审查提交页
-      name: 'review',
-      component: () => import('@/pages/ReviewPage.vue'),
-    },
-    {
-      path: '/result/:requestId',          // 审查结果页（动态路由参数）
-      name: 'result',
-      component: () => import('@/pages/ResultPage.vue'),
-      props: true,
-    },
-    {
-      path: '/cases',                      // 案例库页
-      name: 'cases',
-      component: () => import('@/pages/CasesPage.vue'),
-    },
-    {
-      path: '/templates',                  // 改写模板库页
-      name: 'templates',
-      component: () => import('@/pages/TemplatesPage.vue'),
-    },
+    { path: '/login', name: 'login', component: () => import('@/pages/LoginPage.vue'), meta: { guest: true } },
+    { path: '/', name: 'home', component: () => import('@/pages/HomePage.vue') },
+    { path: '/submit', name: 'submit', component: () => import('@/pages/SubmitPage.vue') },
+    { path: '/result/:id', name: 'result', component: () => import('@/pages/ResultPage.vue'), props: true },
+    { path: '/legal', name: 'legal', component: () => import('@/pages/LegalDashboard.vue') },
+    { path: '/legal/:id', name: 'legal-detail', component: () => import('@/pages/LegalDetail.vue'), props: true },
+    { path: '/knowledge', name: 'knowledge', component: () => import('@/pages/KnowledgePage.vue') },
   ],
+})
+
+router.beforeEach(async (to, _from, next) => {
+  const store = useUserStore()
+  if (!store.user && localStorage.getItem('access_token')) {
+    await store.fetchUser()
+  }
+  if (to.meta.guest) {
+    next()
+    return
+  }
+  if (!store.isLoggedIn) {
+    next('/login')
+    return
+  }
+  if (to.path.startsWith('/legal') && store.isMarketing) {
+    next('/')
+    return
+  }
+  next()
 })
 
 export default router
