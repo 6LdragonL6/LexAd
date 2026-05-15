@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
-import { useRouter } from 'vue-router'
 
 const store = useUserStore()
-const router = useRouter()
 
 const navItems = [
   { label: '首页', to: '/' },
