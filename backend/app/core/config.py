@@ -8,6 +8,11 @@ from typing import Literal
 
 from pydantic_settings import BaseSettings
 
+# 路径常量 —— 必须在 Settings 类之前定义，因为字段默认值依赖它们
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # backend/ 目录
+DATA_DIR = PROJECT_ROOT.parent / "data"  # 数据文件目录（规则、案例、模板 JSON）
+STATIC_DIR = PROJECT_ROOT / "static"  # 静态资源目录
+
 
 class Settings(BaseSettings):
     """全局应用配置，自动从 .env 文件和环境变量加载。"""
@@ -67,9 +72,3 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """获取缓存的全局配置单例。"""
     return Settings()
-
-
-# 路径常量
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # backend/ 目录
-DATA_DIR = PROJECT_ROOT.parent / "data"  # 数据文件目录（规则、案例、模板 JSON）
-STATIC_DIR = PROJECT_ROOT / "static"  # 静态资源目录
