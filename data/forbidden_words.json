@@ -1,0 +1,2012 @@
+[
+  {
+    "word": "最好",
+    "category": "绝对化用语",
+    "replacement": "表现出色、口碑出众、品质优异"
+  },
+  {
+    "word": "最大",
+    "category": "绝对化用语",
+    "replacement": "较大、领先、规模领先、广受青睐"
+  },
+  {
+    "word": "最高",
+    "category": "绝对化用语",
+    "replacement": "领先、位居前列、行业领先"
+  },
+  {
+    "word": "最佳",
+    "category": "绝对化用语",
+    "replacement": "上佳之选、广受好评、热门推荐"
+  },
+  {
+    "word": "最优惠",
+    "category": "绝对化用语",
+    "replacement": "超值优惠、限时特惠"
+  },
+  {
+    "word": "最高级",
+    "category": "绝对化用语",
+    "replacement": "高端系列、升级款"
+  },
+  {
+    "word": "最具",
+    "category": "绝对化用语",
+    "replacement": "备受、深受、广受"
+  },
+  {
+    "word": "最美",
+    "category": "绝对化用语",
+    "replacement": "颜值出众、美观大方"
+  },
+  {
+    "word": "最新",
+    "category": "绝对化用语",
+    "replacement": "新款上市、全新升级"
+  },
+  {
+    "word": "最便宜",
+    "category": "绝对化用语",
+    "replacement": "价格实惠、性价比高"
+  },
+  {
+    "word": "最低价",
+    "category": "绝对化用语",
+    "replacement": "优惠价、活动价"
+  },
+  {
+    "word": "最受欢迎",
+    "category": "绝对化用语",
+    "replacement": "深受喜爱、人气之选"
+  },
+  {
+    "word": "最新科技",
+    "category": "绝对化用语",
+    "replacement": "创新技术、前沿科技"
+  },
+  {
+    "word": "最先进",
+    "category": "绝对化用语",
+    "replacement": "技术领先、工艺精良"
+  },
+  {
+    "word": "最时尚",
+    "category": "绝对化用语",
+    "replacement": "时尚之选、潮流设计"
+  },
+  {
+    "word": "最舒适",
+    "category": "绝对化用语",
+    "replacement": "体感舒适、亲肤体验"
+  },
+  {
+    "word": "最专业",
+    "category": "绝对化用语",
+    "replacement": "深耕行业多年、经验丰富"
+  },
+  {
+    "word": "最畅销",
+    "category": "绝对化用语",
+    "replacement": "热门单品、持续热销"
+  },
+  {
+    "word": "最高品质",
+    "category": "绝对化用语",
+    "replacement": "品质过硬、严选标准"
+  },
+  {
+    "word": "最大程度",
+    "category": "绝对化用语",
+    "replacement": "显著提升、大幅度"
+  },
+  {
+    "word": "最全",
+    "category": "绝对化用语",
+    "replacement": "品类丰富、种类齐全"
+  },
+  {
+    "word": "最早",
+    "category": "绝对化用语",
+    "replacement": "率先、先发"
+  },
+  {
+    "word": "最火",
+    "category": "绝对化用语",
+    "replacement": "热度高、关注度高"
+  },
+  {
+    "word": "最快",
+    "category": "绝对化用语",
+    "replacement": "高效、快捷"
+  },
+  {
+    "word": "最优",
+    "category": "绝对化用语",
+    "replacement": "出众、优越"
+  },
+  {
+    "word": "最纯",
+    "category": "绝对化用语",
+    "replacement": "纯正、高纯度"
+  },
+  {
+    "word": "最强",
+    "category": "绝对化用语",
+    "replacement": "实力出众、表现突出"
+  },
+  {
+    "word": "第一",
+    "category": "绝对化用语",
+    "replacement": "领先品牌之一、行业前列、位列前茅"
+  },
+  {
+    "word": "全国第一",
+    "category": "绝对化用语",
+    "replacement": "行业领先品牌、广受消费者认可"
+  },
+  {
+    "word": "销量第一",
+    "category": "绝对化用语",
+    "replacement": "销量领先、持续热销、畅销单品"
+  },
+  {
+    "word": "排名第一",
+    "category": "绝对化用语",
+    "replacement": "排名前列、名列前茅"
+  },
+  {
+    "word": "NO.1 / Top1",
+    "category": "绝对化用语",
+    "replacement": "位居前列、广受认可"
+  },
+  {
+    "word": "第一品牌",
+    "category": "绝对化用语",
+    "replacement": "知名品牌、值得信赖的品牌"
+  },
+  {
+    "word": "唯一",
+    "category": "绝对化用语",
+    "replacement": "专注、专研、深耕、主打"
+  },
+  {
+    "word": "全网唯一",
+    "category": "绝对化用语",
+    "replacement": "特色鲜明、与众不同"
+  },
+  {
+    "word": "独一无二",
+    "category": "绝对化用语",
+    "replacement": "别具特色、自成一格、风格独特"
+  },
+  {
+    "word": "绝无仅有",
+    "category": "绝对化用语",
+    "replacement": "难得一见、少有、珍贵"
+  },
+  {
+    "word": "仅此一家",
+    "category": "绝对化用语",
+    "replacement": "专注领域、专业深耕"
+  },
+  {
+    "word": "仅此一次",
+    "category": "绝对化用语",
+    "replacement": "限时活动、机会难得"
+  },
+  {
+    "word": "仅此一款",
+    "category": "绝对化用语",
+    "replacement": "特别款、限定发售"
+  },
+  {
+    "word": "一流",
+    "category": "绝对化用语",
+    "replacement": "高水准、品质出众"
+  },
+  {
+    "word": "全国X大品牌之一",
+    "category": "绝对化用语",
+    "replacement": "知名品牌、业内认可"
+  },
+  {
+    "word": "首家",
+    "category": "绝对化用语",
+    "replacement": "早期/率先开展、先行者"
+  },
+  {
+    "word": "首个",
+    "category": "绝对化用语",
+    "replacement": "率先推出、先发"
+  },
+  {
+    "word": "首款",
+    "category": "绝对化用语",
+    "replacement": "首发新品、全新上市"
+  },
+  {
+    "word": "首发",
+    "category": "绝对化用语",
+    "replacement": "新品上市、抢先体验"
+  },
+  {
+    "word": "首选",
+    "category": "绝对化用语",
+    "replacement": "热门之选、备受青睐、值得入手"
+  },
+  {
+    "word": "首屈一指",
+    "category": "绝对化用语",
+    "replacement": "名列前茅、位居前列"
+  },
+  {
+    "word": "无可替代",
+    "category": "绝对化用语",
+    "replacement": "特色鲜明、具有独特优势"
+  },
+  {
+    "word": "国家级",
+    "category": "绝对化用语",
+    "replacement": "通过国家认证/检测（需有真实认证资质）"
+  },
+  {
+    "word": "世界级",
+    "category": "绝对化用语",
+    "replacement": "全球布局、国际标准"
+  },
+  {
+    "word": "国际级",
+    "category": "绝对化用语",
+    "replacement": "符合国际标准、出口品质"
+  },
+  {
+    "word": "全球级",
+    "category": "绝对化用语",
+    "replacement": "覆盖全球、服务全球客户"
+  },
+  {
+    "word": "宇宙级",
+    "category": "绝对化用语",
+    "replacement": "（行业内不使用此类表述）"
+  },
+  {
+    "word": "千万级",
+    "category": "绝对化用语",
+    "replacement": "大规模、覆盖面广"
+  },
+  {
+    "word": "特级",
+    "category": "绝对化用语",
+    "replacement": "精选、优质、高品质"
+  },
+  {
+    "word": "顶级",
+    "category": "绝对化用语",
+    "replacement": "高端、高阶、旗舰款"
+  },
+  {
+    "word": "顶尖",
+    "category": "绝对化用语",
+    "replacement": "出色、优秀、实力雄厚"
+  },
+  {
+    "word": "极品",
+    "category": "绝对化用语",
+    "replacement": "精品、佳作、优质"
+  },
+  {
+    "word": "极佳",
+    "category": "绝对化用语",
+    "replacement": "出色、出众、表现良好"
+  },
+  {
+    "word": "极致",
+    "category": "绝对化用语",
+    "replacement": "精良、卓越、精湛"
+  },
+  {
+    "word": "终极",
+    "category": "绝对化用语",
+    "replacement": "旗舰版、进阶版"
+  },
+  {
+    "word": "巅峰",
+    "category": "绝对化用语",
+    "replacement": "高峰之作、代表作"
+  },
+  {
+    "word": "王者",
+    "category": "绝对化用语",
+    "replacement": "实力品牌、领先品牌"
+  },
+  {
+    "word": "王牌",
+    "category": "绝对化用语",
+    "replacement": "核心产品、明星单品、主力产品"
+  },
+  {
+    "word": "至尊",
+    "category": "绝对化用语",
+    "replacement": "尊享版、旗舰版"
+  },
+  {
+    "word": "问鼎",
+    "category": "绝对化用语",
+    "replacement": "领先、位居前列"
+  },
+  {
+    "word": "遥遥领先（禁止使用）",
+    "category": "绝对化用语",
+    "replacement": "表现出众、位居前列（需有客观数据支撑）"
+  },
+  {
+    "word": "尖端",
+    "category": "绝对化用语",
+    "replacement": "先进技术、创新科技"
+  },
+  {
+    "word": "顶级工艺",
+    "category": "绝对化用语",
+    "replacement": "精湛工艺、精工细作"
+  },
+  {
+    "word": "顶级享受",
+    "category": "绝对化用语",
+    "replacement": "优质体验、舒适享受"
+  },
+  {
+    "word": "领先上市",
+    "category": "绝对化用语",
+    "replacement": "率先推出、抢先发布"
+  },
+  {
+    "word": "行业领先",
+    "category": "绝对化用语",
+    "replacement": "行业知名、业内认可"
+  },
+  {
+    "word": "世界领先",
+    "category": "绝对化用语",
+    "replacement": "国际知名、全球化布局"
+  },
+  {
+    "word": "领袖品牌",
+    "category": "绝对化用语",
+    "replacement": "知名品牌、行业标杆"
+  },
+  {
+    "word": "引领",
+    "category": "绝对化用语",
+    "replacement": "推动、促进行业发展"
+  },
+  {
+    "word": "开创",
+    "category": "绝对化用语",
+    "replacement": "创新、率先推出"
+  },
+  {
+    "word": "鼻祖",
+    "category": "绝对化用语",
+    "replacement": "深耕多年、资深品牌"
+  },
+  {
+    "word": "100%有效",
+    "category": "绝对化用语",
+    "replacement": "持续使用效果更佳、坚持使用有助改善"
+  },
+  {
+    "word": "100%纯天然",
+    "category": "绝对化用语",
+    "replacement": "天然成分、植物来源"
+  },
+  {
+    "word": "万能",
+    "category": "绝对化用语",
+    "replacement": "多用途、多功能、适用范围广"
+  },
+  {
+    "word": "永久",
+    "category": "绝对化用语",
+    "replacement": "长久、长效、耐用"
+  },
+  {
+    "word": "终身",
+    "category": "绝对化用语",
+    "replacement": "长期、持续（需根据实际服务/质保期限确定替代词，避免\"终身\"误导）"
+  },
+  {
+    "word": "彻底",
+    "category": "绝对化用语",
+    "replacement": "显著、深入、充分"
+  },
+  {
+    "word": "绝对",
+    "category": "绝对化用语",
+    "replacement": "显著、必定（视语境调整）"
+  },
+  {
+    "word": "无限",
+    "category": "绝对化用语",
+    "replacement": "（不使用此表述，用具体数量描述）"
+  },
+  {
+    "word": "完美",
+    "category": "绝对化用语",
+    "replacement": "出色、优秀、令人满意"
+  },
+  {
+    "word": "销冠",
+    "category": "绝对化用语",
+    "replacement": "畅销单品、热卖商品"
+  },
+  {
+    "word": "性价比之王",
+    "category": "绝对化用语",
+    "replacement": "高性价比、物超所值"
+  },
+  {
+    "word": "天花板",
+    "category": "绝对化用语",
+    "replacement": "顶尖水平、高水平"
+  },
+  {
+    "word": "史无前例",
+    "category": "绝对化用语",
+    "replacement": "较为少见、颇具特色、近年来少有"
+  },
+  {
+    "word": "空前绝后",
+    "category": "绝对化用语",
+    "replacement": "（行业内不使用此类表述）"
+  },
+  {
+    "word": "前无古人",
+    "category": "绝对化用语",
+    "replacement": "创新性强、具有突破性"
+  },
+  {
+    "word": "纯天然",
+    "category": "绝对化用语",
+    "replacement": "天然成分、自然来源（需有证明）"
+  },
+  {
+    "word": "无添加",
+    "category": "绝对化用语",
+    "replacement": "配方精简、成分友好（需有证明）"
+  },
+  {
+    "word": "0风险",
+    "category": "绝对化用语",
+    "replacement": "风险可控（金融类禁用）"
+  },
+  {
+    "word": "无任何化学成分",
+    "category": "绝对化用语",
+    "replacement": "配方温和（需有证明）"
+  },
+  {
+    "word": "医用级",
+    "category": "绝对化用语",
+    "replacement": "高品质、高标准（需有医疗器械注册证方可使用）"
+  },
+  {
+    "word": "完美替代",
+    "category": "绝对化用语",
+    "replacement": "优质替代方案、良好替代选择"
+  },
+  {
+    "word": "全面",
+    "category": "绝对化用语",
+    "replacement": "综合、多方面、多元"
+  },
+  {
+    "word": "全网最低价",
+    "category": "价格欺诈",
+    "replacement": "限时优惠价、活动特惠价"
+  },
+  {
+    "word": "最低价",
+    "category": "价格欺诈",
+    "replacement": "优惠价、惊喜价"
+  },
+  {
+    "word": "最便宜",
+    "category": "价格欺诈",
+    "replacement": "价格实惠、物超所值"
+  },
+  {
+    "word": "秒杀",
+    "category": "价格欺诈",
+    "replacement": "限时特惠、限时抢购、限时优惠"
+  },
+  {
+    "word": "抢购",
+    "category": "价格欺诈",
+    "replacement": "限时活动、优惠名额有限"
+  },
+  {
+    "word": "错过后悔",
+    "category": "价格欺诈",
+    "replacement": "优惠难得、活动限时"
+  },
+  {
+    "word": "抢疯了",
+    "category": "价格欺诈",
+    "replacement": "人气火爆、关注度高"
+  },
+  {
+    "word": "再不买就没了",
+    "category": "价格欺诈",
+    "replacement": "库存有限、售完即止"
+  },
+  {
+    "word": "马上涨价",
+    "category": "价格欺诈",
+    "replacement": "价格即将调整、优惠即将结束"
+  },
+  {
+    "word": "随时结束",
+    "category": "价格欺诈",
+    "replacement": "活动限时、售完即止"
+  },
+  {
+    "word": "仅此一次",
+    "category": "价格欺诈",
+    "replacement": "限时活动、机会难得"
+  },
+  {
+    "word": "随时涨价",
+    "category": "价格欺诈",
+    "replacement": "价格可能调整（需标注依据）"
+  },
+  {
+    "word": "马上降价",
+    "category": "价格欺诈",
+    "replacement": "价格下调、优惠调整"
+  },
+  {
+    "word": "最后一波",
+    "category": "价格欺诈",
+    "replacement": "最后机会、余量不多"
+  },
+  {
+    "word": "万人疯抢",
+    "category": "价格欺诈",
+    "replacement": "广受关注、用户青睐"
+  },
+  {
+    "word": "库存不足",
+    "category": "价格欺诈",
+    "replacement": "库存有限、限量发售"
+  },
+  {
+    "word": "不会再便宜了",
+    "category": "价格欺诈",
+    "replacement": "当前优惠力度较大"
+  },
+  {
+    "word": "限时（虚假时限）",
+    "category": "价格欺诈",
+    "replacement": "活动期限：[标注具体时间]"
+  },
+  {
+    "word": "仅限（虚假时限）",
+    "category": "价格欺诈",
+    "replacement": "限定期限：[标注具体时间]"
+  },
+  {
+    "word": "XX秒（倒计时虚假紧迫）",
+    "category": "价格欺诈",
+    "replacement": "（不使用倒计时压迫性描述，如实说明活动时间）"
+  },
+  {
+    "word": "免费送/免费领（实际有条件的）",
+    "category": "价格欺诈",
+    "replacement": "赠品活动、满赠福利（需标注条件）"
+  },
+  {
+    "word": "免费试用（实际有门槛的）",
+    "category": "价格欺诈",
+    "replacement": "体验装、试用装（标注具体规则）"
+  },
+  {
+    "word": "演戏炒作/虚构砍价",
+    "category": "价格欺诈",
+    "replacement": "价格直降、限时让利（避免虚构冲突情节）"
+  },
+  {
+    "word": "比某平台更便宜",
+    "category": "价格欺诈",
+    "replacement": "同款优选、质优价实（避免对比竞品）"
+  },
+  {
+    "word": "治疗/治愈/根治",
+    "category": "涉医用语",
+    "replacement": "改善、缓解、有助于（仅适用于具有合法功效资质的商品，普通商品禁用）"
+  },
+  {
+    "word": "消炎",
+    "category": "涉医用语",
+    "replacement": "舒缓、安抚、镇定肌肤"
+  },
+  {
+    "word": "杀菌/抗菌",
+    "category": "涉医用语",
+    "replacement": "清洁、除味、洁净（普通商品不可用，需有消字号）"
+  },
+  {
+    "word": "消毒",
+    "category": "涉医用语",
+    "replacement": "清洁、洁净（需有消字号资质）"
+  },
+  {
+    "word": "排毒",
+    "category": "涉医用语",
+    "replacement": "清洁、净化（普通商品禁用）"
+  },
+  {
+    "word": "抗敏/抗过敏",
+    "category": "涉医用语",
+    "replacement": "温和配方、适合敏感肌"
+  },
+  {
+    "word": "解毒",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "抗病毒",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "祛疤",
+    "category": "涉医用语",
+    "replacement": "淡化痕迹、平滑肤质（需特殊化妆品资质）"
+  },
+  {
+    "word": "止痛",
+    "category": "涉医用语",
+    "replacement": "缓解不适（药品/医疗器械专属用语）"
+  },
+  {
+    "word": "麻醉",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "药妆",
+    "category": "涉医用语",
+    "replacement": "（普通化妆品不可使用此词）"
+  },
+  {
+    "word": "医学护肤品",
+    "category": "涉医用语",
+    "replacement": "（普通化妆品不可使用此词）"
+  },
+  {
+    "word": "医用",
+    "category": "涉医用语",
+    "replacement": "医疗器械专用（需有注册证）"
+  },
+  {
+    "word": "处方",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "中药精华",
+    "category": "涉医用语",
+    "replacement": "植萃精华、草本精华（如实际含植物成分）"
+  },
+  {
+    "word": "药物成分",
+    "category": "涉医用语",
+    "replacement": "活性成分、有效成分（非药物时禁用）"
+  },
+  {
+    "word": "抗炎",
+    "category": "涉医用语",
+    "replacement": "舒润、安抚"
+  },
+  {
+    "word": "调节内分泌",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "改善XX（疾病名）",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用疾病名称）"
+  },
+  {
+    "word": "防脱发",
+    "category": "涉医用语",
+    "replacement": "稳固发根、强韧发丝（需特殊化妆品资质）"
+  },
+  {
+    "word": "改善睡眠",
+    "category": "涉医用语",
+    "replacement": "有助放松、舒缓身心（需有对应资质）"
+  },
+  {
+    "word": "清热解毒",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "活血",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "增强免疫力",
+    "category": "涉医用语",
+    "replacement": "补充营养、均衡膳食（需保健食品资质）"
+  },
+  {
+    "word": "助眠",
+    "category": "涉医用语",
+    "replacement": "放松身心、舒缓压力（保健食品需资质）"
+  },
+  {
+    "word": "降血压",
+    "category": "涉医用语",
+    "replacement": "（保健食品需资质，普通商品不可使用）"
+  },
+  {
+    "word": "防癌抗癌",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可使用）"
+  },
+  {
+    "word": "瘦身/减肥",
+    "category": "涉医用语",
+    "replacement": "体重管理、形体管理（需保健食品/特妆资质或改为体重管理）"
+  },
+  {
+    "word": "溶脂/燃烧脂肪",
+    "category": "涉医用语",
+    "replacement": "（需保健食品资质或不可使用）"
+  },
+  {
+    "word": "治疗痘痘",
+    "category": "涉医用语",
+    "replacement": "改善痘痘肌、控油清洁"
+  },
+  {
+    "word": "修复受损细胞",
+    "category": "涉医用语",
+    "replacement": "修护肌肤、滋养润泽（避免\"细胞\"表述）"
+  },
+  {
+    "word": "治愈率",
+    "category": "涉医用语",
+    "replacement": "（不可用于任何商品宣传）"
+  },
+  {
+    "word": "不复发",
+    "category": "涉医用语",
+    "replacement": "持续效果、长久维持（避免绝对承诺）"
+  },
+  {
+    "word": "比手术安全",
+    "category": "涉医用语",
+    "replacement": "（普通商品不可与医疗手段对比）"
+  },
+  {
+    "word": "包治百病",
+    "category": "涉医用语",
+    "replacement": "（任何商品不可使用）"
+  },
+  {
+    "word": "一盒见效/一剂见效",
+    "category": "涉医用语",
+    "replacement": "持续使用、坚持使用"
+  },
+  {
+    "word": "无副作用",
+    "category": "涉医用语",
+    "replacement": "温和配方（需有检测报告支撑）"
+  },
+  {
+    "word": "免费治疗",
+    "category": "涉医用语",
+    "replacement": "（非医疗机构不可使用）"
+  },
+  {
+    "word": "祛斑",
+    "category": "功效宣称",
+    "replacement": "提亮肤色、均匀肤色、淡化色斑（需特殊化妆品资质）"
+  },
+  {
+    "word": "美白",
+    "category": "功效宣称",
+    "replacement": "提亮、匀净肤色（需特殊化妆品资质）"
+  },
+  {
+    "word": "淡斑",
+    "category": "功效宣称",
+    "replacement": "提亮、焕亮（需特殊化妆品资质）"
+  },
+  {
+    "word": "祛除皱纹",
+    "category": "功效宣称",
+    "replacement": "淡化细纹、平滑肌肤、紧致"
+  },
+  {
+    "word": "平皱",
+    "category": "功效宣称",
+    "replacement": "抚平细纹、淡化表情纹"
+  },
+  {
+    "word": "修复弹性纤维",
+    "category": "功效宣称",
+    "replacement": "紧致弹润、提升肌肤弹性"
+  },
+  {
+    "word": "丰胸/丰乳/美乳",
+    "category": "功效宣称",
+    "replacement": "健美术、胸部护理（需特殊化妆品资质）"
+  },
+  {
+    "word": "使乳房丰满",
+    "category": "功效宣称",
+    "replacement": "（需特殊化妆品资质，普通商品不可使用）"
+  },
+  {
+    "word": "脱毛",
+    "category": "功效宣称",
+    "replacement": "脱毛（需特殊化妆品资质）"
+  },
+  {
+    "word": "一洗白/速白",
+    "category": "功效宣称",
+    "replacement": "清洁焕亮、洁净透亮"
+  },
+  {
+    "word": "全效",
+    "category": "功效宣称",
+    "replacement": "多效、多效合一、综合护理"
+  },
+  {
+    "word": "高效",
+    "category": "功效宣称",
+    "replacement": "有效、作用明显"
+  },
+  {
+    "word": "强效",
+    "category": "功效宣称",
+    "replacement": "深层作用、密集护理"
+  },
+  {
+    "word": "速效",
+    "category": "功效宣称",
+    "replacement": "快速起效（避免时效承诺）"
+  },
+  {
+    "word": "三天美白/X天白X度",
+    "category": "功效宣称",
+    "replacement": "长期使用有助提亮"
+  },
+  {
+    "word": "破坏黑色素细胞",
+    "category": "功效宣称",
+    "replacement": "抑制黑色素、减少色素沉着"
+  },
+  {
+    "word": "药妆",
+    "category": "功效宣称",
+    "replacement": "（化妆品禁用词）"
+  },
+  {
+    "word": "械字号（化妆品宣传中）",
+    "category": "功效宣称",
+    "replacement": "化妆品不可宣传械字号"
+  },
+  {
+    "word": "医学级",
+    "category": "功效宣称",
+    "replacement": "（化妆品不可使用）"
+  },
+  {
+    "word": "药物护肤",
+    "category": "功效宣称",
+    "replacement": "（化妆品不可使用）"
+  },
+  {
+    "word": "修复细胞",
+    "category": "功效宣称",
+    "replacement": "修护肌肤（避免\"细胞\"表述）"
+  },
+  {
+    "word": "祛除斑点/瓦解斑点",
+    "category": "功效宣称",
+    "replacement": "淡化斑点、改善暗沉"
+  },
+  {
+    "word": "修复红血丝",
+    "category": "功效宣称",
+    "replacement": "舒缓泛红、修护屏障"
+  },
+  {
+    "word": "100%纯天然/食品级（化妆品）",
+    "category": "功效宣称",
+    "replacement": "天然成分、植物萃取（需有证明）"
+  },
+  {
+    "word": "消炎止痛（化妆品）",
+    "category": "功效宣称",
+    "replacement": "舒缓镇定、温和护理"
+  },
+  {
+    "word": "一喷就白/一泡就白",
+    "category": "功效宣称",
+    "replacement": "清洁去黄、深层洁净"
+  },
+  {
+    "word": "100%去除（污渍）",
+    "category": "功效宣称",
+    "replacement": "强力去污、高效洁净"
+  },
+  {
+    "word": "瞬间磨平皱纹",
+    "category": "功效宣称",
+    "replacement": "紧致提拉、瞬间提亮（避免夸张）"
+  },
+  {
+    "word": "十年不掉色（饰品）",
+    "category": "功效宣称",
+    "replacement": "保色工艺优良、日常佩戴不易褪色"
+  },
+  {
+    "word": "不过敏",
+    "category": "功效宣称",
+    "replacement": "温和配方、敏感肌适用（需有检测报告）"
+  },
+  {
+    "word": "恭喜获奖（实际非真实抽奖）",
+    "category": "虚假表述",
+    "replacement": "幸运用户回馈活动（需标注活动规则）"
+  },
+  {
+    "word": "全民免单",
+    "category": "虚假表述",
+    "replacement": "免单抽奖（需标注规则和概率）"
+  },
+  {
+    "word": "点击有惊喜",
+    "category": "虚假表述",
+    "replacement": "点击查看详情"
+  },
+  {
+    "word": "领取奖品（需消费）",
+    "category": "虚假表述",
+    "replacement": "下单赠礼、满赠活动"
+  },
+  {
+    "word": "免费赠送（有条件要求）",
+    "category": "虚假表述",
+    "replacement": "赠品活动（需标注条件，如满XX元赠）"
+  },
+  {
+    "word": "做任务返现",
+    "category": "虚假表述",
+    "replacement": "打卡活动、积分回馈（需使用官方工具）"
+  },
+  {
+    "word": "下单后可退款不当承诺",
+    "category": "虚假表述",
+    "replacement": "七天无理由退货（需真实支持）"
+  },
+  {
+    "word": "下单后高价回收",
+    "category": "虚假表述",
+    "replacement": "（禁止此类宣传）"
+  },
+  {
+    "word": "诱骗秒杀（宣传低价未兑现）",
+    "category": "虚假表述",
+    "replacement": "如实标注秒杀时间和价格"
+  },
+  {
+    "word": "虚假倒计时",
+    "category": "虚假表述",
+    "replacement": "如实展示活动时间"
+  },
+  {
+    "word": "免费送手机/高价值物品诱导互动",
+    "category": "虚假表述",
+    "replacement": "抽奖活动（需官方工具，标注规则）"
+  },
+  {
+    "word": "包过/保过",
+    "category": "效果保证",
+    "replacement": "专业辅导、系统课程"
+  },
+  {
+    "word": "一次通过",
+    "category": "效果保证",
+    "replacement": "高效备考、系统学习"
+  },
+  {
+    "word": "一本书学会",
+    "category": "效果保证",
+    "replacement": "内容精炼、知识系统"
+  },
+  {
+    "word": "一套题学会",
+    "category": "效果保证",
+    "replacement": "精选习题、巩固提高"
+  },
+  {
+    "word": "必考（暗示押题命中率）",
+    "category": "效果保证",
+    "replacement": "高频考点、重点知识梳理"
+  },
+  {
+    "word": "出题人/原题",
+    "category": "效果保证",
+    "replacement": "真题解析、模拟训练（需有真实授权）"
+  },
+  {
+    "word": "内部资料（非真实内部）",
+    "category": "效果保证",
+    "replacement": "独家整理、精选资料"
+  },
+  {
+    "word": "押题（暗示命中率）",
+    "category": "效果保证",
+    "replacement": "考前冲刺、重难点梳理"
+  },
+  {
+    "word": "无需学习/不用学",
+    "category": "效果保证",
+    "replacement": "轻松入门、循序渐进"
+  },
+  {
+    "word": "快速提分",
+    "category": "效果保证",
+    "replacement": "高效学习、循序渐进提升"
+  },
+  {
+    "word": "零风险（教育类）",
+    "category": "效果保证",
+    "replacement": "学习保障、试听体验"
+  },
+  {
+    "word": "升学承诺",
+    "category": "效果保证",
+    "replacement": "升学规划、学业指导"
+  },
+  {
+    "word": "包就业承诺",
+    "category": "效果保证",
+    "replacement": "就业指导、职业规划、推荐机会"
+  },
+  {
+    "word": "保就业",
+    "category": "效果保证",
+    "replacement": "校企合作、就业指导服务"
+  },
+  {
+    "word": "高考升学率",
+    "category": "效果保证",
+    "replacement": "教学成果、培养质量（需有数据支撑）"
+  },
+  {
+    "word": "学会就能赚钱",
+    "category": "效果保证",
+    "replacement": "技能提升、拓展职业可能"
+  },
+  {
+    "word": "一辈子不会失业",
+    "category": "效果保证",
+    "replacement": "技能实用、市场需求大"
+  },
+  {
+    "word": "掌握即获收益",
+    "category": "效果保证",
+    "replacement": "学以致用、提升竞争力"
+  },
+  {
+    "word": "教会孩子写作技巧（K12）",
+    "category": "效果保证",
+    "replacement": "激发写作兴趣、拓展表达（K12学科培训受严格限制）"
+  },
+  {
+    "word": "带孩子学习（K12学科）",
+    "category": "效果保证",
+    "replacement": "（K12学科培训需有资质并遵守双减政策）"
+  },
+  {
+    "word": "7天学会XX",
+    "category": "效果保证",
+    "replacement": "系统课程、循序渐进"
+  },
+  {
+    "word": "收益率（非金融机构）",
+    "category": "效果保证",
+    "replacement": "（非金融机构禁用，金融机构需标注年化利率和风险提示）"
+  },
+  {
+    "word": "投资回报",
+    "category": "效果保证",
+    "replacement": "（非金融机构禁用）"
+  },
+  {
+    "word": "回报率",
+    "category": "效果保证",
+    "replacement": "（非金融机构禁用）"
+  },
+  {
+    "word": "收益/保证收益",
+    "category": "效果保证",
+    "replacement": "（非金融机构禁用）"
+  },
+  {
+    "word": "无风险",
+    "category": "效果保证",
+    "replacement": "风险可控（需标注\"投资有风险\"警示）"
+  },
+  {
+    "word": "保本",
+    "category": "效果保证",
+    "replacement": "（非银行/证券机构禁用）"
+  },
+  {
+    "word": "升值/升值潜力",
+    "category": "效果保证",
+    "replacement": "（投资品类需标注风险，普通商品禁用）"
+  },
+  {
+    "word": "保底收益",
+    "category": "效果保证",
+    "replacement": "（非金融机构禁用）"
+  },
+  {
+    "word": "返本销售",
+    "category": "效果保证",
+    "replacement": "（任何行业均禁止）"
+  },
+  {
+    "word": "无风险回报",
+    "category": "效果保证",
+    "replacement": "（任何行业均禁止承诺无风险）"
+  },
+  {
+    "word": "快速回报",
+    "category": "效果保证",
+    "replacement": "（禁止承诺回报速度）"
+  },
+  {
+    "word": "高收益回报",
+    "category": "效果保证",
+    "replacement": "（禁止承诺高收益，需标注风险）"
+  },
+  {
+    "word": "众筹（无资质时）",
+    "category": "效果保证",
+    "replacement": "共同购买、共同投资（需有金融资质，避免暗示合伙关系）"
+  },
+  {
+    "word": "保本保息",
+    "category": "效果保证",
+    "replacement": "（仅银行/持牌机构在合规范围内可用）"
+  },
+  {
+    "word": "稳赚不赔",
+    "category": "效果保证",
+    "replacement": "（禁止使用）"
+  },
+  {
+    "word": "立马升值",
+    "category": "效果保证",
+    "replacement": "（禁止承诺升值）"
+  },
+  {
+    "word": "投资价值（普通商品）",
+    "category": "效果保证",
+    "replacement": "收藏价值、使用价值（避免投资暗示）"
+  },
+  {
+    "word": "低利息（误导性）",
+    "category": "效果保证",
+    "replacement": "利息说明（需标注年化利率和还款方式）"
+  },
+  {
+    "word": "值得信赖（金融类无依据时）",
+    "category": "效果保证",
+    "replacement": "（金融类禁用主观评价）"
+  },
+  {
+    "word": "高额低息福利",
+    "category": "效果保证",
+    "replacement": "贷款产品说明（需标注利率和风险警示语）"
+  },
+  {
+    "word": "推荐股票/选股教学",
+    "category": "效果保证",
+    "replacement": "证券知识普及（需有证券投资咨询资质）"
+  },
+  {
+    "word": "涨停/牛股暗示",
+    "category": "效果保证",
+    "replacement": "（禁止暗示股价走势）"
+  },
+  {
+    "word": "潜力股票",
+    "category": "效果保证",
+    "replacement": "（禁止对股票质量作评价）"
+  },
+  {
+    "word": "国家领导人推荐",
+    "category": "权威背书",
+    "replacement": "（任何行业均禁止使用）"
+  },
+  {
+    "word": "国家机关推荐",
+    "category": "权威背书",
+    "replacement": "（任何行业均禁止使用）"
+  },
+  {
+    "word": "国家机关特供/专供",
+    "category": "权威背书",
+    "replacement": "（任何行业均禁止使用）"
+  },
+  {
+    "word": "国宴专供",
+    "category": "权威背书",
+    "replacement": "（无真实依据的禁用）"
+  },
+  {
+    "word": "特供/专供",
+    "category": "权威背书",
+    "replacement": "（任何行业均禁止使用，除非有真实政府授权文件）"
+  },
+  {
+    "word": "军队专用",
+    "category": "权威背书",
+    "replacement": "（未经授权禁止使用）"
+  },
+  {
+    "word": "质量免检",
+    "category": "权威背书",
+    "replacement": "通过质量检测（需有检测报告）"
+  },
+  {
+    "word": "无需国家质量检测",
+    "category": "权威背书",
+    "replacement": "（禁止使用，所有商品需合规质检）"
+  },
+  {
+    "word": "免抽检",
+    "category": "权威背书",
+    "replacement": "（禁止使用）"
+  },
+  {
+    "word": "老字号（无认证）",
+    "category": "权威背书",
+    "replacement": "历史悠久的品牌、传承工艺（有认证时可使用）"
+  },
+  {
+    "word": "中国驰名商标（广告宣传中）",
+    "category": "权威背书",
+    "replacement": "知名商标（广告法限制在广告中使用\"驰名商标\"字样）"
+  },
+  {
+    "word": "国家免检产品",
+    "category": "权威背书",
+    "replacement": "（此类表述已废止）"
+  },
+  {
+    "word": "政府定价",
+    "category": "权威背书",
+    "replacement": "统一定价、明码标价"
+  },
+  {
+    "word": "国酒",
+    "category": "权威背书",
+    "replacement": "（特定品牌授权除外，普通商品禁用）"
+  },
+  {
+    "word": "推荐（医生/专家名义）",
+    "category": "权威背书",
+    "replacement": "（禁止以专业人士名义推荐，食品/化妆品等均不可）"
+  },
+  {
+    "word": "XX指定用品（无依据）",
+    "category": "权威背书",
+    "replacement": "（需有真实授权文件）"
+  },
+  {
+    "word": "保险公司保险（无依据）",
+    "category": "权威背书",
+    "replacement": "（需有真实保险合同）"
+  },
+  {
+    "word": "xx知名人员选用（无授权）",
+    "category": "权威背书",
+    "replacement": "名人同款（需有授权）"
+  },
+  {
+    "word": "明星同款（无授权）",
+    "category": "权威背书",
+    "replacement": "时尚设计（需有授权）"
+  },
+  {
+    "word": "名人推荐（无授权）",
+    "category": "权威背书",
+    "replacement": "（需有授权和代言合同）"
+  },
+  {
+    "word": "CCTV/央视推荐/上榜品牌（无授权）",
+    "category": "权威背书",
+    "replacement": "（需有真实合作关系证明）"
+  },
+  {
+    "word": "获奖（无具体奖项）",
+    "category": "权威背书",
+    "replacement": "荣获[具体奖项名称]（需标注奖项名称和时间）"
+  },
+  {
+    "word": "算命/算卦",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "面相/手相",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "风水",
+    "category": "迷信内容",
+    "replacement": "环境布局、空间设计（避免迷信暗示）"
+  },
+  {
+    "word": "开光",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "招财/招财进宝",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "转运",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "增强第六感",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "化解小人",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "增加事业运",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "健康富贵",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "提升运气",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "护身/护身符",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "平衡正负能量",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "旺人旺财",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "助吉避凶",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "运势",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "逢凶化吉",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "避邪/辟邪",
+    "category": "迷信内容",
+    "replacement": "传统纹样、吉祥寓意（避免迷信表述）"
+  },
+  {
+    "word": "镇宅",
+    "category": "迷信内容",
+    "replacement": "家居装饰、艺术陈设"
+  },
+  {
+    "word": "消灾/挡灾",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "时来运转/万事亨通",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "转富招福",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "旺夫/旺宅/旺财",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "带来好运气",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "有助事业",
+    "category": "迷信内容",
+    "replacement": "（禁止用于任何商品宣传）"
+  },
+  {
+    "word": "无效退款",
+    "category": "效果保证",
+    "replacement": "品质保障、售后无忧（需真实支持，虚假标注仍违规）"
+  },
+  {
+    "word": "不满意退款",
+    "category": "效果保证",
+    "replacement": "满意保障、无忧购物（需真实支持）"
+  },
+  {
+    "word": "特效",
+    "category": "效果保证",
+    "replacement": "特殊功效（需有资质，普通商品禁用）"
+  },
+  {
+    "word": "速效",
+    "category": "效果保证",
+    "replacement": "快速起效（避免绝对时间承诺）"
+  },
+  {
+    "word": "保证（效果保证场景，如\"保证有效\"\"保证不复发\"等）",
+    "category": "效果保证",
+    "replacement": "承诺（需可兑现），日常用语如\"品质保证\"可不替换"
+  },
+  {
+    "word": "彻底解决",
+    "category": "效果保证",
+    "replacement": "显著改善、有效缓解"
+  },
+  {
+    "word": "1天见效/当天见效",
+    "category": "效果保证",
+    "replacement": "坚持使用、持续改善（避免具体时间承诺）"
+  },
+  {
+    "word": "无依赖/无依赖性",
+    "category": "效果保证",
+    "replacement": "温和配方（需有检测支撑）"
+  },
+  {
+    "word": "不反弹",
+    "category": "效果保证",
+    "replacement": "效果持久、长效维持（避免绝对承诺）"
+  },
+  {
+    "word": "根治",
+    "category": "效果保证",
+    "replacement": "改善、缓解（不可用于普通商品）"
+  },
+  {
+    "word": "痊愈",
+    "category": "效果保证",
+    "replacement": "恢复、改善（不可用于普通商品）"
+  },
+  {
+    "word": "立马见效",
+    "category": "效果保证",
+    "replacement": "快速感受、迅速体验（避免绝对承诺）"
+  },
+  {
+    "word": "无毒副作用",
+    "category": "效果保证",
+    "replacement": "温和安全（需有检测报告支撑）"
+  },
+  {
+    "word": "免费治疗",
+    "category": "效果保证",
+    "replacement": "（非医疗机构禁用）"
+  },
+  {
+    "word": "零风险",
+    "category": "效果保证",
+    "replacement": "风险可控（金融类需警示，普通商品不可用于服务承诺）"
+  },
+  {
+    "word": "比XX（医药手段）更有效",
+    "category": "效果保证",
+    "replacement": "（普通商品不可与医药手段对比）"
+  },
+  {
+    "word": "中国人不骗中国人（赌咒式承诺）",
+    "category": "效果保证",
+    "replacement": "品质保证、诚信经营（避免赌咒式表述）"
+  },
+  {
+    "word": "即便要封号我也要说（赌咒式）",
+    "category": "效果保证",
+    "replacement": "（禁止通过赌咒方式承诺效果）"
+  },
+  {
+    "word": "我们全家发誓（赌咒式）",
+    "category": "效果保证",
+    "replacement": "（禁止通过赌咒方式承诺效果）"
+  },
+  {
+    "word": "一瓶改善/一抹淡斑（用量+效果）",
+    "category": "效果保证",
+    "replacement": "持续使用有助改善（避免用量+效果承诺结构）"
+  },
+  {
+    "word": "15天重返年轻（时间+效果）",
+    "category": "效果保证",
+    "replacement": "长期使用有助焕活肌肤（避免时间+效果承诺结构）"
+  },
+  {
+    "word": "不复发/根除（医疗类）",
+    "category": "效果保证",
+    "replacement": "改善症状、缓解不适（药品按说明书，其他商品不承诺）"
+  },
+  {
+    "word": "壮阳/补肾/益肾/补阳",
+    "category": "功效宣称",
+    "replacement": "传统滋补、固本培元（食品不可宣传，保健食品按批文）"
+  },
+  {
+    "word": "丰胸/从A到C",
+    "category": "功效宣称",
+    "replacement": "（食品/普通商品禁止宣传）"
+  },
+  {
+    "word": "治疗高血压/高血脂/高血糖",
+    "category": "功效宣称",
+    "replacement": "辅助降血压/降血脂/降血糖（需保健食品批文）"
+  },
+  {
+    "word": "治疗糖尿病",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传治疗疾病，保健食品需有批文）"
+  },
+  {
+    "word": "治疗便秘",
+    "category": "功效宣称",
+    "replacement": "润肠通便（需保健食品批文）"
+  },
+  {
+    "word": "治疗痛风",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传治疗疾病）"
+  },
+  {
+    "word": "治疗脂肪肝/肝硬化",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传治疗疾病）"
+  },
+  {
+    "word": "降胆固醇",
+    "category": "功效宣称",
+    "replacement": "辅助降胆固醇（需保健食品批文）"
+  },
+  {
+    "word": "治疗月经不调",
+    "category": "功效宣称",
+    "replacement": "调理身体、温养（禁止宣传治疗功效）"
+  },
+  {
+    "word": "缩阴/紧致私处",
+    "category": "功效宣称",
+    "replacement": "（禁止此类宣传）"
+  },
+  {
+    "word": "治疗不孕不育/促进怀孕",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传）"
+  },
+  {
+    "word": "驱虫",
+    "category": "功效宣称",
+    "replacement": "（仅药品/兽药可用）"
+  },
+  {
+    "word": "宫寒/体寒/手脚冰凉（治疗性宣传）",
+    "category": "功效宣称",
+    "replacement": "温养身体、暖身（避免治疗性表述）"
+  },
+  {
+    "word": "肝气郁结/脾虚/肝虚（中医病症）",
+    "category": "功效宣称",
+    "replacement": "调理身体（非医生禁用中医诊断表述）"
+  },
+  {
+    "word": "解酒/醒酒",
+    "category": "功效宣称",
+    "replacement": "（非保健食品不可宣传）"
+  },
+  {
+    "word": "抗雾霾",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传）"
+  },
+  {
+    "word": "调节内分泌失调",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传）"
+  },
+  {
+    "word": "增强免疫力/提升抵抗力",
+    "category": "功效宣称",
+    "replacement": "补充营养、均衡膳食（需保健食品批文）"
+  },
+  {
+    "word": "中药/药材/入药",
+    "category": "功效宣称",
+    "replacement": "草本原料、植物成分（非药品不可宣传药用）"
+  },
+  {
+    "word": "可替代药品/胰岛素",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传）"
+  },
+  {
+    "word": "活血/补血/养血",
+    "category": "功效宣称",
+    "replacement": "传统滋补（食品不可宣传药用功效）"
+  },
+  {
+    "word": "清肺/润肺/保肝/护肝",
+    "category": "功效宣称",
+    "replacement": "（非保健食品不可宣传）"
+  },
+  {
+    "word": "辅助戒烟",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传）"
+  },
+  {
+    "word": "缓解视疲劳",
+    "category": "功效宣称",
+    "replacement": "（需保健食品批文）"
+  },
+  {
+    "word": "调节免疫力/免疫调节",
+    "category": "功效宣称",
+    "replacement": "有助于维持健康（需保健食品批文）"
+  },
+  {
+    "word": "治疗肿瘤/癌/白血病",
+    "category": "功效宣称",
+    "replacement": "（禁止宣传任何重大疾病治疗功效）"
+  },
+  {
+    "word": "一泡就白（清洁品）",
+    "category": "虚假表述",
+    "replacement": "强力去污、深层洁净"
+  },
+  {
+    "word": "一喷不用刷（清洁品）",
+    "category": "虚假表述",
+    "replacement": "免刷设计、轻松清洁"
+  },
+  {
+    "word": "一喷即净（清洁品）",
+    "category": "虚假表述",
+    "replacement": "高效去污、轻松洁净"
+  },
+  {
+    "word": "百分百去除/100%去污",
+    "category": "虚假表述",
+    "replacement": "强力去污、高效去除"
+  },
+  {
+    "word": "瞬间磨平皱纹（化妆品）",
+    "category": "虚假表述",
+    "replacement": "紧致提拉、即时平滑"
+  },
+  {
+    "word": "清除顽固污渍（绝对化）",
+    "category": "虚假表述",
+    "replacement": "有效去污、强力清洁"
+  },
+  {
+    "word": "60平房子秒变90平（家居）",
+    "category": "虚假表述",
+    "replacement": "空间优化、视觉扩容"
+  },
+  {
+    "word": "两个小时不到1度电（省电承诺）",
+    "category": "虚假表述",
+    "replacement": "平均每小时用电量在[X]度之间（按实际功率标注）"
+  },
+  {
+    "word": "平均3小时一度电（省电夸大）",
+    "category": "虚假表述",
+    "replacement": "每小时用电量在[X]度-[Y]度之间"
+  },
+  {
+    "word": "10个里面9个都有白头发（绝对化数据）",
+    "category": "虚假表述",
+    "replacement": "常见困扰、很多人关注"
+  },
+  {
+    "word": "101岁老人肾龄仅30岁（虚构事迹）",
+    "category": "虚假表述",
+    "replacement": "（禁止虚构人物事迹宣传）"
+  },
+  {
+    "word": "鸡蛋和它同吃不出七天笑着感谢我（夸大效果）",
+    "category": "虚假表述",
+    "replacement": "营养搭配、均衡膳食"
+  },
+  {
+    "word": "1年才充一次电（电子商品夸大）",
+    "category": "虚假表述",
+    "replacement": "续航持久、超长待机"
+  },
+  {
+    "word": "洗牙十次也不如用它一次（贬低+夸大）",
+    "category": "虚假表述",
+    "replacement": "有效清洁、辅助护齿"
+  },
+  {
+    "word": "水杯防爆防摔（无依据）",
+    "category": "虚假表述",
+    "replacement": "坚固耐用（需有检测报告支撑）"
+  },
+  {
+    "word": "可食用（化妆品宣称\"可食用\"）",
+    "category": "虚假表述",
+    "replacement": "天然成分、温和配方（化妆品不可宣称可食用）"
+  },
+  {
+    "word": "白酒不辣嘴不伤胃（食品夸大）",
+    "category": "虚假表述",
+    "replacement": "口感柔和、品质优良"
+  },
+  {
+    "word": "用XX牙膏不用洗牙了（与医疗手段对比）",
+    "category": "虚假表述",
+    "replacement": "有效清洁、呵护牙龈（禁止与医疗手段对比）"
+  },
+  {
+    "word": "使用XX可以用做医美了（与医美对比）",
+    "category": "虚假表述",
+    "replacement": "高效护肤、改善肤质（禁止与医美手段对比）"
+  },
+  {
+    "word": "虚假前后对比（过度美化）",
+    "category": "虚假表述",
+    "replacement": "如实展示效果（避免过度剪辑和特效）"
+  },
+  {
+    "word": "AI伪造受益人形象",
+    "category": "虚假表述",
+    "replacement": "（禁止使用AI合成形象做虚假推荐证明）"
+  },
+  {
+    "word": "最高续航 / 超长续航 / 最长续航（未注明测试工况）",
+    "category": "虚假表述",
+    "replacement": "续航里程XX公里（CLTC综合工况），实际续航受驾驶习惯、路况、温度等因素影响"
+  },
+  {
+    "word": "永不衰减（电池）",
+    "category": "虚假表述",
+    "replacement": "电池容量保持率随使用时间自然衰减，具体以实际使用情况为准"
+  },
+  {
+    "word": "最优电池 / 最佳电池",
+    "category": "虚假表述",
+    "replacement": "本车搭载XX型电池，具备XX特性"
+  },
+  {
+    "word": "销量TOP1 / 好评第一 / 同级第一",
+    "category": "虚假表述",
+    "replacement": "根据XX机构数据，该车型在XX细分市场销量排名靠前（需注明数据来源和统计周期）"
+  },
+  {
+    "word": "全球第一 / 全国第一 / 行业第一",
+    "category": "虚假表述",
+    "replacement": "该车型在XX方面具有XX优势（附具体参数或第三方认证）"
+  },
+  {
+    "word": "自动驾驶 / 全自动驾驶 / 完全自动驾驶",
+    "category": "虚假表述",
+    "replacement": "L2级辅助驾驶（或按实际等级标注），请驾驶员全程保持注意力，不得脱离方向盘"
+  },
+  {
+    "word": "解放双手 / 不用管 / 自动帮你开",
+    "category": "虚假表述",
+    "replacement": "本车配备XX辅助驾驶功能，可在特定路况下辅助驾驶，驾驶员须全程监控路况，随时准备接管"
+  },
+  {
+    "word": "油耗X升（未注明测试标准）/ 百公里油耗仅X升",
+    "category": "虚假表述",
+    "replacement": "WLTC综合油耗X升/100km（或NEDC），实际油耗因驾驶习惯、路况等因素有所不同"
+  },
+  {
+    "word": "百公里电耗仅X度（虚构或选择性展示最低值）",
+    "category": "虚假表述",
+    "replacement": "百公里综合电耗X kWh，实际电耗受驾驶习惯、气温、路况等因素影响"
+  },
+  {
+    "word": "最安全 / 五星安全 / 最安全的车 / 安全第一名",
+    "category": "虚假表述",
+    "replacement": "本车在XX碰撞测试中获得XX星级评价（注明测试机构和测试年度）"
+  },
+  {
+    "word": "XX公里刹车距离最短",
+    "category": "虚假表述",
+    "replacement": "百公里刹停距离XX米（附检测报告），制动性能受路面、轮胎、车速等因素影响"
+  },
+  {
+    "word": "充电X分钟续航XX公里（未标注充电条件和温度）",
+    "category": "虚假表述",
+    "replacement": "在XXkW快充条件下，电量从XX%充至XX%约需X分钟（环境温度XX℃）"
+  },
+  {
+    "word": "年销量过XX万 / 累计销量XX万（捏造或无法验证）",
+    "category": "虚假表述",
+    "replacement": "202X年全年销量XX辆（数据来源于XX，仅供参考）"
+  },
+  {
+    "word": "遥遥领先（同级对比无依据）",
+    "category": "虚假表述",
+    "replacement": "本车型在XX指标上处于行业前列（附具体对比数据及来源）"
+  },
+  {
+    "word": "XX之王 / 性能之王 / 续航之王 / 性价比之王",
+    "category": "虚假表述",
+    "replacement": "本车型在XX价位区间具备XX竞争优势"
+  },
+  {
+    "word": "全市最低价 / 全城最低价（二手车/新车）",
+    "category": "虚假表述",
+    "replacement": "本店XX车型报价XX万元，欢迎比价"
+  },
+  {
+    "word": "用料比XX好十倍（无证据的竞品对比）",
+    "category": "虚假表述",
+    "replacement": "本车采用XX材料，具有XX特性（附材质说明）"
+  },
+  {
+    "word": "帮解决京牌/沪牌指标",
+    "category": "虚假表述",
+    "replacement": "如需了解车牌相关政策，请咨询当地车辆管理部门"
+  },
+  {
+    "word": "买车送京标/送牌照",
+    "category": "虚假表述",
+    "replacement": "购车赠送XX礼包（具体清单见购车合同）"
+  },
+  {
+    "word": "72小时订单过万 / 上市即火爆（数据注水）",
+    "category": "虚假表述",
+    "replacement": "上市XX天累计订单XX台（数据为意向金订单，具体以实际交付为准）"
+  },
+  {
+    "word": "3秒速热 / 每平方米每小时仅需X度电（新能源汽车配件虚假能耗）",
+    "category": "虚假表述",
+    "replacement": "额定功率XXW，XX条件下XX时间内可升至设定温度"
+  },
+  {
+    "word": "秒杀 / 倒计时秒杀 / 最后X秒",
+    "category": "虚假表述",
+    "replacement": "限时特惠 / 限时活动（须注明真实活动时间范围）"
+  },
+  {
+    "word": "仅限X分钟 / 只卖半小时（实际售卖时间远超宣称）",
+    "category": "虚假表述",
+    "replacement": "本活动有效期为XX:XX至XX:XX，数量有限售完即止"
+  },
+  {
+    "word": "最后10单 / 仅剩X件 / 库存告急（实际库存充足）",
+    "category": "虚假表述",
+    "replacement": "当前库存XX件（须展示真实库存），售完即止"
+  },
+  {
+    "word": "假一赔十（直播间口播但未在商品页设置该服务）",
+    "category": "虚假表述",
+    "replacement": "本店提供假一赔十服务（须在商品详情页或售后政策中真实设置并公示）"
+  },
+  {
+    "word": "直播间专属价XX元，原价XXX元（虚构原价）",
+    "category": "虚假表述",
+    "replacement": "直播活动价XX元（本商品历史最低成交价为XX元，活动期间价格如有变动以页面显示为准）"
+  },
+  {
+    "word": "全网最低价 / 历史最低价 / 跌破底价",
+    "category": "虚假表述",
+    "replacement": "本次直播活动价XX元，请以页面实际价格为准"
+  },
+  {
+    "word": "倒数3-2-1，上链接！手慢无！",
+    "category": "虚假表述",
+    "replacement": "本商品将于X分钟后上架，数量有限，按实际下单顺序发货"
+  },
+  {
+    "word": "不买就亏了 / 买到就是赚到 / 亏本清仓",
+    "category": "虚假表述",
+    "replacement": "本商品直播期间享有专属优惠，欢迎按需选购"
+  },
+  {
+    "word": "100%正品保证 / 绝对正品 / 永久保修",
+    "category": "虚假表述",
+    "replacement": "本店承诺所售商品为正品行货（须在商品详情页公示相关资质），享受XX保修政策"
+  },
+  {
+    "word": "AI主播 / 数字人（未在显著位置标注）",
+    "category": "虚假表述",
+    "replacement": "本直播间由AI数字人主播（须在直播间显著位置标注\"虚拟主播\"或\"AI生成\"标识）"
+  },
+  {
+    "word": "已售10万+（虚构销量） / 全网销量第一",
+    "category": "虚假表述",
+    "replacement": "本商品平台累计销量约XX件（数据来源：平台统计，仅供参考）"
+  },
+  {
+    "word": "无效退款 / 无效果全额退（无法验证保证）",
+    "category": "虚假表述",
+    "replacement": "本商品支持XX天无理由退换货（具体规则见商品详情页售后政策）"
+  },
+  {
+    "word": "所有肤质适用 / 所有人都能吃 / 老少皆宜",
+    "category": "虚假表述",
+    "replacement": "本品适合XX人群，XX人群需谨慎使用/不宜使用，请仔细阅读产品说明"
+  },
+  {
+    "word": "先涨价后降价 / 原价998今天只要99（虚构被比较价）",
+    "category": "虚假表述",
+    "replacement": "本次活动价为XX元，本商品近30日最低成交价为XX元，降价幅度为XX%"
+  },
+  {
+    "word": "再不买就没了 / 抢疯了 / 万人疯抢",
+    "category": "虚假表述",
+    "replacement": "本商品受到不少消费者关注，目前仍有库存，建议按需下单"
+  },
+  {
+    "word": "全场1折起 / 低至1折（实际仅少数商品1折）",
+    "category": "虚假表述",
+    "replacement": "本场直播活动折扣力度从XX折起不等，具体以各商品页面标注为准"
+  },
+  {
+    "word": "教你三天赚一百万 / 轻松月入过万（带货知识付费）",
+    "category": "虚假表述",
+    "replacement": "本课程分享XX方面的知识和经验，学习效果因个人基础和实践投入而不同"
+  }
+]
