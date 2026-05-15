@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     # ── 应用基础 ────────────────────────────────────────────────────────────
     APP_ENV: Literal["development", "staging", "production"] = "development"  # 运行环境
     APP_NAME: str = "LexAd"  # 应用名称
-    APP_VERSION: str = "0.2.0"  # 应用版本
+    APP_VERSION: str = "0.3.0"  # 应用版本
     DEBUG: bool = False  # 调试模式开关
 
     # ── 服务器 ─────────────────────────────────────────────────────────────
@@ -51,6 +51,12 @@ class Settings(BaseSettings):
 
     # ── OCR ────────────────────────────────────────────────────────────────
     TESSERACT_AVAILABLE: bool = True  # Tesseract OCR 开关，启动时自动检测是否可用
+
+    # ── ChromaDB ──────────────────────────────────────────────────────
+    CHROMA_PERSIST_DIR: str = str(PROJECT_ROOT.parent / "chroma_data")
+
+    # ── Knowledge Base ────────────────────────────────────────────────
+    KNOWLEDGE_DIR: str = str(PROJECT_ROOT.parent / "knowledge")
 
     class Config:
         env_file = ".env"
