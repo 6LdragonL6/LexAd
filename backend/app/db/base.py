@@ -8,3 +8,7 @@ from sqlalchemy.orm import DeclarativeBase
 class Base(DeclarativeBase):
     """SQLAlchemy 声明式基类，所有 ORM 模型需继承此类。"""
     pass
+
+
+# Ensure all models are imported for Alembic discovery
+from app.models import *  # noqa: F401,F403
