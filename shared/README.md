@@ -7,6 +7,4 @@ This directory is reserved for shared artifacts between frontend and backend:
 - Shared validation schemas
 - Data format specifications
 
-Currently, backend API types are defined in `backend/app/schemas/` and mirrored
-in `frontend/src/types/`. For larger projects, consider auto-generating types
-from the OpenAPI schema.
+Currently, backend types are defined in `backend/app/schemas/` and mirrored manually in `frontend/src/types/`. Future iterations may auto-generate frontend types from the OpenAPI schema via `openapi-typescript`.
