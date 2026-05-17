@@ -25,7 +25,7 @@ import requests
 # ── Config ────────────────────────────────────────────────────────────────
 
 # 测试物料 xlsx 路径
-XLSX_PATH = Path(r"D:\LDragonl\桌面\物料1-65.xlsx")
+XLSX_PATH = Path(__file__).resolve().parent / "物料1-65.xlsx"
 
 # API 地址
 API_BASE = "http://localhost:8000/api/v1"
