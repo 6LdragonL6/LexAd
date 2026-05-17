@@ -20,7 +20,7 @@ const navItems = [
           v-if="!item.show || item.show()"
           :to="item.to"
           class="px-3 py-1.5 rounded-md text-sm text-gray-600 hover:bg-gray-100"
-          active-class="bg-blue-50 text-blue-700"
+          active-class="bg-sky-50 text-sky-700"
         >{{ item.label }}</router-link>
       </template>
     </nav>
