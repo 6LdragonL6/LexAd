@@ -86,3 +86,57 @@ class TestImageParser:
                 tmp_path.unlink()
             except FileNotFoundError:
                 pass
+
+
+class TestPdfParser:
+    def test_supports_pdf(self):
+        from app.services.parsers.pdf_parser import PdfParser
+        assert PdfParser.supports("application/pdf") is True
+
+    def test_parse_text_pdf(self):
+        from app.services.parsers.pdf_parser import PdfParser
+        import fitz
+        import tempfile
+        from pathlib import Path
+
+        tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+        tmp.close()
+        doc = fitz.open()
+        page = doc.new_page()
+        page.insert_font(fontname="SimSun", fontfile="C:/Windows/Fonts/simsun.ttc")
+        page.insert_text((50, 50), "广告文案测试内容包含足够多的文字以满足质量阈值", fontname="SimSun", fontsize=12)
+        doc.save(tmp.name)
+        doc.close()
+        tmp_path = Path(tmp.name)
+
+        try:
+            result = PdfParser.parse(tmp_path)
+            assert "广告文案测试内容" in result.text
+            assert result.source_format == "pdf_text"
+            assert result.quality == "good"
+            assert result.fallback_used is False
+        finally:
+            tmp_path.unlink()
+
+    def test_parse_empty_pdf_falls_back_to_ocr(self):
+        from app.services.parsers.pdf_parser import PdfParser
+        import fitz
+        import tempfile
+        from pathlib import Path
+
+        tmp = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+        tmp.close()
+        doc = fitz.open()
+        doc.new_page()
+        doc.save(tmp.name)
+        doc.close()
+        tmp_path = Path(tmp.name)
+
+        try:
+            result = PdfParser.parse(tmp_path)
+            # OCR fallback returns pdf_ocr regardless of whether
+            # tesseract is installed (empty text if not available)
+            assert result.source_format == "pdf_ocr"
+            assert result.fallback_used is True
+        finally:
+            tmp_path.unlink()
