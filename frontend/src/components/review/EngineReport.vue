@@ -21,7 +21,7 @@ defineProps<{ result: EngineResult }>()
       <h4 class="text-sm font-semibold text-gray-700 mb-2">修改建议</h4>
       <ul class="text-sm text-gray-600 space-y-1">
         <li v-for="s in result.suggestions" :key="s" class="flex items-start gap-1">
-          <span class="text-blue-500">▸</span> {{ s }}
+          <span class="text-sky-500">▸</span> {{ s }}
         </li>
       </ul>
     </div>
