@@ -195,6 +195,58 @@ def compare_result(case: dict[str, Any], review: dict[str, Any]) -> dict[str, An
     }
 
 
+# ── Test Runner ───────────────────────────────────────────────────────────
+
+def run_all_cases(cases: list[dict[str, Any]], token: str) -> list[dict[str, Any]]:
+    """逐条运行测试，返回结果列表。同时收集 material_id 用于清理。"""
+    results: list[dict[str, Any]] = []
+    material_ids: list[str] = []
+    errors: list[str] = []
+
+    for i, case in enumerate(cases):
+        case_id = case["id"]
+        print(f"[{i+1:02d}/{len(cases)}] {case_id} ...", end=" ", flush=True)
+        try:
+            mid = submit_material(token, case)
+            material_ids.append(mid)
+
+            review = trigger_review(token, mid)
+            time.sleep(0.3)  # 避免请求过快
+
+            result = compare_result(case, review)
+            results.append(result)
+
+            tag = "✓" if result["deviation"] == "通过" else "✗"
+            print(f"{tag} score={result['actual_score']:3d}  {result['deviation']}")
+
+        except requests.RequestException as e:
+            print(f"ERROR: {e}")
+            errors.append(f"{case_id}: {e}")
+            results.append({
+                "id": case_id,
+                "industry": case.get("industry", ""),
+                "ad_content": case.get("ad_content", "")[:100],
+                "expected_compliance": case.get("expected_compliance", ""),
+                "actual_compliance": "",
+                "expected_risk": case.get("expected_risk", ""),
+                "actual_risk": "",
+                "actual_score": -1,
+                "deviation": "API错误",
+                "actual_summary": str(e)[:200],
+            })
+
+    # 将 material_ids 附加到第一条结果中（供 main() 中的 cleanup 使用）
+    if results:
+        results[0]["_material_ids"] = material_ids
+        results[0]["_token"] = token
+    if errors:
+        print(f"\n{len(errors)} API 错误:")
+        for e in errors:
+            print(f"  · {e}")
+
+    return results
+
+
 def main() -> None:
     print("=" * 60)
     print("LexAd 测试物料批量验证")
