@@ -218,7 +218,7 @@ def run_all_cases(cases: list[dict[str, Any]], token: str) -> list[dict[str, Any
             result = compare_result(case, review)
             results.append(result)
 
-            tag = "✓" if result["deviation"] == "通过" else "✗"
+            tag = "PASS" if result["deviation"] == "通过" else "FAIL"
             print(f"{tag} score={result['actual_score']:3d}  {result['deviation']}")
 
         except Exception as e:
