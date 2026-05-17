@@ -41,7 +41,7 @@ function priorityColor(p: string) {
         </div>
         <router-link v-for="item in queue" :key="item.id" :to="`/legal/${item.id}`"
           class="grid grid-cols-7 gap-4 px-4 py-3 text-sm hover:bg-gray-50 border-b last:border-0 items-center">
-          <span class="text-sky-600 truncate">{{ item.material_name }}</span>
+          <span class="text-sky-700 truncate">{{ item.material_name }}</span>
           <span class="text-gray-600">{{ item.submitter_name }}</span>
           <span class="text-gray-500">{{ item.industry }}</span>
           <span :class="{ 'text-red-500 font-bold': item.ai_risk_score < 60, 'text-yellow-500': item.ai_risk_score >= 60 && item.ai_risk_score < 80, 'text-green-500': item.ai_risk_score >= 80 }">{{ item.ai_risk_score }}</span>

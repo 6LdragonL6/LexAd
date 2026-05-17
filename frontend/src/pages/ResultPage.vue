@@ -33,7 +33,7 @@ function getHighlightedHtml(): string {
     const colorMap: Record<string, string> = {
       '绝对化用语': '#ef4444', '涉医用语': '#ef4444', 'high': '#ef4444',
       '效果保证': '#f97316', '功效宣称': '#f97316', 'medium': '#f97316',
-      '需证明材料': '#3b82f6',
+      '需证明材料': '#0EA5E9',
     }
     const color = colorMap[issue.match_type] || '#6b7280'
     text = text.replace(issue.rule_text, `<mark data-rule-id="${issue.rule_id}" style="background:${color}20;border-bottom:2px solid ${color};cursor:pointer" class="px-0.5 rounded">${issue.rule_text}</mark>`)

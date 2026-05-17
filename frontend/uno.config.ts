@@ -4,7 +4,7 @@ export default defineConfig({
   presets: [presetUno(), presetAttributify()],
   shortcuts: {
     'btn': 'px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
-    'btn-primary': 'btn bg-sky-500 text-white hover:bg-sky-600',
+    'btn-primary': 'btn bg-sky-600 text-white hover:bg-sky-700',
     'btn-danger': 'btn bg-red-600 text-white hover:bg-red-700',
     'btn-outline': 'btn border border-sky-300 bg-white text-sky-600 hover:bg-sky-50',
     'card': 'bg-white rounded-xl shadow-sm border border-gray-200 p-6',
