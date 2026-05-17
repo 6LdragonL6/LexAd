@@ -6,7 +6,7 @@ class MaterialSubmit(BaseModel):
     industry: str = Field(default="", max_length=50)
     platforms: list[str] = Field(default_factory=list)
     material_type: str = Field(default="文字")
-    raw_text: str
+    raw_text: str = Field(default="")
     priority: str = Field(default="normal", pattern="^(normal|urgent|extreme)$")
     deadline: datetime | None = None
 
@@ -46,3 +46,8 @@ class MaterialListItem(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+class PreviewTextResponse(BaseModel):
+    text: str
+    quality: str
+    source_format: str
