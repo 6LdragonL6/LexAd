@@ -5,13 +5,19 @@ from app.models.user import User, UserRole
 from app.schemas.material import MaterialSubmit, MaterialUpdate
 
 
-def create_material(db: Session, data: MaterialSubmit, submitter_id: str) -> Material:
+def create_material(
+    db: Session,
+    data: MaterialSubmit,
+    submitter_id: str,
+    extracted_text: str = "",
+) -> Material:
+    final_text = _merge_texts(extracted_text, data.raw_text)
     material = Material(
         name=data.name,
         industry=data.industry,
         platforms=data.platforms,
         material_type=data.material_type,
-        raw_text=data.raw_text,
+        raw_text=final_text,
         priority=data.priority,
         deadline=data.deadline,
         status=MaterialStatus.draft,
@@ -21,6 +27,11 @@ def create_material(db: Session, data: MaterialSubmit, submitter_id: str) -> Mat
     db.commit()
     db.refresh(material)
     return material
+
+
+def _merge_texts(extracted: str, form_text: str) -> str:
+    parts = [t.strip() for t in (extracted, form_text) if t.strip()]
+    return "\n".join(parts)
 
 
 def get_material(db: Session, material_id: str) -> Material | None:
