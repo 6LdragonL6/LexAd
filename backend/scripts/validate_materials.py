@@ -134,6 +134,67 @@ def get_review_result(token: str, material_id: str) -> dict[str, Any]:
     return resp.json()
 
 
+# ── Comparison Logic ──────────────────────────────────────────────────────
+
+def classify_compliance(ai_result: dict) -> str:
+    """从 AI 审查结果判定合规状态：违规 / 合规。"""
+    ai_risk_score = ai_result.get("ai_risk_score", 100)
+    engine_result = ai_result.get("ai_result", {})
+
+    # 任一层有命中违规项即判违规
+    for layer_key in ("layer1", "layer2", "layer3"):
+        layer = engine_result.get(layer_key, {})
+        if layer.get("matched_rules"):
+            return "违规"
+
+    if ai_risk_score < 80:
+        return "违规"
+    return "合规"
+
+
+def classify_risk(ai_risk_score: int) -> str:
+    """risk_score 映射到风险等级：高 / 中 / 低。"""
+    if ai_risk_score < 50:
+        return "高"
+    elif ai_risk_score < 80:
+        return "中"
+    else:
+        return "低"
+
+
+def compare_result(case: dict[str, Any], review: dict[str, Any]) -> dict[str, Any]:
+    """对比期望 vs 实际，返回带偏差标记的结果记录。"""
+    expected_compliance = case["expected_compliance"]
+    expected_risk = case["expected_risk"]
+    actual_score = review.get("ai_risk_score", -1)
+    actual_compliance = classify_compliance(review)
+    actual_risk = classify_risk(actual_score)
+
+    # 偏差判定
+    compliance_ok = (expected_compliance == actual_compliance)
+    risk_ok = (expected_risk == actual_risk)
+
+    if not compliance_ok:
+        deviation = "严重偏差"  # 二分类错误
+    elif not risk_ok:
+        deviation = "一般偏差"  # 分类对但风险等级错
+    else:
+        deviation = "通过"
+
+    return {
+        "id": case["id"],
+        "industry": case["industry"],
+        "ad_content": case["ad_content"][:100],
+        "expected_compliance": expected_compliance,
+        "actual_compliance": actual_compliance,
+        "expected_risk": expected_risk,
+        "actual_risk": actual_risk,
+        "actual_score": actual_score,
+        "deviation": deviation,
+        "actual_summary": review.get("ai_result", {}).get("summary", "")[:200],
+    }
+
+
 def main() -> None:
     print("=" * 60)
     print("LexAd 测试物料批量验证")
