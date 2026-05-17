@@ -81,3 +81,9 @@ export interface LawItem {
   title: string
   path: string
 }
+
+export interface PreviewTextResponse {
+  text: string
+  quality: 'good' | 'degraded' | 'minimal'
+  source_format: string
+}
