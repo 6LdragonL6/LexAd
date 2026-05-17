@@ -287,6 +287,61 @@ def cleanup(material_ids: list[str]) -> None:
         db.close()
 
 
+# ── Report ────────────────────────────────────────────────────────────────
+
+def generate_report(results: list[dict[str, Any]]) -> None:
+    """输出 CSV 详细报告。"""
+    fieldnames = [
+        "id", "industry", "ad_content",
+        "expected_compliance", "actual_compliance",
+        "expected_risk", "actual_risk", "actual_score",
+        "deviation", "actual_summary",
+    ]
+    with open(REPORT_PATH, "w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(results)
+    print(f"\n详细报告已保存至: {REPORT_PATH}")
+
+
+def print_summary(results: list[dict[str, Any]]) -> None:
+    """打印终端汇总。"""
+    total = len(results)
+    passed = sum(1 for r in results if r["deviation"] == "通过")
+    critical = sum(1 for r in results if r["deviation"] == "严重偏差")
+    minor = sum(1 for r in results if r["deviation"] == "一般偏差")
+    errors = sum(1 for r in results if r["deviation"] == "API错误")
+
+    compliance_correct = sum(
+        1 for r in results
+        if r["expected_compliance"] == r["actual_compliance"]
+    )
+    risk_correct = sum(
+        1 for r in results
+        if r["expected_risk"] == r["actual_risk"]
+    )
+
+    print()
+    print("=" * 60)
+    print("验证汇总")
+    print("=" * 60)
+    print(f"总用例数:     {total}")
+    print(f"通过:         {passed}  ({passed/max(total,1)*100:.1f}%)")
+    print(f"严重偏差:     {critical}  ({critical/max(total,1)*100:.1f}%)")
+    print(f"一般偏差:     {minor}  ({minor/max(total,1)*100:.1f}%)")
+    print(f"API错误:      {errors}")
+    print(f"---")
+    print(f"二分类准确率: {compliance_correct}/{total} = {compliance_correct/max(total,1)*100:.1f}%")
+    print(f"风险等级准确率: {risk_correct}/{total} = {risk_correct/max(total,1)*100:.1f}%")
+    print("=" * 60)
+
+    if critical > 0:
+        print("\n严重偏差案例（二分类错误）:")
+        for r in results:
+            if r["deviation"] == "严重偏差":
+                print(f"  · {r['id']} 期望={r['expected_compliance']} 实际={r['actual_compliance']} score={r['actual_score']}")
+
+
 def main() -> None:
     print("=" * 60)
     print("LexAd 测试物料批量验证")
@@ -300,16 +355,29 @@ def main() -> None:
     print(f"读取到 {len(cases)} 条测试用例\n")
 
     # 2. Login
-    token = login()
-    print(f"登录成功，token: {token[:20]}...\n")
+    try:
+        token = login()
+        print(f"登录成功 (账户: {AUTH_USERNAME})\n")
+    except requests.RequestException as e:
+        print(f"登录失败: {e}")
+        print("请确认后端服务已启动: uvicorn app.main:app --port 8000")
+        sys.exit(1)
 
-    # 3. Run tests
-    results = run_all_cases(cases, token)
+    # 3. Run tests (cleanup is guaranteed in finally)
+    material_ids: list[str] = []
+    try:
+        results = run_all_cases(cases, token)
+        # Extract material_ids from results hack
+        if results and "_material_ids" in results[0]:
+            material_ids = results[0].pop("_material_ids")
+            results[0].pop("_token", None)
+    finally:
+        # 4. Cleanup — always runs
+        print()
+        cleanup(material_ids)
 
-    # 4. Generate report
+    # 5. Report
     generate_report(results)
-
-    # 5. Summary
     print_summary(results)
 
 
