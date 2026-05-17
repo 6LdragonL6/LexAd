@@ -247,6 +247,46 @@ def run_all_cases(cases: list[dict[str, Any]], token: str) -> list[dict[str, Any
     return results
 
 
+# ── Cleanup ───────────────────────────────────────────────────────────────
+
+def cleanup(material_ids: list[str]) -> None:
+    """通过数据库直接删除测试创建的物料和关联审查记录。"""
+    if not material_ids:
+        print("无需清理（无物料创建）")
+        return
+
+    # 需要确保从 backend/ 目录运行，.env 才能被正确加载
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+    from app.db.session import SessionLocal
+    from app.models.material import Material
+    from app.models.review import Review
+
+    db = SessionLocal()
+    try:
+        # 先删 Review（外键依赖），再删 Material
+        review_deleted = (
+            db.query(Review)
+            .filter(Review.material_id.in_(material_ids))
+            .delete(synchronize_session="fetch")
+        )
+        material_deleted = (
+            db.query(Material)
+            .filter(Material.id.in_(material_ids))
+            .delete(synchronize_session="fetch")
+        )
+        db.commit()
+        print(f"清理完成：删除 {review_deleted} 条 Review，{material_deleted} 条 Material")
+    except Exception as e:
+        db.rollback()
+        print(f"清理失败: {e}")
+        print(f"请手动删除以下 material_id:")
+        for mid in material_ids:
+            print(f"  {mid}")
+    finally:
+        db.close()
+
+
 def main() -> None:
     print("=" * 60)
     print("LexAd 测试物料批量验证")
