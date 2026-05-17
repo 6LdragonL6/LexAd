@@ -76,6 +76,64 @@ def read_test_cases() -> list[dict[str, Any]]:
         wb.close()
 
 
+# ── API Client ────────────────────────────────────────────────────────────
+
+def login() -> str:
+    """登录并返回 JWT access_token。"""
+    resp = requests.post(
+        f"{API_BASE}/auth/login",
+        json={"username": AUTH_USERNAME, "password": AUTH_PASSWORD},
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.json()["access_token"]
+
+
+def _auth_header(token: str) -> dict[str, str]:
+    return {"Authorization": f"Bearer {token}"}
+
+
+def submit_material(token: str, case: dict[str, Any]) -> str:
+    """提交物料，返回 material_id。"""
+    resp = requests.post(
+        f"{API_BASE}/materials/submit",
+        json={
+            "name": case["id"],
+            "industry": case["industry"],
+            "material_type": case["material_type"],
+            "raw_text": case["ad_content"],
+            "platforms": [],
+        },
+        headers=_auth_header(token),
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.json()["id"]
+
+
+def trigger_review(token: str, material_id: str) -> dict[str, Any]:
+    """触发 AI 审查，返回审查结果 dict（含 ai_risk_score, ai_result）。"""
+    resp = requests.post(
+        f"{API_BASE}/reviews/ai-review",
+        json={"material_id": material_id},
+        headers=_auth_header(token),
+        timeout=120,  # AI 审查可能较慢
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+
+def get_review_result(token: str, material_id: str) -> dict[str, Any]:
+    """通过 material_id 获取审查结果。"""
+    resp = requests.get(
+        f"{API_BASE}/reviews/by-material/{material_id}",
+        headers=_auth_header(token),
+        timeout=30,
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+
 def main() -> None:
     print("=" * 60)
     print("LexAd 测试物料批量验证")
