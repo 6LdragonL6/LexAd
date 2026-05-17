@@ -52,6 +52,28 @@ COL_SOURCE = 12      # M: 来源说明
 REPORT_PATH = Path(__file__).resolve().parent / "validation_report.csv"
 
 
+def read_test_cases() -> list[dict[str, Any]]:
+    """读取 xlsx 测试物料，返回字典列表。"""
+    wb = openpyxl.load_workbook(XLSX_PATH)
+    ws = wb.active
+    cases = []
+    for row in ws.iter_rows(min_row=2, values_only=True):  # skip header
+        if not row[COL_ID]:
+            continue
+        cases.append({
+            "id": str(row[COL_ID]).strip(),
+            "industry": str(row[COL_INDUSTRY] or "").strip(),
+            "sub_industry": str(row[COL_SUB_INDUSTRY] or "").strip(),
+            "material_type": str(row[COL_MATERIAL_TYPE] or "文字").strip(),
+            "expected_compliance": str(row[COL_COMPLIANCE] or "").strip(),  # 违规 / 合规
+            "expected_risk": str(row[COL_RISK_LEVEL] or "").strip(),        # 高 / 中 / 低
+            "ad_content": str(row[COL_AD_CONTENT] or "").strip(),
+            "expected_review": str(row[COL_EXPECTED_RESULT] or "").strip(),
+        })
+    wb.close()
+    return cases
+
+
 def main() -> None:
     print("=" * 60)
     print("LexAd 测试物料批量验证")
