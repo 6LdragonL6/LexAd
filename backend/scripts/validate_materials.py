@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import sys
 import time
 from datetime import datetime, timezone
@@ -95,15 +96,16 @@ def _auth_header(token: str) -> dict[str, str]:
 
 def submit_material(token: str, case: dict[str, Any]) -> str:
     """提交物料，返回 material_id。"""
+    body_data = {
+        "name": case["id"],
+        "industry": case["industry"],
+        "material_type": case["material_type"],
+        "raw_text": case["ad_content"],
+        "platforms": [],
+    }
     resp = requests.post(
         f"{API_BASE}/materials/submit",
-        json={
-            "name": case["id"],
-            "industry": case["industry"],
-            "material_type": case["material_type"],
-            "raw_text": case["ad_content"],
-            "platforms": [],
-        },
+        data={"body": json.dumps(body_data)},
         headers=_auth_header(token),
         timeout=30,
     )
