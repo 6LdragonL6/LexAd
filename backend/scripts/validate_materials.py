@@ -219,9 +219,9 @@ def run_all_cases(cases: list[dict[str, Any]], token: str) -> list[dict[str, Any
             tag = "✓" if result["deviation"] == "通过" else "✗"
             print(f"{tag} score={result['actual_score']:3d}  {result['deviation']}")
 
-        except requests.RequestException as e:
+        except Exception as e:
             print(f"ERROR: {e}")
-            errors.append(f"{case_id}: {e}")
+            errors.append(f"{case_id}: {type(e).__name__}: {e}")
             results.append({
                 "id": case_id,
                 "industry": case.get("industry", ""),
