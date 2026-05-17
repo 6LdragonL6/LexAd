@@ -53,3 +53,36 @@ class TestTextParser:
             assert result.quality == "minimal"
         finally:
             tmp_path.unlink()
+
+
+class TestImageParser:
+    def test_supports_image_mimes(self):
+        from app.services.parsers.image_parser import ImageParser
+        assert ImageParser.supports("image/png") is True
+        assert ImageParser.supports("image/jpeg") is True
+        assert ImageParser.supports("image/gif") is True
+        assert ImageParser.supports("image/bmp") is True
+        assert ImageParser.supports("video/mp4") is False
+
+    def test_parse_creates_result(self):
+        from app.services.parsers.image_parser import ImageParser
+        from PIL import Image
+        import tempfile
+        from pathlib import Path
+
+        img = Image.new("RGB", (200, 50), color="white")
+        tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+        img.save(tmp)
+        tmp.close()
+        tmp_path = Path(tmp.name)
+
+        try:
+            result = ImageParser.parse(tmp_path)
+            assert result.source_format == "image_ocr"
+            assert result.quality in ("good", "degraded", "minimal")
+            assert isinstance(result.text, str)
+        finally:
+            try:
+                tmp_path.unlink()
+            except FileNotFoundError:
+                pass
