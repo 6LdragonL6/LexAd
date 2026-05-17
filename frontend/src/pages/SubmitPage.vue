@@ -154,26 +154,26 @@ function togglePlatform(p: string) {
 
 <template>
   <DefaultLayout>
-    <div class="max-w-2xl mx-auto p-8">
-      <h2 class="text-xl font-bold mb-6">提交广告物料</h2>
+    <div class="max-w-2xl mx-auto p-4 lg:p-8">
+      <h2 class="page-heading">提交广告物料</h2>
       <form @submit.prevent="handleSubmit" class="space-y-5">
         <!-- Name -->
         <div>
-          <label class="block text-sm font-medium mb-1">物料名称 *</label>
+          <label class="label">物料名称 *</label>
           <input v-model="form.name" class="input" required placeholder="如：诺优能益生菌春节推广文案" />
         </div>
 
         <!-- Industry + Type -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">行业类型</label>
+            <label class="label">行业类型</label>
             <select v-model="form.industry" class="input">
               <option value="">请选择</option>
               <option v-for="ind in industries" :key="ind" :value="ind">{{ ind }}</option>
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">物料类型</label>
+            <label class="label">物料类型</label>
             <select v-model="form.material_type" class="input">
               <option v-for="mt in materialTypes" :key="mt" :value="mt">{{ mt }}</option>
             </select>
@@ -182,7 +182,7 @@ function togglePlatform(p: string) {
 
         <!-- Platforms -->
         <div>
-          <label class="block text-sm font-medium mb-1">投放平台</label>
+          <label class="label">投放平台</label>
           <div class="flex flex-wrap gap-2">
             <button type="button" v-for="p in platforms" :key="p"
               @click="togglePlatform(p)"
@@ -194,7 +194,7 @@ function togglePlatform(p: string) {
 
         <!-- File upload area -->
         <div>
-          <label class="block text-sm font-medium mb-1">上传文件（可选）</label>
+          <label class="label">上传文件（可选）</label>
           <div
             class="border-2 border-dashed rounded-lg p-6 text-center transition-colors"
             :class="isDragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
@@ -234,7 +234,7 @@ function togglePlatform(p: string) {
         <!-- Text content: with quality label if file was processed -->
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="text-sm font-medium">广告文案内容 *</label>
+            <label class="label !mb-0">广告文案内容 *</label>
             <span v-if="qualityLabel" :class="qualityLabel.cls" class="text-xs">{{ qualityLabel.text }}</span>
           </div>
           <textarea
@@ -246,9 +246,9 @@ function togglePlatform(p: string) {
         </div>
 
         <!-- Priority + Deadline -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium mb-1">优先级</label>
+            <label class="label">优先级</label>
             <select v-model="form.priority" class="input">
               <option value="normal">普通</option>
               <option value="urgent">加急 (24h)</option>
@@ -256,7 +256,7 @@ function togglePlatform(p: string) {
             </select>
           </div>
           <div v-if="form.priority !== 'normal'">
-            <label class="block text-sm font-medium mb-1">截止时间</label>
+            <label class="label">截止时间</label>
             <input v-model="form.deadline" type="datetime-local" class="input" />
           </div>
         </div>

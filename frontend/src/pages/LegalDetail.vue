@@ -85,11 +85,11 @@ async function handleDecision() {
             </label>
           </div>
           <div v-if="decision !== 'approved'">
-            <label class="block text-sm font-medium mb-1">退回原因</label>
+            <label class="label">退回原因</label>
             <textarea v-model="returnReasons" class="input h-20" placeholder="请说明退回或条件..."></textarea>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-1">法务备注</label>
+            <label class="label">法务备注</label>
             <textarea v-model="notes" class="input h-20" placeholder="内部备注..."></textarea>
           </div>
           <button @click="handleDecision" :disabled="submitting" class="btn-primary w-full">

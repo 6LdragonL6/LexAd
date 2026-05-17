@@ -31,8 +31,8 @@ onMounted(loadTab)
 
 <template>
   <DefaultLayout>
-    <div class="max-w-4xl mx-auto p-8">
-      <h2 class="text-xl font-bold mb-6">法规数据库</h2>
+    <div class="max-w-4xl mx-auto p-4 lg:p-8">
+      <h2 class="page-heading">法规数据库</h2>
       <div class="flex gap-1 mb-6 border-b">
         <button v-for="t in [{ k: 'laws', l: '法律法规' }, { k: 'cases', l: '行政处罚案例' }, { k: 'templates', l: '改写模板' }]" :key="t.k"
           @click="tab = t.k as any; loadTab()"

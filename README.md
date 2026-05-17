@@ -1,6 +1,14 @@
-# LexAd — 广告合规审查平台 v0.3.0
+# LexAd — 广告合规审查平台 v0.4.0
 
 广告合规审查平台，面向企业内部市场部与法务部的两部门审查交互闭环：提交广告物料 → AI 四层引擎审查 → 结果展示 → 法务审核 → 决策（通过/退回/有条件通过）→ 版本管理。
+
+## v0.4.0 新特性
+
+**文件上传与多格式提取**：支持 JPG / PNG / PDF / DOCX / PPTX / XLSX / TXT 等 8 种格式上传，自动提取文本内容（PDF→PyMuPDF、Office→python-docx/pptx/openpyxl、图片→Tesseract OCR），提取失败自动降级 OCR 兜底，提交前可预览编辑。
+
+**测试物料批量验证**：内置 65 条标注广告案例（55违规+10合规），端到端验证审查引擎的合规/违规二分类与风险等级判定，输出 CSV 报告，支持自动清理测试数据。
+
+**天蓝色系统一与无障碍修复**：品牌色从蓝色(#2563EB)统一为天蓝色(#0EA5E9)，覆盖所有页面、组件、链接和 favicon；修复按钮 disabled/loading 状态下视觉消失问题。
 
 ## 技术栈
 
@@ -29,12 +37,22 @@ LexAd/
 │   │   ├── models/            数据库模型 (User, Material, Review)
 │   │   ├── schemas/           Pydantic 模型
 │   │   ├── services/          业务逻辑层
-│   │   └── engine/            审查引擎（四层流水线）
-│   │       ├── layer1_hard_rules.py  硬规则匹配（AC 自动机）
-│   │       ├── layer2_semantic.py    语义推理（DeepSeek + ChromaDB）
-│   │       ├── layer3_evidence.py    证明材料检查
-│   │       ├── layer4_platform.py    平台差异适配
-│   │       └── pipeline.py           流水线编排
+│   │   │   ├── material_service.py
+│   │   │   ├── review_service.py
+│   │   │   ├── file_extraction.py    文件提取服务（v0.4.0 新增）
+│   │   │   └── parsers/              格式解析器（v0.4.0 新增）
+│   │   │       ├── image_parser.py   OCR（Tesseract）
+│   │   │       ├── pdf_parser.py     PDF（PyMuPDF + OCR 降级）
+│   │   │       ├── office_parser.py  DOCX/PPTX/XLSX
+│   │   │       └── text_parser.py    TXT（编码检测）
+│   │   ├── engine/            审查引擎（四层流水线）
+│   │   │   ├── layer1_hard_rules.py  硬规则匹配（AC 自动机）
+│   │   │   ├── layer2_semantic.py    语义推理（DeepSeek + ChromaDB）
+│   │   │   ├── layer3_evidence.py    证明材料检查
+│   │   │   ├── layer4_platform.py    平台差异适配
+│   │   │   └── pipeline.py           流水线编排
+│   │   └── scripts/           批量工具脚本（v0.4.0 新增）
+│   │       └── validate_materials.py  测试物料批量验证
 │   ├── alembic/               数据库迁移
 │   ├── requirements.txt
 │   └── Dockerfile
@@ -47,7 +65,7 @@ LexAd/
 │   │   │   └── common/        通用组件（预留）
 │   │   ├── composables/       组合式函数（预留）
 │   │   ├── layouts/           DefaultLayout, ReviewLayout
-│   │   ├── pages/             LoginPage, HomePage, SubmitPage, ResultPage, LegalDashboard, LegalDetail, KnowledgePage
+│   │   ├── pages/             LoginPage, HomePage, SubmitPage（含文件上传+预览编辑）, ResultPage, LegalDashboard, LegalDetail, KnowledgePage
 │   │   ├── router/            路由配置 + 角色守卫
 │   │   ├── stores/            Pinia 状态管理 (user)
 │   │   ├── types/             TypeScript 类型定义
@@ -119,7 +137,8 @@ docker-compose up
 ### 物料 `/api/v1/materials`
 | 方法 | 路径           | 说明               |
 |------|---------------|--------------------|
-| POST | /submit       | 提交广告物料         |
+| POST | /submit       | 提交广告物料（支持文件上传） |
+| POST | /preview-text | 预览文件提取文本（v0.4.0 新增） |
 | GET  | /list         | 物料列表（按角色过滤）|
 | GET  | /{id}         | 物料详情            |
 | PUT  | /{id}         | 修改物料（退回后重提交）|
@@ -177,13 +196,15 @@ docker-compose up
 
 ## 文档
 
-- [设计文档](docs/superpowers/specs/2026-05-15-lexad-v0.3.0-design.md)
-- [实施计划](docs/superpowers/plans/2026-05-15-lexad-v0.3.0-core.md)
+- [v0.4.0 设计文档](docs/superpowers/specs/2026-05-17-lexad-v0.4.0-design.md)
+- [v0.3.0 设计文档](docs/superpowers/specs/2026-05-15-lexad-v0.3.0-design.md)
+- [v0.3.0 实施计划](docs/superpowers/plans/2026-05-15-lexad-v0.3.0-core.md)
 
 ## 版本历史
 
 | 版本   | 日期       | 说明                                      |
 |--------|-----------|------------------------------------------|
+| v0.4.0 | 2026-05-17 | 文件上传与多格式提取（8种格式+OCR降级）、测试物料批量验证（65条标注案例）、天蓝色系统一与按钮状态修复 |
 | v0.3.0 | 2026-05-15 | 两部门审查交互闭环、四层 AI 引擎、知识库集成    |
 | v0.2.0 | 2026-05   | 项目骨架 (FastAPI + Vue 3)，Mock 占位审查     |
 | v0.1.0 | 2026-04   | 初始原型，单文件 FastAPI 应用                  |

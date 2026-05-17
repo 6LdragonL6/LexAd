@@ -29,11 +29,11 @@ const queueCount = computed(() => queue.value.length)
 
 <template>
   <DefaultLayout>
-    <div class="max-w-4xl mx-auto p-8">
-      <h2 class="text-xl font-bold mb-6">
+    <div class="max-w-4xl mx-auto p-4 lg:p-8">
+      <h2 class="page-heading">
         {{ store.isMarketing ? '我的工作台' : store.isLegal ? '法务工作台' : '管理面板' }}
       </h2>
-      <div class="grid grid-cols-3 gap-4 mb-8">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div class="card text-center">
           <p class="text-3xl font-bold text-sky-600">{{ pendingCount }}</p>
           <p class="text-sm text-gray-500 mt-1">待处理</p>
@@ -50,7 +50,7 @@ const queueCount = computed(() => queue.value.length)
       <div class="card" v-if="materials.length">
         <h3 class="font-semibold mb-3">最近提交</h3>
         <div v-for="m in materials.slice(0, 5)" :key="m.id"
-             class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+             class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 border-b border-gray-100 last:border-0 gap-1">
           <div>
             <router-link :to="`/result/${m.id}`" class="text-sky-700 hover:underline">{{ m.name }}</router-link>
             <span class="text-xs text-gray-400 ml-2">{{ m.industry }}</span>
