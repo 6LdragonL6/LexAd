@@ -35,7 +35,7 @@ const queueCount = computed(() => queue.value.length)
       </h2>
       <div class="grid grid-cols-3 gap-4 mb-8">
         <div class="card text-center">
-          <p class="text-3xl font-bold text-blue-600">{{ pendingCount }}</p>
+          <p class="text-3xl font-bold text-sky-500">{{ pendingCount }}</p>
           <p class="text-sm text-gray-500 mt-1">待处理</p>
         </div>
         <div class="card text-center">
@@ -52,7 +52,7 @@ const queueCount = computed(() => queue.value.length)
         <div v-for="m in materials.slice(0, 5)" :key="m.id"
              class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
           <div>
-            <router-link :to="`/result/${m.id}`" class="text-blue-600 hover:underline">{{ m.name }}</router-link>
+            <router-link :to="`/result/${m.id}`" class="text-sky-600 hover:underline">{{ m.name }}</router-link>
             <span class="text-xs text-gray-400 ml-2">{{ m.industry }}</span>
           </div>
           <span class="text-xs px-2 py-0.5 rounded-full"
@@ -66,7 +66,7 @@ const queueCount = computed(() => queue.value.length)
           </span>
         </div>
       </div>
-      <p v-else-if="!loading" class="text-gray-400 text-center py-8">暂无提交记录，<router-link to="/submit" class="text-blue-600 hover:underline">去提交物料</router-link></p>
+      <p v-else-if="!loading" class="text-gray-400 text-center py-8">暂无提交记录，<router-link to="/submit" class="text-sky-600 hover:underline">去提交物料</router-link></p>
     </div>
   </DefaultLayout>
 </template>

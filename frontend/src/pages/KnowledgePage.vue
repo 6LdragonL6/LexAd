@@ -36,7 +36,7 @@ onMounted(loadTab)
       <div class="flex gap-1 mb-6 border-b">
         <button v-for="t in [{ k: 'laws', l: '法律法规' }, { k: 'cases', l: '行政处罚案例' }, { k: 'templates', l: '改写模板' }]" :key="t.k"
           @click="tab = t.k as any; loadTab()"
-          :class="tab === t.k ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500'"
+          :class="tab === t.k ? 'border-b-2 border-sky-500 text-sky-600' : 'text-gray-500'"
           class="px-4 py-2 text-sm font-medium">
           {{ t.l }}
         </button>
