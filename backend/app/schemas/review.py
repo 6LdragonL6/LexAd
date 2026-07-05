@@ -31,6 +31,10 @@ class ReviewOut(BaseModel):
     version: int
     ai_risk_score: int
     ai_result: dict
+    task_status: str
+    error_message: str | None
+    started_at: datetime | None
+    completed_at: datetime | None
     legal_decision: str | None
     legal_notes: str | None
     return_reasons: str | None

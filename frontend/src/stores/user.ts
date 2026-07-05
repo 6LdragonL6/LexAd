@@ -11,6 +11,7 @@ export const useUserStore = defineStore('user', () => {
   const isMarketing = computed(() => user.value?.role === 'marketing')
   const isLegal = computed(() => user.value?.role === 'legal' || user.value?.role === 'admin')
   const isAdmin = computed(() => user.value?.role === 'admin')
+  const canSubmit = computed(() => user.value?.role === 'marketing' || user.value?.role === 'admin')
 
   async function login(username: string, password: string) {
     const res = await authApi.login(username, password)
@@ -37,5 +38,5 @@ export const useUserStore = defineStore('user', () => {
     window.location.href = '/login'
   }
 
-  return { user, loading, isLoggedIn, isMarketing, isLegal, isAdmin, login, fetchUser, logout }
+  return { user, loading, isLoggedIn, isMarketing, isLegal, isAdmin, canSubmit, login, fetchUser, logout }
 })

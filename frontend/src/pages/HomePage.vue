@@ -1,6 +1,7 @@
 <!-- frontend/src/pages/HomePage.vue -->
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
@@ -8,9 +9,11 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import type { Material, ReviewQueueItem } from '@/types'
 
 const store = useUserStore()
+const router = useRouter()
 const materials = ref<Material[]>([])
 const queue = ref<ReviewQueueItem[]>([])
 const loading = ref(true)
+const navigationError = ref('')
 
 onMounted(async () => {
   try {
@@ -25,6 +28,18 @@ onMounted(async () => {
 const pendingCount = computed(() => materials.value.filter(m => m.status !== 'approved' && m.status !== 'draft').length)
 const returnedCount = computed(() => materials.value.filter(m => m.status === 'returned').length)
 const queueCount = computed(() => queue.value.length)
+
+async function openMaterial(material: Material) {
+  navigationError.value = ''
+  try {
+    const response = await reviewsApi.byMaterial(material.id)
+    router.push(`/result/${response.data.id}`)
+  } catch (error: any) {
+    navigationError.value = error.response?.status === 404
+      ? '该物料还没有审查记录'
+      : (error.response?.data?.detail || '无法打开审查记录')
+  }
+}
 </script>
 
 <template>
@@ -48,11 +63,12 @@ const queueCount = computed(() => queue.value.length)
         </div>
       </div>
       <div class="card" v-if="materials.length">
-        <h3 class="font-semibold mb-3">最近提交</h3>
+        <h3 class="font-semibold mb-3">{{ store.isLegal ? '最近审核物料' : '最近提交' }}</h3>
+        <p v-if="navigationError" class="text-sm text-red-500 mb-2">{{ navigationError }}</p>
         <div v-for="m in materials.slice(0, 5)" :key="m.id"
              class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-2 border-b border-gray-100 last:border-0 gap-1">
           <div>
-            <router-link :to="`/result/${m.id}`" class="text-sky-700 hover:underline">{{ m.name }}</router-link>
+            <button class="text-sky-700 hover:underline text-left" @click="openMaterial(m)">{{ m.name }}</button>
             <span class="text-xs text-gray-400 ml-2">{{ m.industry }}</span>
           </div>
           <span class="text-xs px-2 py-0.5 rounded-full"
@@ -66,7 +82,12 @@ const queueCount = computed(() => queue.value.length)
           </span>
         </div>
       </div>
-      <p v-else-if="!loading" class="text-gray-400 text-center py-8">暂无提交记录，<router-link to="/submit" class="text-sky-700 hover:underline">去提交物料</router-link></p>
+      <p v-else-if="!loading" class="text-gray-400 text-center py-8">
+        <template v-if="store.canSubmit">
+          暂无提交记录，<router-link to="/submit" class="text-sky-700 hover:underline">去提交物料</router-link>
+        </template>
+        <template v-else>暂无需要处理的审核物料</template>
+      </p>
     </div>
   </DefaultLayout>
 </template>

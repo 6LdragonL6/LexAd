@@ -1,4 +1,4 @@
-"""Office document parser — DOCX, DOC, PPTX, XLSX text extraction."""
+"""Office document parser — DOCX, PPTX, XLSX text extraction."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -9,7 +9,6 @@ from app.services.parsers.text_parser import ExtractionResult
 class OfficeParser:
     MIME_TYPES = {
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/msword",
         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     }
@@ -27,8 +26,6 @@ class OfficeParser:
             return _parse_pptx(path)
         elif "spreadsheet" in mime:
             return _parse_xlsx(path)
-        elif "msword" in mime:
-            return _parse_docx(path)
         raise ValueError(f"Unsupported office MIME: {mime}")
 
 

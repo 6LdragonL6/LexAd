@@ -1,6 +1,6 @@
 [project]
 name = "lexad-backend"
-version = "0.2.0"
+version = "0.4.1"
 description = "LexAd advertising compliance review platform — backend"
 requires-python = ">=3.10"
 dependencies = [

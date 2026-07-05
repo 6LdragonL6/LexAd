@@ -30,8 +30,9 @@ def create_material(
 
 
 def _merge_texts(extracted: str, form_text: str) -> str:
-    parts = [t.strip() for t in (extracted, form_text) if t.strip()]
-    return "\n".join(parts)
+    # The form text is the user's final, editable preview. Prefer it to avoid
+    # appending the same extracted content a second time.
+    return form_text.strip() or extracted.strip()
 
 
 def get_material(db: Session, material_id: str) -> Material | None:
@@ -42,6 +43,17 @@ def list_materials(db: Session, user: User) -> list[Material]:
     query = db.query(Material)
     if user.role == UserRole.marketing:
         query = query.filter(Material.submitter_id == user.id)
+    elif user.role == UserRole.legal:
+        query = query.filter(
+            Material.status.in_(
+                [
+                    MaterialStatus.pending_legal,
+                    MaterialStatus.in_legal_review,
+                    MaterialStatus.approved,
+                    MaterialStatus.returned,
+                ]
+            )
+        )
     return query.order_by(Material.created_at.desc()).all()
 
 

@@ -11,6 +11,8 @@ services:
     volumes:
       - ./backend:/app
       - ./data:/data
+      - ./knowledge:/knowledge:ro
+      - ./chroma_data:/chroma_data
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:

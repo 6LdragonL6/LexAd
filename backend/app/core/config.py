@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # 路径常量 —— 必须在 Settings 类之前定义，因为字段默认值依赖它们
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # backend/ 目录
@@ -17,10 +17,12 @@ STATIC_DIR = PROJECT_ROOT / "static"  # 静态资源目录
 class Settings(BaseSettings):
     """全局应用配置，自动从 .env 文件和环境变量加载。"""
 
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
     # ── 应用基础 ────────────────────────────────────────────────────────────
     APP_ENV: Literal["development", "staging", "production"] = "development"  # 运行环境
     APP_NAME: str = "LexAd"  # 应用名称
-    APP_VERSION: str = "0.3.0"  # 应用版本
+    APP_VERSION: str = "0.4.1"  # 应用版本
     DEBUG: bool = False  # 调试模式开关
 
     # ── 服务器 ─────────────────────────────────────────────────────────────
@@ -62,11 +64,6 @@ class Settings(BaseSettings):
 
     # ── Knowledge Base ────────────────────────────────────────────────
     KNOWLEDGE_DIR: str = str(PROJECT_ROOT.parent / "knowledge")
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-
 
 @lru_cache()
 def get_settings() -> Settings:

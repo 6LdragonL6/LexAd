@@ -103,7 +103,8 @@ class TestOfficeParser:
 
     def test_supports_doc(self):
         from app.services.parsers.office_parser import OfficeParser
-        assert OfficeParser.supports("application/msword") is True
+        # Legacy binary .doc files cannot be parsed safely by python-docx.
+        assert OfficeParser.supports("application/msword") is False
 
     def test_parse_docx(self):
         from app.services.parsers.office_parser import OfficeParser

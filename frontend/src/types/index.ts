@@ -55,6 +55,10 @@ export interface Review {
   version: number
   ai_risk_score: number
   ai_result: EngineResult
+  task_status: 'processing' | 'completed' | 'failed'
+  error_message: string | null
+  started_at: string | null
+  completed_at: string | null
   legal_decision: 'approved' | 'returned' | 'conditional' | null
   legal_notes: string | null
   return_reasons: string | null
@@ -80,6 +84,26 @@ export interface LawItem {
   id: string
   title: string
   path: string
+}
+
+export interface KnowledgeItem {
+  id: string
+  title: string
+  group: string
+}
+
+export interface KnowledgeCatalog {
+  layer: 'L1' | 'L2' | 'L3' | 'L4' | 'L5'
+  label: string
+  items: KnowledgeItem[]
+  total: number
+}
+
+export interface KnowledgeContent {
+  id: string
+  title: string
+  layer: string
+  content: string
 }
 
 export interface PreviewTextResponse {

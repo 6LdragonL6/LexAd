@@ -2,18 +2,20 @@ import json
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.api.deps import get_current_user
+from app.api.deps import ensure_material_visible, get_current_user, require_marketing
 from app.models.user import User
 from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialOut, MaterialListItem, PreviewTextResponse
 from app.services import material_service
 from app.services.file_extraction import FileExtractionService, ExtractionError
 from app.storage import save_upload_temp, cleanup_temp
+from app.core.config import get_settings
 
 router = APIRouter()
 _extraction_svc = FileExtractionService()
+_settings = get_settings()
 
-SUPPORTED_FORMATS = "JPG/PNG/GIF/BMP/PDF/DOCX/DOC/PPTX/XLSX/TXT"
-MAX_UPLOAD_BYTES = 10 * 1024 * 1024  # 10 MB
+SUPPORTED_FORMATS = "JPG/PNG/GIF/BMP/PDF/DOCX/PPTX/XLSX/TXT"
+MAX_UPLOAD_BYTES = _settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
 
 
 @router.post("/submit", response_model=MaterialOut, status_code=201)
@@ -21,7 +23,7 @@ async def submit_material(
     body: str = Form(...),
     file: UploadFile | None = None,
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
+    user: User = Depends(require_marketing),
 ):
     data = MaterialSubmit(**json.loads(body))
     extracted_text = ""
@@ -58,6 +60,7 @@ async def submit_material(
 @router.post("/preview-text", response_model=PreviewTextResponse)
 async def preview_text(
     file: UploadFile = File(...),
+    user: User = Depends(require_marketing),
 ):
     _validate_file(file)
     mime = _extraction_svc.mime_from_extension(file.filename)
@@ -86,12 +89,13 @@ async def preview_text(
 def _validate_file(file: UploadFile) -> None:
     if not file.filename:
         raise HTTPException(status_code=400, detail="未选择文件")
-    content = file.file.read()
+    file.file.seek(0, 2)
+    size = file.file.tell()
     file.file.seek(0)
-    if len(content) > MAX_UPLOAD_BYTES:
+    if size > MAX_UPLOAD_BYTES:
         raise HTTPException(
             status_code=413,
-            detail="文件过大（上限 10MB），请压缩后重试",
+            detail=f"文件过大（上限 {_settings.MAX_UPLOAD_SIZE_MB}MB），请压缩后重试",
         )
 
 
@@ -105,6 +109,7 @@ def get_material(material_id: str, db: Session = Depends(get_db), user: User = D
     material = material_service.get_material(db, material_id)
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
+    ensure_material_visible(user, material)
     return material
 
 
@@ -122,4 +127,8 @@ def update_material(material_id: str, body: MaterialUpdate, db: Session = Depend
 
 @router.get("/{material_id}/versions")
 def get_versions(material_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    material = material_service.get_material(db, material_id)
+    if not material:
+        raise HTTPException(status_code=404, detail="Material not found")
+    ensure_material_visible(user, material)
     return {"versions": material_service.get_material_versions(db, material_id)}

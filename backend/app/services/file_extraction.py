@@ -36,7 +36,6 @@ class FileExtractionService:
             ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
             ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            ".doc": "application/msword",
         }
         return overrides.get(ext, "application/octet-stream")
 

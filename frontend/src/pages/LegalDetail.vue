@@ -20,6 +20,7 @@ const decision = ref('approved')
 const notes = ref('')
 const returnReasons = ref('')
 const submitting = ref(false)
+const decisionError = ref('')
 
 function getAllIssues(): MatchedRule[] {
   if (!review.value) return []
@@ -39,6 +40,7 @@ onMounted(async () => {
 async function handleDecision() {
   if (!review.value) return
   submitting.value = true
+  decisionError.value = ''
   try {
     await reviewsApi.submitDecision(review.value.id, {
       decision: decision.value,
@@ -46,6 +48,8 @@ async function handleDecision() {
       return_reasons: returnReasons.value,
     })
     router.push('/legal')
+  } catch (error: any) {
+    decisionError.value = error.response?.data?.detail || '法务决定提交失败'
   } finally {
     submitting.value = false
   }
@@ -92,6 +96,7 @@ async function handleDecision() {
             <label class="label">法务备注</label>
             <textarea v-model="notes" class="input h-20" placeholder="内部备注..."></textarea>
           </div>
+          <p v-if="decisionError" class="text-sm text-red-500">{{ decisionError }}</p>
           <button @click="handleDecision" :disabled="submitting" class="btn-primary w-full">
             {{ submitting ? '提交中...' : '提交决定' }}
           </button>

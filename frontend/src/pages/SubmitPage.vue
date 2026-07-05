@@ -31,7 +31,7 @@ const previewQuality = ref<'good' | 'degraded' | 'minimal' | null>(null)
 const previewing = ref(false)
 const isDragOver = ref(false)
 
-const allowedExtensions = '.jpg,.jpeg,.png,.gif,.bmp,.pdf,.docx,.doc,.pptx,.xlsx,.txt'
+const allowedExtensions = '.jpg,.jpeg,.png,.gif,.bmp,.pdf,.docx,.pptx,.xlsx,.txt'
 
 function fileSizeDisplay(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -66,7 +66,7 @@ function handleDrop(e: DragEvent) {
 function setFile(file: File) {
   const ext = '.' + (file.name.split('.').pop()?.toLowerCase() ?? '')
   if (!allowedExtensions.includes(ext)) {
-    error.value = '不支持的文件格式，支持：JPG/PNG/PDF/DOCX/DOC/PPTX/XLSX/TXT'
+    error.value = '不支持的文件格式，支持：JPG/PNG/PDF/DOCX/PPTX/XLSX/TXT'
     return
   }
   if (file.size > MAX_FILE_SIZE) {
@@ -130,10 +130,6 @@ async function handleSubmit() {
     deadline: form.value.deadline || undefined,
   })
   fd.append('body', body)
-  if (selectedFile.value) {
-    fd.append('file', selectedFile.value)
-  }
-
   try {
     const res = await materialsApi.submit(fd)
     const reviewRes = await reviewsApi.aiReview(res.data.id)
@@ -205,7 +201,7 @@ function togglePlatform(p: string) {
             <template v-if="!selectedFile">
               <p class="text-gray-500 mb-2">拖拽文件到此处 或 点击选择</p>
               <p class="text-gray-400 text-xs">
-                支持 JPG / PNG / GIF / BMP / PDF / DOCX / DOC / PPTX / XLSX / TXT，单文件最大 10MB
+                支持 JPG / PNG / GIF / BMP / PDF / DOCX / PPTX / XLSX / TXT，单文件最大 10MB
               </p>
               <input
                 type="file"

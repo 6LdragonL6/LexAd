@@ -9,6 +9,10 @@ KNOWLEDGE_DIR = Path(settings.KNOWLEDGE_DIR)
 DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
 
 
+class SemanticReviewError(RuntimeError):
+    """Raised when semantic review cannot produce a trustworthy result."""
+
+
 def _load_law_provisions(industry: str) -> str:
     parts = []
     law_index_path = DATA_DIR / "law_provisions_index.json"
@@ -70,9 +74,13 @@ SIMILAR_CASES:
 输出严格JSON格式：
 {{"violations": [{{"text": "违规原文", "reason": "违规原因", "law_ref": "法律依据", "risk_level": "high/medium/low", "suggestion": "修改建议"}}], "overall_assessment": "整体评估"}}"""
 
-    client = OpenAI(api_key=settings.DEEPSEEK_API_KEY, base_url=settings.DEEPSEEK_BASE_URL)
-
     try:
+        if not settings.DEEPSEEK_API_KEY.strip():
+            raise SemanticReviewError("DeepSeek API key is not configured")
+        client = OpenAI(
+            api_key=settings.DEEPSEEK_API_KEY,
+            base_url=settings.DEEPSEEK_BASE_URL,
+        )
         response = client.chat.completions.create(
             model=settings.DEEPSEEK_MODEL,
             messages=[
@@ -83,18 +91,19 @@ SIMILAR_CASES:
             max_tokens=2048,
         )
         content = response.choices[0].message.content
-        result = json.loads(content) if content else {"violations": [], "overall_assessment": ""}
+        if not content:
+            raise SemanticReviewError("DeepSeek returned an empty response")
+        normalized = content.strip()
+        if normalized.startswith("```"):
+            normalized = normalized.removeprefix("```json").removeprefix("```")
+            normalized = normalized.removesuffix("```").strip()
+        result = json.loads(normalized)
+        if not isinstance(result, dict):
+            raise SemanticReviewError("DeepSeek returned an invalid result")
+    except SemanticReviewError:
+        raise
     except Exception as e:
-        return LayerResult(
-            layer="第二层·语义推理",
-            matched_rules=[MatchedRule(
-                rule_id="L2-ERROR",
-                rule_text=f"DeepSeek API error: {str(e)[:200]}",
-                source_law="",
-                match_type="error",
-            )],
-            explanations=[f"语义推理失败: {str(e)[:200]}"],
-        )
+        raise SemanticReviewError(f"DeepSeek semantic review failed: {str(e)[:200]}") from e
 
     matched = []
     for v in result.get("violations", []):

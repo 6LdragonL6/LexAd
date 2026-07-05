@@ -1,66 +1,165 @@
-<!-- frontend/src/pages/KnowledgePage.vue -->
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { knowledgeApi } from '@/api/knowledge'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
-import type { LawItem } from '@/types'
+import type { KnowledgeCatalog, KnowledgeContent, KnowledgeItem } from '@/types'
 
-const tab = ref<'laws' | 'cases' | 'templates'>('laws')
-const laws = ref<LawItem[]>([])
-const cases = ref<any[]>([])
-const templates = ref<Record<string, string>>({})
+const layers = [
+  { key: 'L1', label: '法律法规' },
+  { key: 'L2', label: '行业规则' },
+  { key: 'L3', label: '处罚案例' },
+  { key: 'L4', label: '平台规则' },
+  { key: 'L5', label: '合规模板' },
+] as const
+
+const activeLayer = ref<(typeof layers)[number]['key']>('L1')
+const catalog = ref<KnowledgeCatalog | null>(null)
+const selectedGroup = ref('')
+const selectedContent = ref<KnowledgeContent | null>(null)
 const loading = ref(false)
+const contentLoading = ref(false)
+const error = ref('')
 
-async function loadTab() {
+const groups = computed(() => {
+  if (!catalog.value) return []
+  return [...new Set(catalog.value.items.map((item) => item.group))]
+})
+
+const visibleItems = computed(() => {
+  if (!catalog.value) return []
+  if (!selectedGroup.value) return catalog.value.items
+  return catalog.value.items.filter((item) => item.group === selectedGroup.value)
+})
+
+async function loadLayer(layer = activeLayer.value) {
+  activeLayer.value = layer
   loading.value = true
-  if (tab.value === 'laws') {
-    const res = await knowledgeApi.laws()
-    laws.value = res.data.items
-  } else if (tab.value === 'cases') {
-    const res = await knowledgeApi.cases()
-    cases.value = res.data.items
-  } else {
-    const res = await knowledgeApi.templates()
-    templates.value = res.data.items
+  error.value = ''
+  selectedContent.value = null
+  selectedGroup.value = ''
+  try {
+    const response = await knowledgeApi.catalog(layer)
+    catalog.value = response.data
+    selectedGroup.value = groups.value[0] || ''
+  } catch (requestError: any) {
+    catalog.value = null
+    error.value = requestError.response?.data?.detail || '知识库目录加载失败'
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
-onMounted(loadTab)
+async function openItem(item: KnowledgeItem) {
+  contentLoading.value = true
+  error.value = ''
+  try {
+    const response = await knowledgeApi.content(item.id)
+    selectedContent.value = response.data
+  } catch (requestError: any) {
+    error.value = requestError.response?.data?.detail || '法规正文加载失败'
+  } finally {
+    contentLoading.value = false
+  }
+}
+
+onMounted(() => loadLayer())
 </script>
 
 <template>
   <DefaultLayout>
-    <div class="max-w-4xl mx-auto p-4 lg:p-8">
-      <h2 class="page-heading">法规数据库</h2>
-      <div class="flex gap-1 mb-6 border-b">
-        <button v-for="t in [{ k: 'laws', l: '法律法规' }, { k: 'cases', l: '行政处罚案例' }, { k: 'templates', l: '改写模板' }]" :key="t.k"
-          @click="tab = t.k as any; loadTab()"
-          :class="tab === t.k ? 'border-b-2 border-sky-500 text-sky-700' : 'text-gray-500'"
-          class="px-4 py-2 text-sm font-medium">
-          {{ t.l }}
-        </button>
+    <div class="max-w-6xl mx-auto p-4 lg:p-8">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
+        <div>
+          <h2 class="page-heading !mb-1">法规数据库</h2>
+          <p class="text-sm text-gray-500">按知识层级浏览法规、行业规则、案例、平台规范和合规模板。</p>
+        </div>
+        <span v-if="catalog" class="text-xs text-gray-400">当前分类共 {{ catalog.total }} 项</span>
       </div>
-      <div v-if="loading" class="text-gray-400 py-8 text-center">加载中...</div>
-      <div v-else-if="tab === 'laws'" class="space-y-2">
-        <div v-for="law in laws" :key="law.id" class="card text-sm">
-          <p class="font-medium">{{ law.title }}</p>
+
+      <div class="card !p-0 overflow-hidden">
+        <div class="flex overflow-x-auto border-b border-gray-200 bg-gray-50">
+          <button
+            v-for="layer in layers"
+            :key="layer.key"
+            class="px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors"
+            :class="activeLayer === layer.key
+              ? 'border-sky-500 bg-white text-sky-700'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-white'"
+            @click="loadLayer(layer.key)"
+          >
+            <span class="font-bold mr-1">{{ layer.key }}</span>{{ layer.label }}
+          </button>
+        </div>
+
+        <div v-if="loading" class="py-20 text-center">
+          <div class="w-8 h-8 border-3 border-sky-100 border-t-sky-500 rounded-full animate-spin mx-auto mb-3" />
+          <p class="text-sm text-gray-400">正在读取知识库目录...</p>
+        </div>
+
+        <div v-else-if="error && !catalog" class="py-16 px-4 text-center">
+          <p class="text-sm text-red-500">{{ error }}</p>
+          <button class="btn-outline mt-4 text-sm" @click="loadLayer()">重新加载</button>
+        </div>
+
+        <div v-else-if="catalog" class="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] min-h-520px">
+          <aside class="border-b lg:border-b-0 lg:border-r border-gray-200 bg-gray-50 p-3">
+            <p class="px-2 py-1 text-xs font-semibold text-gray-400 uppercase">分类目录</p>
+            <div class="flex lg:block gap-2 overflow-x-auto lg:overflow-visible mt-1">
+              <button
+                v-for="group in groups"
+                :key="group"
+                class="block shrink-0 lg:w-full text-left px-3 py-2 rounded-lg text-sm transition-colors"
+                :class="selectedGroup === group
+                  ? 'bg-sky-100 text-sky-700 font-medium'
+                  : 'text-gray-600 hover:bg-gray-100'"
+                @click="selectedGroup = group; selectedContent = null"
+              >
+                {{ group }}
+                <span class="ml-1 text-xs opacity-60">
+                  {{ catalog.items.filter((item) => item.group === group).length }}
+                </span>
+              </button>
+            </div>
+          </aside>
+
+          <main class="min-w-0">
+            <div v-if="contentLoading" class="py-20 text-center text-sm text-gray-400">正文加载中...</div>
+
+            <article v-else-if="selectedContent" class="p-4 sm:p-6">
+              <button class="text-sm text-sky-600 hover:text-sky-700 mb-4" @click="selectedContent = null">
+                ← 返回条目列表
+              </button>
+              <div class="border-b border-gray-100 pb-4 mb-5">
+                <span class="inline-flex px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 text-xs font-medium">
+                  {{ selectedContent.layer }}
+                </span>
+                <h3 class="text-lg font-semibold text-gray-800 mt-2 break-words">{{ selectedContent.title }}</h3>
+              </div>
+              <pre class="font-sans text-sm leading-7 text-gray-700 whitespace-pre-wrap break-words">{{ selectedContent.content }}</pre>
+            </article>
+
+            <div v-else class="p-4 sm:p-6">
+              <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+                <h3 class="font-semibold text-gray-800">{{ selectedGroup || catalog.label }}</h3>
+                <span class="text-xs text-gray-400">{{ visibleItems.length }} 项</span>
+              </div>
+              <div v-if="visibleItems.length" class="divide-y divide-gray-100">
+                <button
+                  v-for="item in visibleItems"
+                  :key="item.id"
+                  class="w-full text-left py-3 px-2 text-sm text-gray-700 hover:text-sky-700 hover:bg-sky-50 rounded-lg break-words transition-colors"
+                  @click="openItem(item)"
+                >
+                  {{ item.title }}
+                </button>
+              </div>
+              <p v-else class="py-16 text-center text-sm text-gray-400">该分类暂无知识库文件</p>
+            </div>
+          </main>
         </div>
       </div>
-      <div v-else-if="tab === 'cases'" class="space-y-2">
-        <div v-for="c in cases" :key="c.id" class="card text-sm flex justify-between">
-          <span>{{ c.title }}</span>
-          <span class="text-gray-400">{{ c.province }}</span>
-        </div>
-      </div>
-      <div v-else class="text-sm text-gray-600">
-        <p>共 {{ Object.keys(templates).length }} 条改写模板</p>
-        <div v-for="(replacement, original) in templates" :key="original" class="card mb-2 flex justify-between">
-          <span class="text-red-500 line-through">{{ original }}</span>
-          <span class="text-gray-400">→</span>
-          <span class="text-green-600">{{ replacement }}</span>
-        </div>
-      </div>
+
+      <p v-if="error && catalog" class="mt-3 text-sm text-red-500">{{ error }}</p>
     </div>
   </DefaultLayout>
 </template>
