@@ -21,6 +21,8 @@ class EngineResult(BaseModel):
     summary: str = ""
     suggestions: list[str] = Field(default_factory=list)
     case_refs: list[dict] = Field(default_factory=list)
+    platform_rule_version_ids: list[str] = Field(default_factory=list)
+    unavailable_platforms: list[str] = Field(default_factory=list)
 
 class AIReviewRequest(BaseModel):
     material_id: str
@@ -35,6 +37,19 @@ class ReviewOut(BaseModel):
     error_message: str | None
     started_at: datetime | None
     completed_at: datetime | None
+    legal_library_version_id: str | None = None
+    industry_library_version_id: str | None = None
+    platform_rule_version_ids: list = Field(default_factory=list)
+    public_opinion_library_version_id: str | None = None
+    legal_module_status: str | None = None
+    legal_module_error: str | None = None
+    legal_module_retry_count: int = 0
+    legal_module_completed_at: datetime | None = None
+    public_opinion_module_status: str | None = None
+    public_opinion_result: dict = Field(default_factory=dict)
+    public_opinion_module_error: str | None = None
+    public_opinion_module_retry_count: int = 0
+    public_opinion_module_completed_at: datetime | None = None
     legal_decision: str | None
     legal_notes: str | None
     return_reasons: str | None

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from sqlalchemy import case, func
 from app.models.material import Material, MaterialStatus
+from app.models.knowledge import ReviewModuleStatus
 from app.models.review import Review, LegalDecision
 from app.models.user import User, UserRole
 from app.schemas.review import LegalDecisionRequest
@@ -65,9 +66,16 @@ def execute_ai_review(review_id: str) -> None:
             material.raw_text,
             material.industry,
             material.platforms,
+            db,
         )
         review.ai_risk_score = engine_result.risk_score
         review.ai_result = engine_result.model_dump()
+        review.platform_rule_version_ids = engine_result.platform_rule_version_ids
+        review.legal_module_status = ReviewModuleStatus.succeeded
+        review.legal_module_error = None
+        review.legal_module_completed_at = datetime.now(timezone.utc)
+        review.public_opinion_module_status = ReviewModuleStatus.unavailable
+        review.public_opinion_module_error = "舆情风险分析将在 v0.4.2 后续阶段接入"
         review.task_status = "completed"
         review.error_message = None
         review.completed_at = datetime.now(timezone.utc)
@@ -80,6 +88,9 @@ def execute_ai_review(review_id: str) -> None:
             material = db.query(Material).filter(Material.id == review.material_id).first()
             review.task_status = "failed"
             review.error_message = _safe_error_message(exc)
+            review.legal_module_status = ReviewModuleStatus.failed
+            review.legal_module_error = review.error_message
+            review.legal_module_completed_at = datetime.now(timezone.utc)
             review.completed_at = datetime.now(timezone.utc)
             if material and material.status == MaterialStatus.ai_reviewing:
                 material.status = MaterialStatus.draft
