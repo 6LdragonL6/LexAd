@@ -31,3 +31,6 @@ chroma_data/
 .idea/
 *.swp
 *.swo
+
+# Local development launcher state
+scripts/.dev-pids.json
