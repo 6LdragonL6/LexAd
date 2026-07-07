@@ -191,15 +191,15 @@ class TestPdfParser:
         tmp.close()
         doc = fitz.open()
         page = doc.new_page()
-        page.insert_font(fontname="SimSun", fontfile="C:/Windows/Fonts/simsun.ttc")
-        page.insert_text((50, 50), "广告文案测试内容包含足够多的文字以满足质量阈值", fontname="SimSun", fontsize=12)
+        text = "Advertising compliance review text with enough words to meet the quality threshold."
+        page.insert_text((50, 50), text, fontsize=12)
         doc.save(tmp.name)
         doc.close()
         tmp_path = Path(tmp.name)
 
         try:
             result = PdfParser.parse(tmp_path)
-            assert "广告文案测试内容" in result.text
+            assert "Advertising compliance review text" in result.text
             assert result.source_format == "pdf_text"
             assert result.quality == "good"
             assert result.fallback_used is False
