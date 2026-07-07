@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.models.knowledge import (
     KnowledgeAuditLog,
     KnowledgeImportJob,
+    KnowledgeImportJobStatus,
     PlatformRuleSet,
     PlatformRuleStatus,
     PlatformRuleVersion,
@@ -17,12 +18,14 @@ from app.models.knowledge import (
 )
 from app.models.user import User
 from app.schemas.admin_knowledge import (
+    PublicOpinionImportConfirmRequest,
     PlatformRuleSetCreate,
     PlatformRuleSetUpdate,
     PlatformRuleVersionCreate,
     PublicOpinionEventCreate,
     PublicOpinionEventUpdate,
 )
+from app.services import model_service
 
 
 def list_public_opinion_events(
@@ -122,31 +125,29 @@ def structure_public_opinion_event(
     event.transition_to(PublicOpinionEventStatus.pending_review)
     event.updated_by_id = actor.id
     version_number = _next_event_version(db, event.id)
+    structured, model_name, model_version, confidence, edit_notes = _structure_case_with_model_fallback(event)
     version = PublicOpinionEventVersion(
         event_id=event.id,
         version=version_number,
-        title=event.title or _summarize_title(event.source_text),
+        title=event.title or structured.get("summary") or _summarize_title(event.source_text),
+        industry=structured.get("industry", []),
+        platforms=structured.get("platforms", []),
         source_text=event.source_text,
-        event_process={
-            "trigger": "",
-            "timeline": [],
-            "brand_response": "",
-            "outcome": event.consequence_text,
-        },
-        consequences={
-            "reputation": event.consequence_text,
-            "business": "",
-            "regulatory": "",
-            "duration_days": None,
-            "severity_hint": None,
-        },
-        summary=_summarize_title(event.source_text),
-        confidence=0,
-        model_name="deterministic-placeholder",
-        model_version="v0.4.2-stage2",
+        event_process=structured.get("event_process", {}),
+        consequences=structured.get("consequences", {}),
+        risk_topics=structured.get("risk_topics", []),
+        trigger_patterns=structured.get("trigger_patterns", []),
+        affected_groups=structured.get("affected_groups", []),
+        propagation_drivers=structured.get("propagation_drivers", []),
+        normalized_tags=structured.get("normalized_tags", {}),
+        severity_level=structured.get("severity_level"),
+        summary=structured.get("summary") or _summarize_title(event.source_text),
+        confidence=confidence,
+        model_name=model_name,
+        model_version=model_version,
         generated_at=datetime.now(timezone.utc),
         edited_by_id=actor.id,
-        edit_notes="阶段 2 占位整理；阶段 3 将接入统一模型服务。",
+        edit_notes=edit_notes,
     )
     db.add(version)
     _audit(
@@ -374,6 +375,139 @@ def list_import_jobs(db: Session) -> list[KnowledgeImportJob]:
     return db.query(KnowledgeImportJob).order_by(KnowledgeImportJob.created_at.desc()).all()
 
 
+def get_import_job(db: Session, job_id: str) -> KnowledgeImportJob | None:
+    return db.query(KnowledgeImportJob).filter(KnowledgeImportJob.id == job_id).first()
+
+
+def preview_public_opinion_import(
+    db: Session,
+    payload: dict[str, Any],
+    file_name: str,
+    actor: User,
+) -> KnowledgeImportJob:
+    validation = _validate_public_opinion_import_payload(db, payload)
+    status = (
+        KnowledgeImportJobStatus.validated
+        if validation["invalid_items"] == 0
+        else KnowledgeImportJobStatus.validation_failed
+    )
+    job = KnowledgeImportJob(
+        import_type="public_opinion",
+        file_name=file_name,
+        status=status,
+        total_items=validation["total_items"],
+        valid_items=validation["valid_items"],
+        invalid_items=validation["invalid_items"],
+        error_summary={
+            "schema_errors": validation["schema_errors"],
+            "item_errors": validation["item_errors"],
+            "duplicate_external_ids": validation["duplicate_external_ids"],
+        },
+        options={"valid_events": validation["valid_events"]},
+        created_by_id=actor.id,
+    )
+    db.add(job)
+    db.flush()
+    _audit(db, actor, "public_opinion_import.preview", "knowledge_import_job", job.id, after=_import_job_state(job))
+    db.commit()
+    db.refresh(job)
+    return job
+
+
+def confirm_public_opinion_import(
+    db: Session,
+    job: KnowledgeImportJob,
+    data: PublicOpinionImportConfirmRequest,
+    actor: User,
+) -> dict[str, Any]:
+    if job.import_type != "public_opinion":
+        raise ValueError("导入任务类型不匹配")
+    if job.status not in (KnowledgeImportJobStatus.validated, KnowledgeImportJobStatus.validation_failed):
+        raise ValueError("只有完成预检的导入任务可以确认导入")
+    valid_events = job.options.get("valid_events", []) if isinstance(job.options, dict) else []
+    if not valid_events:
+        raise ValueError("没有可导入的合格事件")
+
+    before = _import_job_state(job)
+    created_event_ids: list[str] = []
+    updated_event_ids: list[str] = []
+    skipped_external_ids: list[str] = []
+    job.status = KnowledgeImportJobStatus.importing
+    db.flush()
+
+    for item in valid_events:
+        external_id = item.get("external_id")
+        existing = (
+            db.query(PublicOpinionEvent)
+            .filter(PublicOpinionEvent.external_id == external_id)
+            .first()
+            if external_id
+            else None
+        )
+        if existing:
+            action = data.duplicate_actions.get(external_id, "skip")
+            if action == "skip":
+                skipped_external_ids.append(external_id)
+                continue
+            if action == "update":
+                if existing.status in (PublicOpinionEventStatus.published, PublicOpinionEventStatus.archived):
+                    skipped_external_ids.append(external_id)
+                    continue
+                existing.title = item["title"]
+                existing.source_text = item["source_text"]
+                existing.consequence_text = item["consequence_text"]
+                existing.source_meta = item["source_meta"]
+                existing.updated_by_id = actor.id
+                updated_event_ids.append(existing.id)
+                if data.run_structure:
+                    structure_public_opinion_event(db, existing, actor)
+                continue
+            if action != "create":
+                raise ValueError(f"不支持的重复处理方式：{action}")
+
+        event = PublicOpinionEvent(
+            external_id=None if existing else external_id,
+            title=item["title"],
+            source_text=item["source_text"],
+            consequence_text=item["consequence_text"],
+            source_meta=item["source_meta"],
+            status=PublicOpinionEventStatus.draft,
+            created_by_id=actor.id,
+            updated_by_id=actor.id,
+        )
+        db.add(event)
+        db.flush()
+        created_event_ids.append(event.id)
+        if data.run_structure:
+            structure_public_opinion_event(db, event, actor)
+
+    job.status = KnowledgeImportJobStatus.completed
+    job.completed_at = datetime.now(timezone.utc)
+    job.options = {
+        **(job.options or {}),
+        "created_event_ids": created_event_ids,
+        "updated_event_ids": updated_event_ids,
+        "skipped_external_ids": skipped_external_ids,
+    }
+    _audit(
+        db,
+        actor,
+        "public_opinion_import.confirm",
+        "knowledge_import_job",
+        job.id,
+        before=before,
+        after=_import_job_state(job),
+    )
+    db.commit()
+    db.refresh(job)
+    return {
+        "job": job,
+        "created_event_ids": created_event_ids,
+        "updated_event_ids": updated_event_ids,
+        "skipped_external_ids": skipped_external_ids,
+    }
+
+
 def list_audit_logs(db: Session, target_type: str | None = None) -> list[KnowledgeAuditLog]:
     query = db.query(KnowledgeAuditLog)
     if target_type:
@@ -499,6 +633,145 @@ def _summarize_title(text: str) -> str:
     return compact[:60] if compact else "未命名舆情事件"
 
 
+def _structure_case_with_model_fallback(event: PublicOpinionEvent) -> tuple[dict[str, Any], str, str, int, str]:
+    try:
+        structured = model_service.structure_public_opinion_case(
+            title=event.title,
+            source_text=event.source_text,
+            consequence_text=event.consequence_text,
+        )
+        confidence = structured.get("confidence")
+        return (
+            structured,
+            "deepseek",
+            "shared-model-service",
+            confidence if isinstance(confidence, int) else 0,
+            "由统一模型服务整理，管理员仍需人工复核。",
+        )
+    except model_service.ModelServiceError as exc:
+        return (
+            _deterministic_public_opinion_structure(event),
+            "deterministic-fallback",
+            "v0.4.2-stage3",
+            0,
+            f"模型整理暂不可用，已使用规则降级整理：{str(exc)[:160]}",
+        )
+
+
+def _deterministic_public_opinion_structure(event: PublicOpinionEvent) -> dict[str, Any]:
+    return {
+        "industry": [],
+        "platforms": [],
+        "event_process": {
+            "trigger": "",
+            "timeline": [],
+            "brand_response": "",
+            "outcome": event.consequence_text,
+        },
+        "consequences": {
+            "reputation": event.consequence_text,
+            "business": "",
+            "regulatory": "",
+            "duration_days": None,
+            "severity_hint": None,
+        },
+        "risk_topics": [],
+        "trigger_patterns": [],
+        "affected_groups": [],
+        "propagation_drivers": [],
+        "normalized_tags": {},
+        "severity_level": None,
+        "summary": _summarize_title(event.source_text),
+        "confidence": 0,
+    }
+
+
+def _validate_public_opinion_import_payload(db: Session, payload: dict[str, Any]) -> dict[str, Any]:
+    schema_errors: list[str] = []
+    item_errors: list[dict[str, Any]] = []
+    duplicate_external_ids: list[str] = []
+    valid_events: list[dict[str, Any]] = []
+
+    if payload.get("schema_version") != "1.0":
+        schema_errors.append("schema_version 必须为 1.0")
+    events = payload.get("events")
+    if not isinstance(events, list):
+        schema_errors.append("events 必须是事件数组")
+        events = []
+
+    seen_external_ids: set[str] = set()
+    for index, event in enumerate(events):
+        errors = _validate_public_opinion_import_event(event)
+        external_id = event.get("external_id") if isinstance(event, dict) else None
+        if external_id:
+            if external_id in seen_external_ids:
+                errors.append("同一文件中 external_id 重复")
+            seen_external_ids.add(external_id)
+            if db.query(PublicOpinionEvent).filter(PublicOpinionEvent.external_id == external_id).first():
+                duplicate_external_ids.append(external_id)
+        if errors:
+            item_errors.append({"index": index, "external_id": external_id, "errors": errors})
+            continue
+        valid_events.append(_normalize_import_event(event))
+
+    return {
+        "total_items": len(events),
+        "valid_items": len(valid_events),
+        "invalid_items": len(item_errors) + len(schema_errors),
+        "schema_errors": schema_errors,
+        "item_errors": item_errors,
+        "duplicate_external_ids": duplicate_external_ids,
+        "valid_events": valid_events,
+    }
+
+
+def _validate_public_opinion_import_event(event: Any) -> list[str]:
+    if not isinstance(event, dict):
+        return ["事件必须是对象"]
+    errors = []
+    if not str(event.get("title") or "").strip():
+        errors.append("缺少标题 title")
+    if not str(event.get("source_text") or "").strip():
+        errors.append("缺少事件材料 source_text")
+    event_process = event.get("event_process")
+    if not isinstance(event_process, dict):
+        errors.append("缺少事件过程 event_process")
+    else:
+        if not str(event_process.get("trigger") or "").strip():
+            errors.append("缺少触发原因 event_process.trigger")
+        if not str(event_process.get("outcome") or "").strip():
+            errors.append("缺少事件结果 event_process.outcome")
+    return errors
+
+
+def _normalize_import_event(event: dict[str, Any]) -> dict[str, Any]:
+    event_process = event.get("event_process") or {}
+    consequences = event.get("consequences") or {}
+    consequence_text = (
+        event_process.get("outcome")
+        or consequences.get("reputation")
+        or consequences.get("business")
+        or consequences.get("regulatory")
+        or ""
+    )
+    return {
+        "external_id": event.get("external_id"),
+        "title": event.get("title", ""),
+        "source_text": event.get("source_text", ""),
+        "consequence_text": consequence_text,
+        "source_meta": {
+            "industry": event.get("industry", []),
+            "platforms": event.get("platforms", []),
+            "occurred_at": event.get("occurred_at"),
+            "sources": event.get("sources", []),
+            "event_process": event_process,
+            "consequences": consequences,
+            "notes": event.get("notes", ""),
+            "raw_import_event": event,
+        },
+    }
+
+
 def _event_state(event: PublicOpinionEvent) -> dict[str, Any]:
     return {
         "id": event.id,
@@ -522,6 +795,17 @@ def _rule_version_state(version: PlatformRuleVersion) -> dict[str, Any]:
         "rule_set_id": version.rule_set_id,
         "version_label": version.version_label,
         "status": version.status.value if hasattr(version.status, "value") else version.status,
+    }
+
+
+def _import_job_state(job: KnowledgeImportJob) -> dict[str, Any]:
+    return {
+        "id": job.id,
+        "import_type": job.import_type,
+        "status": job.status.value if hasattr(job.status, "value") else job.status,
+        "total_items": job.total_items,
+        "valid_items": job.valid_items,
+        "invalid_items": job.invalid_items,
     }
 
 

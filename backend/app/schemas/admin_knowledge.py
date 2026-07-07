@@ -166,6 +166,23 @@ class KnowledgeImportJobOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class PublicOpinionImportPreviewRequest(BaseModel):
+    payload: dict[str, Any]
+    file_name: str = "inline-json"
+
+
+class PublicOpinionImportConfirmRequest(BaseModel):
+    duplicate_actions: dict[str, str] = Field(default_factory=dict)
+    run_structure: bool = False
+
+
+class KnowledgeImportConfirmResult(BaseModel):
+    job: KnowledgeImportJobOut
+    created_event_ids: list[str] = Field(default_factory=list)
+    updated_event_ids: list[str] = Field(default_factory=list)
+    skipped_external_ids: list[str] = Field(default_factory=list)
+
+
 class KnowledgeAuditLogOut(BaseModel):
     id: str
     actor_id: str

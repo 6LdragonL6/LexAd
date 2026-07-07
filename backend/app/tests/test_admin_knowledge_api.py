@@ -9,7 +9,9 @@ from app.api.deps import get_current_user
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from app.models.knowledge import PublicOpinionEvent
 from app.models.user import User, UserRole
+from app.services import admin_knowledge_service
 
 
 def _session_factory():
@@ -193,5 +195,169 @@ def test_public_opinion_import_template_is_available_to_admin():
         assert data["schema_version"] == "1.0"
         assert isinstance(data["events"], list)
         assert data["events"][0]["event_process"]["trigger"]
+    finally:
+        _clear_overrides()
+
+
+def test_public_opinion_import_preview_and_confirm_creates_drafts():
+    client, factory = _client(UserRole.admin)
+    payload = {
+        "schema_version": "1.0",
+        "events": [
+            {
+                "external_id": "case-import-001",
+                "title": "导入事件",
+                "source_text": "某广告表达引发讨论。",
+                "event_process": {
+                    "trigger": "广告表达被认为不尊重消费者",
+                    "timeline": [],
+                    "brand_response": "",
+                    "outcome": "品牌公开道歉",
+                },
+                "consequences": {"reputation": "负面评论增加"},
+            },
+            {
+                "external_id": "case-import-bad",
+                "title": "",
+                "source_text": "",
+                "event_process": {"trigger": "", "outcome": ""},
+            },
+        ],
+    }
+    try:
+        preview = client.post(
+            "/api/v1/admin/knowledge/public-opinion/import/preview",
+            json={"payload": payload, "file_name": "cases.json"},
+        )
+        assert preview.status_code == 201
+        job = preview.json()
+        assert job["status"] == "validation_failed"
+        assert job["total_items"] == 2
+        assert job["valid_items"] == 1
+        assert job["invalid_items"] == 1
+
+        db = factory()
+        try:
+            assert db.query(PublicOpinionEvent).count() == 0
+        finally:
+            db.close()
+
+        confirmed = client.post(f"/api/v1/admin/knowledge/public-opinion/imports/{job['id']}/confirm", json={})
+        assert confirmed.status_code == 200
+        result = confirmed.json()
+        assert result["job"]["status"] == "completed"
+        assert len(result["created_event_ids"]) == 1
+
+        events = client.get("/api/v1/admin/knowledge/public-opinion/events").json()
+        assert events["total"] == 1
+        assert events["items"][0]["external_id"] == "case-import-001"
+        assert events["items"][0]["status"] == "draft"
+    finally:
+        _clear_overrides()
+
+
+def test_public_opinion_import_duplicate_external_id_can_skip():
+    client, _ = _client(UserRole.admin)
+    payload = {
+        "schema_version": "1.0",
+        "events": [
+            {
+                "external_id": "case-dup",
+                "title": "重复事件",
+                "source_text": "事件内容。",
+                "event_process": {
+                    "trigger": "触发点",
+                    "outcome": "已有后果",
+                },
+            }
+        ],
+    }
+    try:
+        first_preview = client.post(
+            "/api/v1/admin/knowledge/public-opinion/import/preview",
+            json={"payload": payload, "file_name": "first.json"},
+        )
+        assert first_preview.status_code == 201
+        first_confirm = client.post(
+            f"/api/v1/admin/knowledge/public-opinion/imports/{first_preview.json()['id']}/confirm",
+            json={},
+        )
+        assert first_confirm.status_code == 200
+
+        duplicate_preview = client.post(
+            "/api/v1/admin/knowledge/public-opinion/import/preview",
+            json={"payload": payload, "file_name": "second.json"},
+        )
+        assert duplicate_preview.status_code == 201
+        duplicate_job = duplicate_preview.json()
+        assert duplicate_job["error_summary"]["duplicate_external_ids"] == ["case-dup"]
+
+        duplicate_confirm = client.post(
+            f"/api/v1/admin/knowledge/public-opinion/imports/{duplicate_job['id']}/confirm",
+            json={"duplicate_actions": {"case-dup": "skip"}},
+        )
+        assert duplicate_confirm.status_code == 200
+        assert duplicate_confirm.json()["skipped_external_ids"] == ["case-dup"]
+
+        events = client.get("/api/v1/admin/knowledge/public-opinion/events").json()
+        assert events["total"] == 1
+    finally:
+        _clear_overrides()
+
+
+def test_public_opinion_structure_uses_shared_model_service(monkeypatch):
+    client, _ = _client(UserRole.admin)
+
+    def fake_structure_public_opinion_case(**_kwargs):
+        return {
+            "industry": ["食品"],
+            "platforms": ["微博"],
+            "event_process": {
+                "trigger": "敏感表达",
+                "timeline": [],
+                "brand_response": "",
+                "outcome": "出现负面评论",
+            },
+            "consequences": {
+                "reputation": "声誉受损",
+                "business": "",
+                "regulatory": "",
+                "duration_days": None,
+                "severity_hint": "medium",
+            },
+            "risk_topics": ["消费者尊重"],
+            "trigger_patterns": ["不尊重消费者"],
+            "affected_groups": ["消费者"],
+            "propagation_drivers": ["截图传播"],
+            "normalized_tags": {"severity": "medium"},
+            "severity_level": "medium",
+            "summary": "模型整理摘要",
+            "confidence": 82,
+        }
+
+    monkeypatch.setattr(
+        admin_knowledge_service.model_service,
+        "structure_public_opinion_case",
+        fake_structure_public_opinion_case,
+    )
+    try:
+        created = client.post(
+            "/api/v1/admin/knowledge/public-opinion/events",
+            json={
+                "title": "模型整理事件",
+                "source_text": "广告内容被消费者批评。",
+                "consequence_text": "出现负面评论。",
+            },
+        )
+        assert created.status_code == 201
+        event_id = created.json()["id"]
+
+        structured = client.post(f"/api/v1/admin/knowledge/public-opinion/events/{event_id}/structure")
+        assert structured.status_code == 202
+        data = structured.json()
+        assert data["model_name"] == "deepseek"
+        assert data["summary"] == "模型整理摘要"
+        assert data["confidence"] == 82
+        assert data["risk_topics"] == ["消费者尊重"]
     finally:
         _clear_overrides()

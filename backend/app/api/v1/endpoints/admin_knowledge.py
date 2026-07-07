@@ -7,6 +7,7 @@ from app.models.user import User
 from app.schemas.admin_knowledge import (
     KnowledgeAuditLogOut,
     KnowledgeImportJobOut,
+    KnowledgeImportConfirmResult,
     PlatformRuleSetCreate,
     PlatformRuleSetDetail,
     PlatformRuleSetList,
@@ -20,6 +21,8 @@ from app.schemas.admin_knowledge import (
     PublicOpinionEventOut,
     PublicOpinionEventUpdate,
     PublicOpinionEventVersionOut,
+    PublicOpinionImportConfirmRequest,
+    PublicOpinionImportPreviewRequest,
 )
 from app.services import admin_knowledge_service as service
 
@@ -142,6 +145,31 @@ def delete_public_opinion_draft(
 @router.get("/public-opinion/import-template")
 def get_public_opinion_import_template():
     return service.public_opinion_import_template()
+
+
+@router.post("/public-opinion/import/preview", response_model=KnowledgeImportJobOut, status_code=status.HTTP_201_CREATED)
+def preview_public_opinion_import(
+    body: PublicOpinionImportPreviewRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_admin),
+):
+    return service.preview_public_opinion_import(db, body.payload, body.file_name, user)
+
+
+@router.post("/public-opinion/imports/{job_id}/confirm", response_model=KnowledgeImportConfirmResult)
+def confirm_public_opinion_import(
+    job_id: str,
+    body: PublicOpinionImportConfirmRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_admin),
+):
+    job = service.get_import_job(db, job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="导入任务不存在")
+    try:
+        return service.confirm_public_opinion_import(db, job, body, user)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
 
 @router.get("/platform-rules", response_model=PlatformRuleSetList)
