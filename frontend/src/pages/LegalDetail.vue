@@ -16,6 +16,8 @@ const store = useUserStore()
 const material = ref<Material | null>(null)
 const review = ref<Review | null>(null)
 const loading = ref(true)
+const versions = ref<any[]>([])
+const showVersions = ref(false)
 const decision = ref('approved')
 const notes = ref('')
 const returnReasons = ref('')
@@ -34,6 +36,12 @@ onMounted(async () => {
   review.value = rRes.data
   const mRes = await materialsApi.get(rRes.data.material_id)
   material.value = mRes.data
+  try {
+    const vRes = await materialsApi.versions(rRes.data.material_id)
+    versions.value = vRes.data.versions || []
+  } catch {
+    versions.value = []
+  }
   loading.value = false
 })
 
@@ -64,11 +72,40 @@ async function handleDecision() {
     </template>
     <template #center>
       <div class="bg-white rounded-lg border p-4 mb-4">
-        <h3 class="font-semibold mb-2">{{ material.name }}</h3>
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-semibold">{{ material.name }}</h3>
+          <span class="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full">第 {{ material.current_version }} 次提交</span>
+        </div>
         <p class="text-sm text-gray-600 whitespace-pre-wrap">{{ material.raw_text }}</p>
         <div class="flex gap-2 mt-2 text-xs text-gray-400">
           <span>{{ material.industry }}</span>
-          <span>{{ material.platforms.join(', ') }}</span>
+          <span>{{ material.platforms.join('、') }}</span>
+        </div>
+      </div>
+
+      <!-- Version history -->
+      <div v-if="versions.length > 1" class="bg-white rounded-lg border p-4">
+        <button @click="showVersions = !showVersions" class="flex items-center justify-between w-full text-left">
+          <h4 class="font-medium text-sm text-gray-700">历史版本 ({{ versions.length }})</h4>
+          <span class="text-xs text-sky-600">{{ showVersions ? '收起' : '展开' }}</span>
+        </button>
+        <div v-if="showVersions" class="mt-3 space-y-2">
+          <div v-for="v in versions" :key="v.version"
+            class="flex items-center justify-between text-sm py-2 border-b last:border-0"
+            :class="{ 'bg-sky-50 -mx-2 px-2 rounded': v.version === review?.version }">
+            <div>
+              <span class="font-medium text-gray-700">{{ v.version_label }}</span>
+              <span v-if="v.version === review?.version" class="text-xs text-sky-600 ml-2">当前</span>
+            </div>
+            <div class="flex gap-3 text-xs text-gray-500">
+              <span>风险分: {{ v.risk_score }}</span>
+              <span v-if="v.legal_decision" :class="{
+                'text-green-600': v.legal_decision === 'approved',
+                'text-red-600': v.legal_decision === 'returned',
+              }">{{ v.legal_decision === 'approved' ? '通过' : v.legal_decision === 'returned' ? '退回' : v.legal_decision }}</span>
+              <span>{{ v.created_at ? new Date(v.created_at).toLocaleDateString() : '' }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -109,7 +146,7 @@ async function handleDecision() {
           'text-red-600': review.legal_decision === 'returned',
           'text-yellow-600': review.legal_decision === 'conditional',
         }" class="font-bold">
-          {{ review.legal_decision === 'approved' ? '✅ 已通过' : review.legal_decision === 'returned' ? '❌ 已退回' : '⚠️ 有条件通过' }}
+          {{ review.legal_decision === 'approved' ? '已通过' : review.legal_decision === 'returned' ? '已退回' : '有条件通过' }}
         </p>
         <p v-if="review.return_reasons" class="text-sm text-gray-600 mt-2">{{ review.return_reasons }}</p>
         <p v-if="review.legal_notes" class="text-sm text-gray-500 mt-1">备注: {{ review.legal_notes }}</p>

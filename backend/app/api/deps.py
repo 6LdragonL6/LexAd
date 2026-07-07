@@ -50,6 +50,7 @@ def can_view_material(user: User, material: Material) -> bool:
         MaterialStatus.in_legal_review,
         MaterialStatus.approved,
         MaterialStatus.returned,
+        MaterialStatus.archived,
     }
 
 

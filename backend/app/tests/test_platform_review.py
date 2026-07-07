@@ -129,3 +129,124 @@ def test_review_task_snapshots_platform_rule_versions(monkeypatch):
         assert material.status == MaterialStatus.pending_legal
     finally:
         db.close()
+
+
+def test_chinese_platform_name_matches_douyin_ruleset():
+    factory = _session_factory()
+    _seed_user_material_and_platform_rule(factory)
+    db = factory()
+    try:
+        result = run_platform_review("本产品是全网最低价", ["抖音"], db)
+        assert result.platform_rule_version_ids == ["platform-version-1"]
+        assert result.unavailable_platforms == []
+        assert len(result.matched_rules) == 1
+        assert result.matched_rules[0].source_law == "抖音 2026-07"
+        assert "抖音" in result.platform_version_labels["platform-version-1"]
+    finally:
+        db.close()
+
+
+def test_platform_alias_xiaohongshu_matches_xhs():
+    factory = _session_factory()
+    db = factory()
+    try:
+        user = User(
+            id="user-2",
+            username="market-test-2",
+            password="not-used",
+            display_name="市场测试2",
+            role=UserRole.marketing,
+            dept_name="市场部",
+        )
+        rule_set = PlatformRuleSet(
+            id="rule-set-xhs",
+            platform_name="xhs",
+            display_name="小红书",
+        )
+        version = PlatformRuleVersion(
+            id="platform-version-xhs",
+            rule_set_id=rule_set.id,
+            version_label="2026-Q3",
+            raw_text="小红书社区规则",
+            structured_rules=[
+                {
+                    "rule_id": "xhs-001",
+                    "text": "不得使用夸大宣传",
+                    "keywords": ["夸大宣传"],
+                    "risk_level": "平台规则",
+                }
+            ],
+            status=PlatformRuleStatus.active,
+            effective_at=datetime.now(timezone.utc),
+            imported_by_id=user.id,
+            activated_by_id=user.id,
+            activated_at=datetime.now(timezone.utc),
+        )
+        db.add_all([user, rule_set, version])
+        db.commit()
+        result = run_platform_review("本产品夸大宣传", ["小红书"], db)
+        assert result.platform_rule_version_ids == ["platform-version-xhs"]
+        assert result.unavailable_platforms == []
+        assert "小红书" in result.platform_version_labels["platform-version-xhs"]
+    finally:
+        db.close()
+
+
+def test_platform_rule_set_exists_but_no_active_version():
+    factory = _session_factory()
+    db = factory()
+    try:
+        user = User(
+            id="user-3",
+            username="market-test-3",
+            password="not-used",
+            display_name="市场测试3",
+            role=UserRole.marketing,
+            dept_name="市场部",
+        )
+        rule_set = PlatformRuleSet(
+            id="rule-set-no-active",
+            platform_name="weibo",
+            display_name="微博",
+        )
+        version = PlatformRuleVersion(
+            id="platform-version-draft",
+            rule_set_id=rule_set.id,
+            version_label="2026-draft",
+            raw_text="微博平台规则草案",
+            structured_rules=[],
+            status=PlatformRuleStatus.draft,
+            imported_by_id=user.id,
+        )
+        db.add_all([user, rule_set, version])
+        db.commit()
+        result = run_platform_review("普通文案", ["微博"], db)
+        assert result.matched_rules == []
+        assert result.platform_rule_version_ids == []
+        assert result.unavailable_platforms == ["微博"]
+        assert "已有规则集，但暂无生效版本" in result.explanations[0]
+    finally:
+        db.close()
+
+
+def test_unavailable_platform_shows_chinese_name_not_internal_id():
+    factory = _session_factory()
+    db = factory()
+    try:
+        result = run_platform_review("普通文案", ["抖音"], db)
+        assert result.unavailable_platforms == ["抖音"]
+        assert "抖音" in result.explanations[0]
+    finally:
+        db.close()
+
+
+def test_platform_version_labels_populated():
+    factory = _session_factory()
+    _seed_user_material_and_platform_rule(factory)
+    db = factory()
+    try:
+        result = run_platform_review("本产品是全网最低价", ["抖音"], db)
+        assert "platform-version-1" in result.platform_version_labels
+        assert result.platform_version_labels["platform-version-1"] == "抖音 / 2026-07"
+    finally:
+        db.close()

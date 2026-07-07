@@ -105,4 +105,5 @@ def run_review_pipeline(
         case_refs=[],
         platform_rule_version_ids=l4_result.platform_rule_version_ids,
         unavailable_platforms=l4_result.unavailable_platforms,
+        platform_version_labels=l4_result.platform_version_labels,
     )

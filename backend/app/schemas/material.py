@@ -13,6 +13,7 @@ class MaterialSubmit(BaseModel):
 class MaterialUpdate(BaseModel):
     name: str | None = None
     raw_text: str | None = None
+    industry: str | None = None
     platforms: list[str] | None = None
     priority: str | None = None
     deadline: datetime | None = None

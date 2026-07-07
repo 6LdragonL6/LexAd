@@ -7,10 +7,31 @@ from pydantic import Field
 from app.models.knowledge import PlatformRuleSet, PlatformRuleStatus, PlatformRuleVersion
 from app.schemas.review import LayerResult, MatchedRule
 
+_PLATFORM_ALIASES: dict[str, set[str]] = {
+    "抖音": {"douyin", "douyin_ec", "巨量引擎"},
+    "小红书": {"xiaohongshu", "red", "xhs"},
+    "微信": {"wechat", "weixin", "shipinhao", "视频号"},
+    "视频号": {"wechat", "weixin", "shipinhao", "微信"},
+    "微博": {"weibo"},
+    "京东": {"jd", "jingdong"},
+    "淘宝": {"taobao", "tmall"},
+    "拼多多": {"pdd", "pinduoduo"},
+}
+
+
+def _resolve_aliases(platform: str) -> set[str]:
+    normalized = _normalize(platform)
+    for canonical, aliases in _PLATFORM_ALIASES.items():
+        alias_set = {_normalize(a) for a in aliases} | {_normalize(canonical)}
+        if normalized in alias_set:
+            return alias_set
+    return {normalized}
+
 
 class PlatformReviewResult(LayerResult):
     platform_rule_version_ids: list[str] = Field(default_factory=list)
     unavailable_platforms: list[str] = Field(default_factory=list)
+    platform_version_labels: dict[str, str] = Field(default_factory=dict)
 
 
 def run_platform_review(text: str, platforms: list[str], db: Session | None) -> PlatformReviewResult:
@@ -27,29 +48,33 @@ def run_platform_review(text: str, platforms: list[str], db: Session | None) -> 
     explanations: list[str] = []
     version_ids: list[str] = []
     unavailable: list[str] = []
+    version_labels: dict[str, str] = {}
 
     for platform in platforms or []:
         rule_set = _find_rule_set(db, platform)
         if not rule_set:
             unavailable.append(platform)
-            explanations.append(f"平台 {platform} 暂无规则集，请管理员补充平台规则")
+            explanations.append(f"{platform}：暂无规则集，请管理员补充")
             continue
 
         version = _find_active_version(db, rule_set.id)
         if not version:
             unavailable.append(platform)
-            explanations.append(f"平台 {rule_set.display_name} 暂无生效规则版本")
+            explanations.append(f"{rule_set.display_name}：已有规则集，但暂无生效版本")
             continue
 
         version_ids.append(version.id)
+        version_labels[version.id] = f"{rule_set.display_name} / {version.version_label}"
         platform_matches = _match_version_rules(text, rule_set, version)
         matched.extend(platform_matches)
         if platform_matches:
             explanations.append(
-                f"平台 {rule_set.display_name} / {version.version_label} 命中 {len(platform_matches)} 条规则"
+                f"{rule_set.display_name} / {version.version_label} 已用于本次审核，命中 {len(platform_matches)} 条规则"
             )
         else:
-            explanations.append(f"平台 {rule_set.display_name} / {version.version_label} 未命中平台规则")
+            explanations.append(
+                f"{rule_set.display_name} / {version.version_label} 本次未发现与该平台生效规则直接冲突的表达"
+            )
 
     if not platforms:
         explanations.append("未选择投放平台，跳过平台差异适配")
@@ -60,17 +85,16 @@ def run_platform_review(text: str, platforms: list[str], db: Session | None) -> 
         explanations=explanations,
         platform_rule_version_ids=_dedupe(version_ids),
         unavailable_platforms=unavailable,
+        platform_version_labels=version_labels,
     )
 
 
 def _find_rule_set(db: Session, platform: str) -> PlatformRuleSet | None:
-    normalized = _normalize(platform)
+    user_aliases = _resolve_aliases(platform)
     candidates = db.query(PlatformRuleSet).all()
     for candidate in candidates:
-        if normalized in {
-            _normalize(candidate.platform_name),
-            _normalize(candidate.display_name),
-        }:
+        candidate_aliases = _resolve_aliases(candidate.platform_name) | _resolve_aliases(candidate.display_name)
+        if user_aliases & candidate_aliases:
             return candidate
     return None
 

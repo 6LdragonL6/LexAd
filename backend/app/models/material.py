@@ -13,6 +13,7 @@ class MaterialStatus(str, enum.Enum):
     in_legal_review = "in_legal_review"
     approved = "approved"
     returned = "returned"
+    archived = "archived"
 
 
 class MaterialPriority(str, enum.Enum):

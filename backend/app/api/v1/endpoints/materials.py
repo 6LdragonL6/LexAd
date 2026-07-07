@@ -1,8 +1,12 @@
 import json
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Response
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.deps import ensure_material_visible, get_current_user, require_marketing
+from app.models.material import MaterialStatus
+from app.models.review import Review
 from app.models.user import User
 from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialOut, MaterialListItem, PreviewTextResponse
 from app.services import material_service
@@ -132,3 +136,38 @@ def get_versions(material_id: str, db: Session = Depends(get_db), user: User = D
         raise HTTPException(status_code=404, detail="Material not found")
     ensure_material_visible(user, material)
     return {"versions": material_service.get_material_versions(db, material_id)}
+
+
+@router.post("/{material_id}/archive", response_model=MaterialOut)
+def archive_material(material_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    material = material_service.get_material(db, material_id)
+    if not material:
+        raise HTTPException(status_code=404, detail="Material not found")
+    if material.submitter_id != user.id:
+        raise HTTPException(status_code=403, detail="Not your material")
+    if material.status.value not in ("draft", "returned"):
+        raise HTTPException(status_code=400, detail="只有草稿和已退回的物料可以归档")
+    material.status = MaterialStatus.archived
+    material.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(material)
+    return material
+
+
+@router.delete("/{material_id}", status_code=204)
+def delete_material(material_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    material = material_service.get_material(db, material_id)
+    if not material:
+        raise HTTPException(status_code=404, detail="Material not found")
+    if material.submitter_id != user.id:
+        raise HTTPException(status_code=403, detail="Not your material")
+    if material.status != MaterialStatus.draft:
+        raise HTTPException(status_code=400, detail="只有草稿状态的物料可以删除")
+
+    review_count = db.query(Review).filter(Review.material_id == material_id).count()
+    if review_count > 0:
+        raise HTTPException(status_code=400, detail="该物料已有审查记录，不能物理删除。请使用归档功能。")
+
+    db.delete(material)
+    db.commit()
+    return Response(status_code=204)

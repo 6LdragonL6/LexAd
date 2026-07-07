@@ -546,7 +546,7 @@ onMounted(loadAll)
               <div class="rounded-xl border border-gray-200 bg-white p-4">
                 <h3 class="font-semibold text-gray-800">新增平台规则集</h3>
                 <div class="mt-3 space-y-3">
-                  <input v-model="ruleSetForm.platform_name" class="input" placeholder="平台标识，例如 douyin" />
+                  <input v-model="ruleSetForm.platform_name" class="input" placeholder="平台标识，例如抖音" />
                   <input v-model="ruleSetForm.display_name" class="input" placeholder="显示名称，例如 抖音" />
                   <textarea v-model="ruleSetForm.description" class="input min-h-20" placeholder="规则集说明" />
                   <button class="btn-primary w-full" :disabled="loading || !ruleSetForm.platform_name || !ruleSetForm.display_name" @click="createRuleSet">创建规则集</button>

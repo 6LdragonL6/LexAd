@@ -14,6 +14,7 @@ const materials = ref<Material[]>([])
 const queue = ref<ReviewQueueItem[]>([])
 const loading = ref(true)
 const navigationError = ref('')
+const archiving = ref<Record<string, boolean>>({})
 
 onMounted(async () => {
   try {
@@ -25,7 +26,7 @@ onMounted(async () => {
   }
 })
 
-const pendingCount = computed(() => materials.value.filter(m => m.status !== 'approved' && m.status !== 'draft').length)
+const pendingCount = computed(() => materials.value.filter(m => !['approved', 'draft', 'archived'].includes(m.status)).length)
 const returnedCount = computed(() => materials.value.filter(m => m.status === 'returned').length)
 const queueCount = computed(() => queue.value.length)
 
@@ -38,6 +39,23 @@ async function openMaterial(material: Material) {
     navigationError.value = error.response?.status === 404
       ? '该物料还没有审查记录'
       : (error.response?.data?.detail || '无法打开审查记录')
+  }
+}
+
+function getQueueInfo(materialId: string): ReviewQueueItem | undefined {
+  return queue.value.find(q => q.material_id === materialId)
+}
+
+async function handleArchive(material: Material) {
+  if (!confirm('确认归档该物料？归档后不再参与待办。')) return
+  archiving.value[material.id] = true
+  try {
+    await materialsApi.archive(material.id)
+    materials.value = materials.value.filter(m => m.id !== material.id)
+  } catch (e: any) {
+    alert(e.response?.data?.detail || '归档失败')
+  } finally {
+    archiving.value[material.id] = false
   }
 }
 </script>
@@ -70,16 +88,30 @@ async function openMaterial(material: Material) {
           <div>
             <button class="text-sky-700 hover:underline text-left" @click="openMaterial(m)">{{ m.name }}</button>
             <span class="text-xs text-gray-400 ml-2">{{ m.industry }}</span>
+            <span v-if="m.current_version > 1" class="text-xs text-gray-400 ml-1">第{{ m.current_version }}次</span>
           </div>
-          <span class="text-xs px-2 py-0.5 rounded-full"
-                :class="{
-                  'bg-green-100 text-green-700': m.status === 'approved',
-                  'bg-yellow-100 text-yellow-700': m.status === 'pending_legal',
-                  'bg-red-100 text-red-700': m.status === 'returned',
-                  'bg-gray-100 text-gray-600': m.status === 'draft',
-                }">
-            {{ m.status === 'approved' ? '已通过' : m.status === 'pending_legal' ? '待法务审核' : m.status === 'returned' ? '已退回' : m.status === 'draft' ? '草稿' : m.status }}
-          </span>
+          <div class="flex items-center gap-2">
+            <span class="text-xs px-2 py-0.5 rounded-full"
+                  :class="{
+                    'bg-green-100 text-green-700': m.status === 'approved',
+                    'bg-yellow-100 text-yellow-700': m.status === 'pending_legal',
+                    'bg-red-100 text-red-700': m.status === 'returned',
+                    'bg-gray-100 text-gray-600': m.status === 'draft',
+                    'bg-gray-100 text-gray-500': m.status === 'archived',
+                  }">
+              {{ m.status === 'approved' ? '已通过' : m.status === 'pending_legal' ? '待法务审核' : m.status === 'returned' ? '已退回' : m.status === 'draft' ? '草稿' : m.status === 'archived' ? '已归档' : m.status }}
+            </span>
+          </div>
+          <!-- Return info for marketing -->
+          <div v-if="store.isMarketing && m.status === 'returned'" class="flex flex-wrap gap-2 items-center text-xs">
+            <span class="text-orange-600">
+              法务已退回
+              <template v-if="getQueueInfo(m.id)?.return_reasons">：{{ getQueueInfo(m.id)?.return_reasons }}</template>
+            </span>
+            <span v-if="getQueueInfo(m.id)?.legal_notes" class="text-gray-500">备注：{{ getQueueInfo(m.id)?.legal_notes }}</span>
+            <router-link :to="`/submit?edit=${m.id}`" class="text-sky-600 hover:underline">修改并重新提交</router-link>
+            <button @click.stop="handleArchive(m)" :disabled="archiving[m.id]" class="text-gray-500 hover:text-gray-700 hover:underline">归档</button>
+          </div>
         </div>
       </div>
       <p v-else-if="!loading" class="text-gray-400 text-center py-8">

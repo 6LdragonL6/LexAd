@@ -6,6 +6,7 @@ class MatchedRule(BaseModel):
     rule_text: str
     source_law: str = ""
     match_type: str = "keyword"
+    explanation: str = ""
 
 class LayerResult(BaseModel):
     layer: str
@@ -23,6 +24,7 @@ class EngineResult(BaseModel):
     case_refs: list[dict] = Field(default_factory=list)
     platform_rule_version_ids: list[str] = Field(default_factory=list)
     unavailable_platforms: list[str] = Field(default_factory=list)
+    platform_version_labels: dict[str, str] = Field(default_factory=dict)
 
 class AIReviewRequest(BaseModel):
     material_id: str
@@ -75,3 +77,8 @@ class ReviewQueueItem(BaseModel):
     status: str
     created_at: datetime
     waiting_hours: float = 0
+    legal_decision: str | None = None
+    return_reasons: str | None = None
+    legal_notes: str | None = None
+    version: int = 1
+    material_version: int = 1

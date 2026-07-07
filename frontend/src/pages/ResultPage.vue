@@ -227,10 +227,14 @@ onUnmounted(() => {
               <div v-for="issue in legalIssues" :key="issue.rule_id" class="rounded-xl border border-gray-200 p-4">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <span class="font-medium text-gray-800">{{ issue.match_type }}</span>
-                  <span class="text-xs text-gray-400">{{ issue.rule_id }}</span>
+                  <span class="text-xs text-gray-400">规则命中</span>
                 </div>
                 <p class="text-sm text-gray-700 mt-2">{{ issue.rule_text }}</p>
                 <p class="text-xs text-gray-400 mt-2">依据：{{ issue.source_law || '未提供' }}</p>
+                <details class="mt-2">
+                  <summary class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">技术详情</summary>
+                  <p class="mt-1 text-xs text-gray-400 font-mono break-all">规则编号：{{ issue.rule_id }}</p>
+                </details>
               </div>
             </div>
             <p v-else class="text-sm text-gray-400">未命中明确法律或平台规则。</p>
@@ -289,11 +293,14 @@ onUnmounted(() => {
             <div class="space-y-3 text-sm">
               <div>
                 <p class="text-xs text-gray-400">平台规则版本</p>
-                <p class="text-gray-700 break-all">{{ review.platform_rule_version_ids?.join(', ') || '未命中或待补充' }}</p>
+                <template v-if="review.ai_result?.platform_version_labels && Object.keys(review.ai_result.platform_version_labels).length > 0">
+                  <p v-for="(label, vid) in review.ai_result.platform_version_labels" :key="vid" class="text-gray-700">{{ label }}</p>
+                </template>
+                <p v-else class="text-gray-500">未命中或待补充</p>
               </div>
               <div>
                 <p class="text-xs text-gray-400">舆情资料库版本</p>
-                <p class="text-gray-700 break-all">{{ review.public_opinion_library_version_id || '未使用' }}</p>
+                <p class="text-gray-700">{{ review.public_opinion_result?.library_version || review.public_opinion_library_version_id || '未使用' }}</p>
               </div>
               <div>
                 <p class="text-xs text-gray-400">法律模块完成时间</p>
@@ -304,12 +311,24 @@ onUnmounted(() => {
                 <p class="text-gray-700">{{ formatDate(review.public_opinion_module_completed_at) }}</p>
               </div>
             </div>
+            <!-- Tech details collapsible -->
+            <details class="mt-3">
+              <summary class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">技术详情</summary>
+              <div class="mt-2 space-y-1 text-xs text-gray-400 font-mono break-all">
+                <p v-if="review.platform_rule_version_ids?.length">平台版本ID: {{ review.platform_rule_version_ids.join(', ') }}</p>
+                <p v-if="review.public_opinion_library_version_id">舆情资料库ID: {{ review.public_opinion_library_version_id }}</p>
+                <p>审查ID: {{ review.id }}</p>
+                <p>物料ID: {{ review.material_id }}</p>
+              </div>
+            </details>
           </div>
 
           <div class="card">
             <h3 class="font-semibold text-gray-800 mb-3">平台规则状态</h3>
-            <div v-if="review.ai_result?.unavailable_platforms?.length" class="rounded-lg bg-yellow-50 text-yellow-700 p-3 text-sm">
-              以下平台暂无生效规则：{{ review.ai_result.unavailable_platforms.join('、') }}。这不是通过结论，需要管理员补充平台规则。
+            <div v-if="review.ai_result?.unavailable_platforms?.length" class="space-y-2">
+              <div v-for="platform in review.ai_result.unavailable_platforms" :key="platform" class="rounded-lg bg-yellow-50 text-yellow-700 p-3 text-sm">
+                {{ platform }}：暂无生效规则，请管理员补充平台规则。
+              </div>
             </div>
             <p v-else class="text-sm text-gray-600">本次审核已固定可用平台规则版本。</p>
           </div>

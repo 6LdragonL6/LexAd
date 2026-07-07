@@ -40,7 +40,7 @@ def get_material(db: Session, material_id: str) -> Material | None:
 
 
 def list_materials(db: Session, user: User) -> list[Material]:
-    query = db.query(Material)
+    query = db.query(Material).filter(Material.status != MaterialStatus.archived)
     if user.role == UserRole.marketing:
         query = query.filter(Material.submitter_id == user.id)
     elif user.role == UserRole.legal:
@@ -61,6 +61,18 @@ def update_material(db: Session, material_id: str, data: MaterialUpdate) -> Mate
     material = db.query(Material).filter(Material.id == material_id).first()
     if not material:
         return None
+
+    if material.status == MaterialStatus.returned:
+        changed = False
+        if data.raw_text is not None and data.raw_text != material.raw_text:
+            changed = True
+        if data.industry is not None and data.industry != material.industry:
+            changed = True
+        if data.platforms is not None and data.platforms != material.platforms:
+            changed = True
+        if changed:
+            material.current_version += 1
+
     update_data = data.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(material, key, value)
@@ -73,4 +85,17 @@ def update_material(db: Session, material_id: str, data: MaterialUpdate) -> Mate
 def get_material_versions(db: Session, material_id: str) -> list[dict]:
     from app.models.review import Review
     reviews = db.query(Review).filter(Review.material_id == material_id).order_by(Review.version.desc()).all()
-    return [{"version": r.version, "risk_score": r.ai_risk_score, "decision": r.legal_decision.value if r.legal_decision else None, "created_at": r.created_at.isoformat()} for r in reviews]
+    return [
+        {
+            "version": r.version,
+            "risk_score": r.ai_risk_score,
+            "task_status": r.task_status,
+            "legal_decision": r.legal_decision.value if r.legal_decision else None,
+            "return_reasons": r.return_reasons,
+            "legal_notes": r.legal_notes,
+            "reviewed_at": r.reviewed_at.isoformat() if r.reviewed_at else None,
+            "created_at": r.created_at.isoformat(),
+            "version_label": f"第{r.version}次提交",
+        }
+        for r in reviews
+    ]

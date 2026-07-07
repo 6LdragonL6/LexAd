@@ -21,4 +21,8 @@ export const materialsApi = {
     client.put<Material>(`/materials/${id}`, data),
   versions: (id: string) =>
     client.get<{ versions: any[] }>(`/materials/${id}/versions`),
+  archive: (id: string) =>
+    client.post<Material>(`/materials/${id}/archive`),
+  delete: (id: string) =>
+    client.delete(`/materials/${id}`),
 }

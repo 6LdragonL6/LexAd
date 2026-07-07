@@ -13,7 +13,8 @@ defineProps<{ result: EngineResult }>()
         <p v-for="exp in layer.explanations" :key="exp" class="text-gray-500">{{ exp }}</p>
         <div v-for="rule in layer.matched_rules" :key="rule.rule_id" class="text-xs py-1">
           <span class="text-red-600">{{ rule.rule_text }}</span>
-          <span v-if="rule.source_law" class="text-gray-400 ml-2">— {{ rule.source_law }}</span>
+          <span v-if="rule.source_law" class="text-gray-400 ml-2">｜{{ rule.source_law }}</span>
+          <p v-if="rule.explanation" class="text-gray-500 mt-0.5 ml-0">{{ rule.explanation }}</p>
         </div>
       </div>
     </details>
@@ -21,7 +22,7 @@ defineProps<{ result: EngineResult }>()
       <h4 class="text-sm font-semibold text-gray-700 mb-2">修改建议</h4>
       <ul class="text-sm text-gray-600 space-y-1">
         <li v-for="s in result.suggestions" :key="s" class="flex items-start gap-1">
-          <span class="text-sky-500">▸</span> {{ s }}
+          <span class="text-sky-500">-</span> {{ s }}
         </li>
       </ul>
     </div>

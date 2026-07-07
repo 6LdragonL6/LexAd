@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -13,6 +15,18 @@ from app.models.knowledge import (
     PublicOpinionLibraryVersion,
 )
 from app.services import model_service
+
+_TRIGGER_WORDS_PATH = Path(__file__).resolve().parent.parent.parent.parent / "data" / "trigger_words.json"
+
+
+def _load_trigger_words() -> dict[str, list[str]]:
+    if not _TRIGGER_WORDS_PATH.exists():
+        return {}
+    try:
+        data = json.loads(_TRIGGER_WORDS_PATH.read_text(encoding="utf-8"))
+        return data.get("triggers", {})
+    except (json.JSONDecodeError, OSError):
+        return {}
 
 
 @dataclass
@@ -61,8 +75,9 @@ def run_public_opinion_review(
         )
 
     deterministic_hits = _deterministic_hits(material_text, industry, platforms, cases)
+    trigger_word_hits = _trigger_word_hits(material_text)
     similar_events = _similar_events(deterministic_hits, cases)
-    fallback_result = _fallback_result(deterministic_hits, similar_events)
+    fallback_result = _fallback_result(deterministic_hits, similar_events, trigger_word_hits)
 
     try:
         model_result = model_service.explain_public_opinion_risk(
@@ -76,6 +91,7 @@ def run_public_opinion_review(
             "status": "succeeded",
             "similar_events": similar_events,
             "deterministic_hits": deterministic_hits,
+            "trigger_word_hits": trigger_word_hits,
             "model_available": True,
             "library_version_id": library_version.id,
             "library_version": library_version.version,
@@ -83,11 +99,12 @@ def run_public_opinion_review(
     except model_service.ModelServiceError as exc:
         result = {
             **fallback_result,
-            "status": "model_unavailable" if similar_events or deterministic_hits else "uncertain",
+            "status": "model_unavailable" if (similar_events or deterministic_hits or trigger_word_hits) else "uncertain",
             "model_available": False,
             "model_error": str(exc)[:200],
             "library_version_id": library_version.id,
             "library_version": library_version.version,
+            "trigger_word_hits": trigger_word_hits,
         }
 
     return PublicOpinionReview(
@@ -206,8 +223,11 @@ def _similar_events(
 def _fallback_result(
     deterministic_hits: list[dict[str, Any]],
     similar_events: list[dict[str, Any]],
+    trigger_word_hits: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    if not deterministic_hits:
+    trigger_word_hits = trigger_word_hits or []
+
+    if not deterministic_hits and not trigger_word_hits:
         return {
             "risk_level": "uncertain",
             "risk_topics": [],
@@ -215,32 +235,68 @@ def _fallback_result(
             "propagation_drivers": [],
             "similar_events": similar_events,
             "deterministic_hits": [],
+            "trigger_word_hits": [],
             "suggestions": ["当前物料未命中已发布舆情案例的明确触发因素，建议人工复核敏感表达"],
             "explanation": "资料库有案例，但当前物料缺少足够相似依据，不能直接判断为低风险。",
             "confidence": 20,
         }
 
+    # Merge trigger hits into risk assessment
+    trigger_categories = list({h["category"] for h in trigger_word_hits})
+    trigger_risk_topics = _dedupe(
+        trigger_categories
+        + _flatten(hit.get("risk_topics", []) for hit in deterministic_hits)
+    )
+
+    all_suggestions = ["建议品牌负责人复核舆情触发点，并参考相似历史事件的后果"]
+    if trigger_word_hits:
+        matched_words = [h["matched_word"] for h in trigger_word_hits]
+        all_suggestions.append(
+            f"触发词命中：{', '.join(matched_words[:5])}，请核实是否构成舆情风险"
+        )
+
+    if not deterministic_hits:
+        # Only trigger word hits, no case matches
+        trigger_confidence = min(len(trigger_word_hits) * 15, 60)
+        return {
+            "risk_level": "medium" if len(trigger_word_hits) >= 2 else "low",
+            "risk_topics": trigger_risk_topics,
+            "affected_groups": [],
+            "propagation_drivers": [],
+            "similar_events": similar_events,
+            "deterministic_hits": [],
+            "trigger_word_hits": trigger_word_hits,
+            "suggestions": all_suggestions,
+            "explanation": f"物料命中 {len(trigger_word_hits)} 个触发词但未匹配历史案例，建议人工判定。",
+            "confidence": trigger_confidence,
+        }
+
     max_score = max(hit["score"] for hit in deterministic_hits)
+    # Boost score based on trigger word matches
+    trigger_boost = min(len(trigger_word_hits) * 10, 30)
+    adjusted_score = min(max_score + trigger_boost, 100)
+
     severities = {str(hit.get("severity_level") or "").lower() for hit in deterministic_hits}
-    if max_score >= 80 or ("severe" in severities and max_score >= 30):
+    if adjusted_score >= 80 or ("severe" in severities and adjusted_score >= 40):
         risk_level = "severe"
-    elif max_score >= 60 or ("high" in severities and max_score >= 30):
+    elif adjusted_score >= 60 or ("high" in severities and adjusted_score >= 40):
         risk_level = "high"
-    elif max_score >= 30 or ("medium" in severities and max_score >= 20):
+    elif adjusted_score >= 30 or ("medium" in severities and adjusted_score >= 25):
         risk_level = "medium"
     else:
         risk_level = "low"
 
     return {
         "risk_level": risk_level,
-        "risk_topics": _dedupe(_flatten(hit.get("risk_topics", []) for hit in deterministic_hits)),
+        "risk_topics": trigger_risk_topics,
         "affected_groups": _dedupe(_flatten(hit.get("affected_groups", []) for hit in deterministic_hits)),
         "propagation_drivers": _dedupe(_flatten(hit.get("propagation_drivers", []) for hit in deterministic_hits)),
         "similar_events": similar_events,
         "deterministic_hits": deterministic_hits,
-        "suggestions": ["建议品牌负责人复核舆情触发点，并参考相似历史事件的后果"],
-        "explanation": "物料命中已发布舆情案例中的触发因素或相近行业/平台标签。",
-        "confidence": min(max_score, 90),
+        "trigger_word_hits": trigger_word_hits,
+        "suggestions": all_suggestions,
+        "explanation": "物料命中已发布舆情案例中的触发因素或触发词，建议人工复核。",
+        "confidence": min(adjusted_score, 90),
     }
 
 
@@ -278,6 +334,16 @@ def _dedupe(values: list[str]) -> list[str]:
         seen.add(value)
         result.append(value)
     return result
+
+
+def _trigger_word_hits(material_text: str) -> list[dict[str, Any]]:
+    triggers = _load_trigger_words()
+    hits: list[dict[str, Any]] = []
+    for category, words in triggers.items():
+        for word in words:
+            if word in material_text:
+                hits.append({"category": category, "matched_word": word})
+    return hits
 
 
 def _normalize(value: str) -> str:

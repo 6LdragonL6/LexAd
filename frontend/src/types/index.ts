@@ -30,6 +30,7 @@ export interface MatchedRule {
   rule_text: string
   source_law: string
   match_type: string
+  explanation?: string
 }
 
 export interface LayerResult {
@@ -49,6 +50,7 @@ export interface EngineResult {
   case_refs: Record<string, any>[]
   platform_rule_version_ids?: string[]
   unavailable_platforms?: string[]
+  platform_version_labels?: Record<string, string>
 }
 
 export interface Review {
@@ -93,6 +95,11 @@ export interface ReviewQueueItem {
   status: string
   created_at: string
   waiting_hours?: number
+  legal_decision?: 'approved' | 'returned' | 'conditional' | null
+  return_reasons?: string | null
+  legal_notes?: string | null
+  version?: number
+  material_version?: number
 }
 
 export interface LawItem {

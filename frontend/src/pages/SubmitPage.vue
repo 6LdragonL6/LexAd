@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 
+const route = useRoute()
 const router = useRouter()
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -31,6 +32,11 @@ const previewing = ref(false)
 const submitting = ref(false)
 const error = ref('')
 const showMoreSettings = ref(false)
+const editMaterialId = ref<string | null>(null)
+const isResubmit = ref(false)
+const resubmitVersion = ref(0)
+const resubmitStatus = ref('')
+const loadingEdit = ref(false)
 
 const finalText = computed({
   get: () => extractedText.value || form.value.raw_text,
@@ -144,6 +150,35 @@ function autoMaterialName() {
   return summary ? `${summary}${finalText.value.trim().length > 24 ? '…' : ''}` : '未命名广告物料'
 }
 
+onMounted(async () => {
+  const editId = route.query.edit as string | undefined
+  if (!editId) return
+  editMaterialId.value = editId
+  loadingEdit.value = true
+  try {
+    const mRes = await materialsApi.get(editId)
+    const m = mRes.data
+    if (m.status !== 'returned') {
+      error.value = '该物料当前状态不允许重新提交'
+      return
+    }
+    isResubmit.value = true
+    resubmitVersion.value = m.current_version
+    resubmitStatus.value = m.status
+    form.value.name = m.name
+    form.value.raw_text = m.raw_text
+    form.value.industries = m.industry ? m.industry.split('、') : []
+    form.value.platforms = m.platforms || []
+    form.value.material_type = m.material_type
+    form.value.priority = m.priority as string
+    form.value.deadline = m.deadline ? m.deadline.slice(0, 16) : null
+  } catch (e: any) {
+    error.value = e.response?.data?.detail || '加载物料失败'
+  } finally {
+    loadingEdit.value = false
+  }
+})
+
 async function handleSubmit() {
   error.value = ''
   if (!finalText.value.trim()) {
@@ -160,21 +195,36 @@ async function handleSubmit() {
   }
 
   submitting.value = true
-  const fd = new FormData()
-  const body = JSON.stringify({
-    ...form.value,
-    name: autoMaterialName(),
-    industry: form.value.industries.join('、'),
-    raw_text: finalText.value,
-    deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
-  })
-  fd.append('body', body)
-  if (selectedFile.value) fd.append('file', selectedFile.value)
-
   try {
-    const materialResponse = await materialsApi.submit(fd)
-    const reviewResponse = await reviewsApi.aiReview(materialResponse.data.id)
-    router.push(`/result/${reviewResponse.data.id}`)
+    if (isResubmit.value && editMaterialId.value) {
+      // Resubmit: update existing material then trigger AI review
+      await materialsApi.update(editMaterialId.value, {
+        name: autoMaterialName(),
+        raw_text: finalText.value,
+        industry: form.value.industries.join('、'),
+        platforms: form.value.platforms,
+        priority: form.value.priority,
+        deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
+      })
+      const reviewResponse = await reviewsApi.aiReview(editMaterialId.value)
+      router.push(`/result/${reviewResponse.data.id}`)
+    } else {
+      // New submission
+      const fd = new FormData()
+      const body = JSON.stringify({
+        ...form.value,
+        name: autoMaterialName(),
+        industry: form.value.industries.join('、'),
+        raw_text: finalText.value,
+        deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
+      })
+      fd.append('body', body)
+      if (selectedFile.value) fd.append('file', selectedFile.value)
+
+      const materialResponse = await materialsApi.submit(fd)
+      const reviewResponse = await reviewsApi.aiReview(materialResponse.data.id)
+      router.push(`/result/${reviewResponse.data.id}`)
+    }
   } catch (requestError: any) {
     error.value = requestError.response?.data?.detail || '提交失败'
   } finally {
@@ -191,7 +241,13 @@ async function handleSubmit() {
         <p class="text-sm text-gray-500">只需提供物料内容、行业和投放平台即可开始法律与舆情双轴风险审查。</p>
       </div>
 
-      <form class="space-y-5" @submit.prevent="handleSubmit">
+        <div v-if="loadingEdit" class="text-gray-400 py-4 text-center">加载物料中...</div>
+        <div v-else-if="isResubmit" class="bg-orange-50 border border-orange-200 rounded-lg px-4 py-3 mb-4">
+          <p class="text-orange-800 font-medium">将作为第 {{ resubmitVersion + 1 }} 次提交重新进入审查</p>
+          <p class="text-orange-600 text-sm mt-1">修改后重新提交，系统会使用新版本号进行审查。</p>
+        </div>
+
+        <form v-if="!loadingEdit" class="space-y-5" @submit.prevent="handleSubmit">
         <section class="card">
           <div class="flex items-start justify-between gap-4">
             <div>
@@ -314,7 +370,7 @@ async function handleSubmit() {
         <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
 
         <button type="submit" :disabled="!canSubmit" class="btn-primary w-full min-h-12">
-          {{ submitting ? '提交并审查中…' : '开始风险审查' }}
+          {{ submitting ? (isResubmit ? '重新提交并审查中…' : '提交并审查中…') : (isResubmit ? '修改并重新审查' : '开始风险审查') }}
         </button>
       </form>
     </div>

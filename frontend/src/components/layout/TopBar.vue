@@ -10,7 +10,7 @@ const menuOpen = ref(false)
 const navItems = computed(() => [
   { label: '首页', description: '工作台与近期任务', to: '/', icon: 'home', show: true },
   { label: '提交物料', description: '提交广告内容并开始审查', to: '/submit', icon: 'submit', show: store.canSubmit },
-  { label: '法务审核', description: '查看并处理待审物料', to: '/legal', icon: 'legal', show: store.isLegal },
+  { label: store.isMarketing ? '我的提交' : '法务审核', description: '查看并处理待审物料', to: '/legal', icon: 'legal', show: store.isLegal || store.isMarketing },
   { label: '资料中心', description: '维护舆情案例和平台规则', to: '/admin/knowledge', icon: 'admin', show: store.isAdmin },
   { label: '法规数据库', description: '阅读五级法规知识库', to: '/knowledge', icon: 'knowledge', show: true },
 ].filter((item) => item.show))
@@ -107,7 +107,7 @@ onUnmounted(() => {
         </div>
         <div class="ml-3 min-w-0">
           <p class="font-bold text-lg text-gray-800 leading-tight">LexAd</p>
-          <p class="text-xs text-gray-400 mt-0.5">v0.4.2</p>
+          <p class="text-xs text-gray-400 mt-0.5">v0.5.0</p>
         </div>
         <button
           type="button"

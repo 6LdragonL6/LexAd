@@ -270,6 +270,11 @@ def get_legal_queue(db: Session, user: User) -> list[dict]:
                     (datetime.now(timezone.utc) - _as_utc(review.created_at)).total_seconds() / 3600,
                     1,
                 ),
+                "legal_decision": review.legal_decision.value if review.legal_decision else None,
+                "return_reasons": review.return_reasons,
+                "legal_notes": review.legal_notes,
+                "version": review.version,
+                "material_version": material.current_version,
             }
         )
     return results
