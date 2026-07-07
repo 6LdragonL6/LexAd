@@ -85,6 +85,65 @@ JSON 格式：
         raise ModelServiceError(f"DeepSeek public opinion structuring failed: {str(exc)[:200]}") from exc
 
 
+def explain_public_opinion_risk(
+    *,
+    material_text: str,
+    deterministic_hits: list[dict[str, Any]],
+    similar_events: list[dict[str, Any]],
+) -> dict[str, Any]:
+    settings = get_settings()
+    if not settings.DEEPSEEK_API_KEY.strip():
+        raise ModelServiceError("DeepSeek API key is not configured")
+
+    system_prompt = """你是企业品牌舆情风险审查助手。只根据广告物料、确定性命中和相似历史事件解释风险。
+要求：
+1. 不得虚构未提供的历史事件或后果。
+2. 依据不足时 risk_level 使用 uncertain。
+3. 只输出 JSON，不输出 Markdown。
+JSON 格式：
+{
+  "risk_level": "low|medium|high|severe|uncertain",
+  "risk_topics": [],
+  "affected_groups": [],
+  "propagation_drivers": [],
+  "suggestions": [],
+  "explanation": "",
+  "confidence": 0
+}"""
+    user_prompt = json.dumps(
+        {
+            "material_text": material_text,
+            "deterministic_hits": deterministic_hits,
+            "similar_events": similar_events,
+        },
+        ensure_ascii=False,
+    )
+    try:
+        client = OpenAI(
+            api_key=settings.DEEPSEEK_API_KEY,
+            base_url=settings.DEEPSEEK_BASE_URL,
+        )
+        response = client.chat.completions.create(
+            model=settings.DEEPSEEK_MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.1,
+            max_tokens=1536,
+        )
+        content = response.choices[0].message.content
+        if not content:
+            raise ModelServiceError("DeepSeek returned an empty response")
+        result = _parse_json_content(content)
+        _validate_public_opinion_risk_result(result)
+        return result
+    except ModelServiceError:
+        raise
+    except Exception as exc:
+        raise ModelServiceError(f"DeepSeek public opinion risk explanation failed: {str(exc)[:200]}") from exc
+
+
 def _parse_json_content(content: str) -> dict[str, Any]:
     normalized = content.strip()
     if normalized.startswith("```"):
@@ -112,3 +171,13 @@ def _validate_public_opinion_model_result(result: dict[str, Any]) -> None:
     for field in required_list_fields:
         if field not in result or not isinstance(result[field], list):
             raise ModelServiceError(f"DeepSeek result missing list field: {field}")
+
+
+def _validate_public_opinion_risk_result(result: dict[str, Any]) -> None:
+    if result.get("risk_level") not in {"low", "medium", "high", "severe", "uncertain"}:
+        raise ModelServiceError("DeepSeek result has invalid risk_level")
+    for field in ["risk_topics", "affected_groups", "propagation_drivers", "suggestions"]:
+        if field not in result or not isinstance(result[field], list):
+            raise ModelServiceError(f"DeepSeek result missing list field: {field}")
+    if "explanation" not in result or not isinstance(result["explanation"], str):
+        raise ModelServiceError("DeepSeek result missing explanation")

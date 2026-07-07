@@ -1,0 +1,283 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any
+
+from sqlalchemy.orm import Session
+
+from app.models.knowledge import (
+    PublicOpinionEvent,
+    PublicOpinionEventStatus,
+    PublicOpinionEventVersion,
+    PublicOpinionLibraryVersion,
+)
+from app.services import model_service
+
+
+@dataclass
+class PublicOpinionReview:
+    status: str
+    result: dict[str, Any]
+    library_version_id: str | None = None
+    error: str | None = None
+
+
+def run_public_opinion_review(
+    *,
+    material_text: str,
+    industry: str,
+    platforms: list[str],
+    db: Session,
+) -> PublicOpinionReview:
+    library_version = _latest_library_version(db)
+    if not library_version or library_version.event_count == 0:
+        return PublicOpinionReview(
+            status="unavailable",
+            library_version_id=library_version.id if library_version else None,
+            result={
+                "status": "knowledge_base_empty",
+                "risk_level": "unavailable",
+                "message": "舆情资料库待补充，暂无法完成基于案例的舆情判断",
+                "similar_events": [],
+                "deterministic_hits": [],
+                "suggestions": ["请管理员先发布舆情案例，再启用案例化舆情判断"],
+            },
+        )
+
+    cases = _load_published_cases(db, library_version)
+    if not cases:
+        return PublicOpinionReview(
+            status="unavailable",
+            library_version_id=library_version.id,
+            result={
+                "status": "knowledge_base_empty",
+                "risk_level": "unavailable",
+                "message": "当前舆情资料库快照中没有可用案例",
+                "similar_events": [],
+                "deterministic_hits": [],
+                "suggestions": ["请管理员检查舆情案例发布状态"],
+            },
+        )
+
+    deterministic_hits = _deterministic_hits(material_text, industry, platforms, cases)
+    similar_events = _similar_events(deterministic_hits, cases)
+    fallback_result = _fallback_result(deterministic_hits, similar_events)
+
+    try:
+        model_result = model_service.explain_public_opinion_risk(
+            material_text=material_text,
+            deterministic_hits=deterministic_hits,
+            similar_events=similar_events,
+        )
+        result = {
+            **fallback_result,
+            **model_result,
+            "status": "succeeded",
+            "similar_events": similar_events,
+            "deterministic_hits": deterministic_hits,
+            "model_available": True,
+            "library_version_id": library_version.id,
+            "library_version": library_version.version,
+        }
+    except model_service.ModelServiceError as exc:
+        result = {
+            **fallback_result,
+            "status": "model_unavailable" if similar_events or deterministic_hits else "uncertain",
+            "model_available": False,
+            "model_error": str(exc)[:200],
+            "library_version_id": library_version.id,
+            "library_version": library_version.version,
+        }
+
+    return PublicOpinionReview(
+        status="succeeded",
+        library_version_id=library_version.id,
+        result=result,
+    )
+
+
+def _latest_library_version(db: Session) -> PublicOpinionLibraryVersion | None:
+    return (
+        db.query(PublicOpinionLibraryVersion)
+        .order_by(PublicOpinionLibraryVersion.version.desc(), PublicOpinionLibraryVersion.published_at.desc())
+        .first()
+    )
+
+
+def _load_published_cases(
+    db: Session,
+    library_version: PublicOpinionLibraryVersion,
+) -> list[dict[str, Any]]:
+    event_ids = library_version.event_ids or []
+    if not event_ids:
+        return []
+    events = (
+        db.query(PublicOpinionEvent)
+        .filter(
+            PublicOpinionEvent.id.in_(event_ids),
+            PublicOpinionEvent.status == PublicOpinionEventStatus.published,
+        )
+        .all()
+    )
+    cases = []
+    for event in events:
+        version = (
+            db.query(PublicOpinionEventVersion)
+            .filter(PublicOpinionEventVersion.event_id == event.id)
+            .order_by(PublicOpinionEventVersion.version.desc())
+            .first()
+        )
+        if not version:
+            continue
+        cases.append({"event": event, "version": version})
+    return cases
+
+
+def _deterministic_hits(
+    material_text: str,
+    industry: str,
+    platforms: list[str],
+    cases: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    hits = []
+    normalized_platforms = {_normalize(platform) for platform in platforms}
+    normalized_industry = _normalize(industry)
+
+    for case in cases:
+        event: PublicOpinionEvent = case["event"]
+        version: PublicOpinionEventVersion = case["version"]
+        tokens = _case_tokens(version)
+        matched_tokens = [token for token in tokens if token and token in material_text]
+        industry_bonus = normalized_industry and normalized_industry in {_normalize(item) for item in version.industry}
+        platform_bonus = bool(normalized_platforms & {_normalize(item) for item in version.platforms})
+        if not matched_tokens and not industry_bonus and not platform_bonus:
+            continue
+        score = len(matched_tokens) * 20
+        if industry_bonus:
+            score += 10
+        if platform_bonus:
+            score += 10
+        hits.append(
+            {
+                "event_id": event.id,
+                "event_title": event.title or version.title,
+                "matched_tokens": matched_tokens,
+                "risk_topics": version.risk_topics,
+                "affected_groups": version.affected_groups,
+                "propagation_drivers": version.propagation_drivers,
+                "historical_consequence": version.consequences,
+                "severity_level": version.severity_level,
+                "score": min(score, 100),
+            }
+        )
+    return sorted(hits, key=lambda item: item["score"], reverse=True)
+
+
+def _similar_events(
+    deterministic_hits: list[dict[str, Any]],
+    cases: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    if deterministic_hits:
+        source = deterministic_hits[:5]
+        return [
+            {
+                "event_id": hit["event_id"],
+                "title": hit["event_title"],
+                "similarity": hit["score"],
+                "severity_level": hit["severity_level"],
+                "historical_consequence": hit["historical_consequence"],
+            }
+            for hit in source
+        ]
+
+    return [
+        {
+            "event_id": case["event"].id,
+            "title": case["event"].title or case["version"].title,
+            "similarity": 0,
+            "severity_level": case["version"].severity_level,
+            "historical_consequence": case["version"].consequences,
+        }
+        for case in cases[:3]
+    ]
+
+
+def _fallback_result(
+    deterministic_hits: list[dict[str, Any]],
+    similar_events: list[dict[str, Any]],
+) -> dict[str, Any]:
+    if not deterministic_hits:
+        return {
+            "risk_level": "uncertain",
+            "risk_topics": [],
+            "affected_groups": [],
+            "propagation_drivers": [],
+            "similar_events": similar_events,
+            "deterministic_hits": [],
+            "suggestions": ["当前物料未命中已发布舆情案例的明确触发因素，建议人工复核敏感表达"],
+            "explanation": "资料库有案例，但当前物料缺少足够相似依据，不能直接判断为低风险。",
+            "confidence": 20,
+        }
+
+    max_score = max(hit["score"] for hit in deterministic_hits)
+    severities = {str(hit.get("severity_level") or "").lower() for hit in deterministic_hits}
+    if "severe" in severities or max_score >= 80:
+        risk_level = "severe"
+    elif "high" in severities or max_score >= 60:
+        risk_level = "high"
+    elif "medium" in severities or max_score >= 30:
+        risk_level = "medium"
+    else:
+        risk_level = "low"
+
+    return {
+        "risk_level": risk_level,
+        "risk_topics": _dedupe(_flatten(hit.get("risk_topics", []) for hit in deterministic_hits)),
+        "affected_groups": _dedupe(_flatten(hit.get("affected_groups", []) for hit in deterministic_hits)),
+        "propagation_drivers": _dedupe(_flatten(hit.get("propagation_drivers", []) for hit in deterministic_hits)),
+        "similar_events": similar_events,
+        "deterministic_hits": deterministic_hits,
+        "suggestions": ["建议品牌负责人复核舆情触发点，并参考相似历史事件的后果"],
+        "explanation": "物料命中已发布舆情案例中的触发因素或相近行业/平台标签。",
+        "confidence": min(max_score, 90),
+    }
+
+
+def _case_tokens(version: PublicOpinionEventVersion) -> list[str]:
+    tokens = []
+    tokens.extend(_string_list(version.trigger_patterns))
+    tokens.extend(_string_list(version.risk_topics))
+    tokens.extend(_string_list(version.affected_groups))
+    event_process = version.event_process or {}
+    trigger = event_process.get("trigger")
+    if isinstance(trigger, str) and len(trigger.strip()) <= 30:
+        tokens.append(trigger.strip())
+    return _dedupe([token for token in tokens if 1 < len(token) <= 30])
+
+
+def _string_list(value: Any) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [str(item).strip() for item in value if str(item).strip()]
+
+
+def _flatten(groups) -> list[str]:
+    flattened: list[str] = []
+    for group in groups:
+        flattened.extend(_string_list(group))
+    return flattened
+
+
+def _dedupe(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    result: list[str] = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        result.append(value)
+    return result
+
+
+def _normalize(value: str) -> str:
+    return "".join(str(value or "").lower().split())
