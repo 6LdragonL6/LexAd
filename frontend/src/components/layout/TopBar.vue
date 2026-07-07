@@ -11,6 +11,7 @@ const navItems = computed(() => [
   { label: '首页', description: '工作台与近期任务', to: '/', icon: 'home', show: true },
   { label: '提交物料', description: '提交广告内容并开始审查', to: '/submit', icon: 'submit', show: store.canSubmit },
   { label: '法务审核', description: '查看并处理待审物料', to: '/legal', icon: 'legal', show: store.isLegal },
+  { label: '资料中心', description: '维护舆情案例和平台规则', to: '/admin/knowledge', icon: 'admin', show: store.isAdmin },
   { label: '法规数据库', description: '阅读五级法规知识库', to: '/knowledge', icon: 'knowledge', show: true },
 ].filter((item) => item.show))
 
@@ -106,7 +107,7 @@ onUnmounted(() => {
         </div>
         <div class="ml-3 min-w-0">
           <p class="font-bold text-lg text-gray-800 leading-tight">LexAd</p>
-          <p class="text-xs text-gray-400 mt-0.5">v0.4.1</p>
+          <p class="text-xs text-gray-400 mt-0.5">v0.4.2</p>
         </div>
         <button
           type="button"
@@ -139,6 +140,9 @@ onUnmounted(() => {
             </svg>
             <svg v-else-if="item.icon === 'legal'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18M6 6h12M7 6 3.5 13h7L7 6Zm10 0-3.5 7h7L17 6ZM8 21h8" />
+            </svg>
+            <svg v-else-if="item.icon === 'admin'" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M6 7v12h12V7M9 11h6M9 15h4M8 4h8l1 3H7l1-3Z" />
             </svg>
             <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16ZM20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z" />
