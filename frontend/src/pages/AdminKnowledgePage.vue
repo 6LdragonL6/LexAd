@@ -74,8 +74,10 @@ function statusText(status: string) {
     archived: '已归档',
     active: '生效中',
     expired: '已失效',
+    uploaded: '已上传',
     validated: '预检通过',
     validation_failed: '预检有错误',
+    importing: '导入中',
     completed: '已完成',
     failed: '失败',
   }

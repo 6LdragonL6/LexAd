@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.db.base import Base
+from app.engine.industry import format_industries, split_industries
 from app.engine.public_opinion import run_public_opinion_review
 from app.models.knowledge import (
     PublicOpinionEvent,
@@ -130,6 +131,41 @@ def test_public_opinion_review_hits_published_case_with_model_fallback(monkeypat
         assert result.result["risk_level"] == "high"
         assert result.result["model_available"] is False
         assert result.result["similar_events"][0]["event_id"] == "po-event-1"
+    finally:
+        db.close()
+
+
+def test_split_industries_supports_compatible_joined_string():
+    assert split_industries("食品、直播电商，金融/食品") == ["食品", "直播电商", "金融"]
+    assert format_industries(["食品", "直播电商", "食品"]) == "食品、直播电商"
+
+
+def test_public_opinion_review_matches_multi_industry_string(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    user = _seed_user(db)
+    _seed_public_opinion_case(db, user.id)
+    db.commit()
+
+    def fail_model(**_kwargs):
+        from app.services.model_service import ModelServiceError
+
+        raise ModelServiceError("no api key")
+
+    import app.engine.public_opinion as public_opinion_engine
+
+    monkeypatch.setattr(public_opinion_engine.model_service, "explain_public_opinion_risk", fail_model)
+    try:
+        result = run_public_opinion_review(
+            material_text="普通广告文案，没有直接触发词。",
+            industry="金融、食品",
+            platforms=[],
+            db=db,
+        )
+        assert result.status == "succeeded"
+        assert result.result["deterministic_hits"][0]["event_id"] == "po-event-1"
+        assert result.result["deterministic_hits"][0]["score"] == 10
+        assert result.result["risk_level"] == "low"
     finally:
         db.close()
 

@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from openai import OpenAI
 from app.core.config import get_settings
+from app.engine.industry import format_industries, split_industries
 from app.schemas.review import MatchedRule, LayerResult
 
 settings = get_settings()
@@ -24,11 +25,12 @@ def _load_law_provisions(industry: str) -> str:
                 text = law_path.read_text(encoding="utf-8")[:3000]
                 parts.append(f"【{law['title']}】\n{text}")
 
-    industry_dir = KNOWLEDGE_DIR / "L2_industry" / industry
-    if industry_dir.exists():
-        for rule_file in sorted(industry_dir.glob("*.txt"))[:3]:
-            text = rule_file.read_text(encoding="utf-8")[:2000]
-            parts.append(f"【行业规则·{rule_file.stem}】\n{text}")
+    for industry_name in split_industries(industry):
+        industry_dir = KNOWLEDGE_DIR / "L2_industry" / industry_name
+        if industry_dir.exists():
+            for rule_file in sorted(industry_dir.glob("*.txt"))[:3]:
+                text = rule_file.read_text(encoding="utf-8")[:2000]
+                parts.append(f"【行业规则·{industry_name}·{rule_file.stem}】\n{text}")
 
     return "\n\n".join(parts)
 
@@ -52,6 +54,7 @@ def _search_similar_cases(text: str) -> list[dict]:
 
 
 def run_semantic_review(text: str, industry: str) -> LayerResult:
+    industry_label = format_industries(industry) or "通用"
     legal_basis = _load_law_provisions(industry)
     similar_cases = _search_similar_cases(text)
 
@@ -85,7 +88,7 @@ SIMILAR_CASES:
             model=settings.DEEPSEEK_MODEL,
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"请审查以下{industry}行业广告文案:\n\n{text}"},
+                {"role": "user", "content": f"请审查以下{industry_label}行业广告文案:\n\n{text}"},
             ],
             temperature=0.1,
             max_tokens=2048,

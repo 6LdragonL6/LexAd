@@ -15,7 +15,7 @@ const allowedExtensions = '.jpg,.jpeg,.png,.gif,.bmp,.pdf,.docx,.pptx,.xlsx,.txt
 
 const form = ref({
   name: '',
-  industry: '',
+  industries: [] as string[],
   platforms: [] as string[],
   material_type: '文字',
   raw_text: '',
@@ -41,7 +41,7 @@ const finalText = computed({
 })
 
 const canSubmit = computed(() => {
-  return finalText.value.trim() && form.value.industry && form.value.platforms.length > 0 && !submitting.value
+  return finalText.value.trim() && form.value.industries.length > 0 && form.value.platforms.length > 0 && !submitting.value
 })
 
 const qualityLabel = computed(() => {
@@ -116,6 +116,12 @@ function togglePlatform(platform: string) {
   else form.value.platforms.push(platform)
 }
 
+function toggleIndustry(industry: string) {
+  const index = form.value.industries.indexOf(industry)
+  if (index >= 0) form.value.industries.splice(index, 1)
+  else form.value.industries.push(industry)
+}
+
 async function handlePreview() {
   if (!selectedFile.value) return
   previewing.value = true
@@ -144,8 +150,8 @@ async function handleSubmit() {
     error.value = '请上传文件或粘贴广告文案'
     return
   }
-  if (!form.value.industry) {
-    error.value = '请选择行业'
+  if (!form.value.industries.length) {
+    error.value = '请选择至少一个行业'
     return
   }
   if (!form.value.platforms.length) {
@@ -158,6 +164,7 @@ async function handleSubmit() {
   const body = JSON.stringify({
     ...form.value,
     name: autoMaterialName(),
+    industry: form.value.industries.join('、'),
     raw_text: finalText.value,
     deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
   })
@@ -234,16 +241,16 @@ async function handleSubmit() {
         </section>
 
         <section class="card">
-          <h3 class="font-semibold text-gray-800">2. 行业</h3>
-          <p class="text-xs text-gray-400 mt-1">行业会影响法律规则、行业规则和舆情案例匹配。</p>
+          <h3 class="font-semibold text-gray-800">2. 行业（可多选）</h3>
+          <p class="text-xs text-gray-400 mt-1">可选择多个相关行业。系统会按多行业匹配法律规则、行业规则和舆情案例。</p>
           <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button
               v-for="industry in industries"
               :key="industry"
               type="button"
               class="btn text-sm border"
-              :class="form.industry === industry ? 'bg-sky-600 text-white border-sky-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-sky-50'"
-              @click="form.industry = industry"
+              :class="form.industries.includes(industry) ? 'bg-sky-600 text-white border-sky-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-sky-50'"
+              @click="toggleIndustry(industry)"
             >
               {{ industry }}
             </button>

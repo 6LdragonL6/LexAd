@@ -5,6 +5,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from app.engine.industry import split_industries
 from app.models.knowledge import (
     PublicOpinionEvent,
     PublicOpinionEventStatus,
@@ -141,14 +142,14 @@ def _deterministic_hits(
 ) -> list[dict[str, Any]]:
     hits = []
     normalized_platforms = {_normalize(platform) for platform in platforms}
-    normalized_industry = _normalize(industry)
+    normalized_industries = {_normalize(item) for item in split_industries(industry)}
 
     for case in cases:
         event: PublicOpinionEvent = case["event"]
         version: PublicOpinionEventVersion = case["version"]
         tokens = _case_tokens(version)
         matched_tokens = [token for token in tokens if token and token in material_text]
-        industry_bonus = normalized_industry and normalized_industry in {_normalize(item) for item in version.industry}
+        industry_bonus = bool(normalized_industries & {_normalize(item) for item in version.industry})
         platform_bonus = bool(normalized_platforms & {_normalize(item) for item in version.platforms})
         if not matched_tokens and not industry_bonus and not platform_bonus:
             continue
@@ -221,11 +222,11 @@ def _fallback_result(
 
     max_score = max(hit["score"] for hit in deterministic_hits)
     severities = {str(hit.get("severity_level") or "").lower() for hit in deterministic_hits}
-    if "severe" in severities or max_score >= 80:
+    if max_score >= 80 or ("severe" in severities and max_score >= 30):
         risk_level = "severe"
-    elif "high" in severities or max_score >= 60:
+    elif max_score >= 60 or ("high" in severities and max_score >= 30):
         risk_level = "high"
-    elif "medium" in severities or max_score >= 30:
+    elif max_score >= 30 or ("medium" in severities and max_score >= 20):
         risk_level = "medium"
     else:
         risk_level = "low"
