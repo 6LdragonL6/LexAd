@@ -47,6 +47,8 @@ export interface EngineResult {
   summary: string
   suggestions: string[]
   case_refs: Record<string, any>[]
+  platform_rule_version_ids?: string[]
+  unavailable_platforms?: string[]
 }
 
 export interface Review {
@@ -59,6 +61,19 @@ export interface Review {
   error_message: string | null
   started_at: string | null
   completed_at: string | null
+  legal_library_version_id?: string | null
+  industry_library_version_id?: string | null
+  platform_rule_version_ids?: string[]
+  public_opinion_library_version_id?: string | null
+  legal_module_status?: 'pending' | 'running' | 'succeeded' | 'failed' | 'unavailable'
+  legal_module_error?: string | null
+  legal_module_retry_count?: number
+  legal_module_completed_at?: string | null
+  public_opinion_module_status?: 'pending' | 'running' | 'succeeded' | 'failed' | 'unavailable'
+  public_opinion_result?: Record<string, any>
+  public_opinion_module_error?: string | null
+  public_opinion_module_retry_count?: number
+  public_opinion_module_completed_at?: string | null
   legal_decision: 'approved' | 'returned' | 'conditional' | null
   legal_notes: string | null
   return_reasons: string | null
