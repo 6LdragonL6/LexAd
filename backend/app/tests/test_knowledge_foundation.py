@@ -1,6 +1,7 @@
 """Knowledge foundation regression tests for v0.4.2."""
 
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 import pytest
 from fastapi import HTTPException
@@ -9,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.api.deps import require_admin
+from app.api.v1.endpoints.knowledge import _display_group, _should_include_knowledge_file
 from app.db.base import Base
 from app.models.knowledge import (
     PlatformRuleSet,
@@ -130,3 +132,16 @@ def test_admin_dependency_remains_backend_enforced():
     with pytest.raises(HTTPException) as exc_info:
         require_admin(marketing)
     assert exc_info.value.status_code == 403
+
+
+def test_knowledge_catalog_filters_non_knowledge_files_and_localizes_l5_groups():
+    assert _should_include_knowledge_file(Path(".txt")) is False
+    assert _should_include_knowledge_file(Path("run_log_20260515_100922.txt")) is False
+    assert _should_include_knowledge_file(Path("食品保健品_虚假宣传.txt")) is True
+
+    assert _display_group("L5", "disclaimer") == "免责声明模板"
+    assert _display_group("L5", "forbidden") == "违禁词清单"
+    assert _display_group("L5", "lawfirm") == "律所实务模板"
+    assert _display_group("L5", "rewrite") == "合规改写模板"
+    assert _display_group("L5", "standards") == "行业合规标准"
+    assert _display_group("L4", "抖音平台") == "抖音平台"

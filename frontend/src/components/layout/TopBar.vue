@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { APP_VERSION } from '@/constants/app'
+import { useTheme, type ThemePreference } from '@/composables/useTheme'
 import { useUserStore } from '@/stores/user'
 
 const store = useUserStore()
 const route = useRoute()
 const menuOpen = ref(false)
+const { themePreference, setThemePreference } = useTheme()
+const themeOptions: { value: ThemePreference; label: string }[] = [
+  { value: 'light', label: '浅色模式' },
+  { value: 'dark', label: '深色模式' },
+  { value: 'system', label: '跟随系统' },
+]
 
 const navItems = computed(() => [
   { label: '首页', description: '工作台与近期任务', to: '/', icon: 'home', show: true },
@@ -36,6 +44,10 @@ function handleKeydown(event: KeyboardEvent) {
 function handleLogout() {
   closeMenu()
   store.logout()
+}
+
+function selectTheme(value: ThemePreference) {
+  setThemePreference(value)
 }
 
 watch(
@@ -70,6 +82,29 @@ onUnmounted(() => {
     </button>
     <h1 class="text-xl font-bold text-brand-primary ml-2">LexAd</h1>
     <span class="hidden sm:inline text-xs text-gray-400 ml-3">广告合规审查平台</span>
+    <div class="ml-auto inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 p-1" aria-label="主题设置">
+      <button
+        v-for="option in themeOptions"
+        :key="option.value"
+        type="button"
+        class="w-9 h-9 inline-flex items-center justify-center rounded-md transition-colors"
+        :class="themePreference === option.value ? 'bg-white text-sky-700 shadow-sm' : 'text-gray-500 hover:text-sky-700 hover:bg-white'"
+        :aria-label="option.label"
+        :title="option.label"
+        :aria-pressed="themePreference === option.value"
+        @click="selectTheme(option.value)"
+      >
+        <svg v-if="option.value === 'light'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V2m0 20v-2m8-8h2M2 12h2m14.95 6.95 1.41 1.41M3.64 3.64l1.41 1.41m0 13.9-1.41 1.41M20.36 3.64l-1.41 1.41M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" />
+        </svg>
+        <svg v-else-if="option.value === 'dark'" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 14.5A8.5 8.5 0 0 1 9.5 3 7 7 0 1 0 21 14.5Z" />
+        </svg>
+        <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16v10H4V5Zm4 16h8m-5-3h2" />
+        </svg>
+      </button>
+    </div>
   </header>
 
   <Transition
@@ -107,7 +142,7 @@ onUnmounted(() => {
         </div>
         <div class="ml-3 min-w-0">
           <p class="font-bold text-lg text-gray-800 leading-tight">LexAd</p>
-          <p class="text-xs text-gray-400 mt-0.5">v0.5.0</p>
+          <p class="text-xs text-gray-400 mt-0.5">v{{ APP_VERSION }}</p>
         </div>
         <button
           type="button"

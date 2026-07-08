@@ -1,6 +1,7 @@
 """Read-only, classified access to the local L1-L5 knowledge base."""
 
 from pathlib import Path
+import re
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -19,6 +20,20 @@ LAYERS = {
     "L5": ("L5_templates", "合规模板"),
 }
 
+GROUP_LABELS = {
+    "L5": {
+        "disclaimer": "免责声明模板",
+        "forbidden": "违禁词清单",
+        "lawfirm": "律所实务模板",
+        "rewrite": "合规改写模板",
+        "standards": "行业合规标准",
+    }
+}
+
+IGNORED_FILE_PATTERNS = [
+    re.compile(r"^run_log_\d{8}_\d{6}\.txt$", re.IGNORECASE),
+]
+
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
@@ -35,9 +50,12 @@ def get_catalog(layer: str):
 
     items = []
     for text_file in sorted(layer_dir.rglob("*.txt")):
+        if not _should_include_knowledge_file(text_file):
+            continue
         relative = text_file.relative_to(KNOWLEDGE_DIR)
         within_layer = text_file.relative_to(layer_dir)
-        group = within_layer.parts[0] if len(within_layer.parts) > 1 else label
+        raw_group = within_layer.parts[0] if len(within_layer.parts) > 1 else label
+        group = _display_group(layer_key, raw_group)
         items.append(
             {
                 "id": relative.as_posix(),
@@ -90,3 +108,16 @@ def _resolve_knowledge_file(item_id: str) -> Path:
     if target.suffix.lower() != ".txt" or not target.is_file():
         raise HTTPException(status_code=404, detail="知识库条目不存在")
     return target
+
+
+def _should_include_knowledge_file(path: Path) -> bool:
+    name = path.name
+    if path.stem.strip() == "":
+        return False
+    if name.startswith("."):
+        return False
+    return not any(pattern.match(name) for pattern in IGNORED_FILE_PATTERNS)
+
+
+def _display_group(layer: str, group: str) -> str:
+    return GROUP_LABELS.get(layer, {}).get(group, group)

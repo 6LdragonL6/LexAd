@@ -4,7 +4,7 @@ import ThreeColLayout from '@/components/layout/ThreeColLayout.vue'
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col bg-gray-50">
+  <div class="app-page">
     <TopBar />
     <div class="flex-1 overflow-auto">
       <ThreeColLayout>

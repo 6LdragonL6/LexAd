@@ -25,7 +25,7 @@ async function handleLogin() {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+  <div class="min-h-screen flex items-center justify-center surface-page px-4">
     <div class="card w-full max-w-sm">
       <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">LexAd 广告合规审查平台</h1>
       <form @submit.prevent="handleLogin" class="space-y-4">
