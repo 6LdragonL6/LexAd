@@ -35,6 +35,7 @@ function statusLabel(status: string) {
   const map: Record<string, string> = {
     pending_legal: '待审核',
     approved: '已通过',
+    conditional_approved: '有条件通过',
     returned: '已退回',
     draft: '草稿',
     ai_reviewing: '审查中',
@@ -45,6 +46,7 @@ function statusLabel(status: string) {
 
 function statusClass(status: string) {
   if (status === 'approved') return 'bg-green-100 text-green-700'
+  if (status === 'conditional_approved') return 'bg-blue-100 text-blue-700'
   if (status === 'pending_legal' || status === 'ai_reviewing') return 'bg-yellow-100 text-yellow-700'
   if (status === 'returned') return 'bg-red-100 text-red-700'
   if (status === 'archived') return 'bg-gray-100 text-gray-500'

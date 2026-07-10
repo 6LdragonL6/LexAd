@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import String, Text, Integer, DateTime, Enum as SAEnum, ForeignKey, JSON
+from sqlalchemy import String, Text, Integer, DateTime, Enum as SAEnum, ForeignKey, JSON, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from app.db.base import Base
 import enum
@@ -12,6 +12,7 @@ class MaterialStatus(str, enum.Enum):
     pending_legal = "pending_legal"
     in_legal_review = "in_legal_review"
     approved = "approved"
+    conditional_approved = "conditional_approved"
     returned = "returned"
     archived = "archived"
 
@@ -39,3 +40,20 @@ class Material(Base):
     submitter_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+class MaterialSubmissionSnapshot(Base):
+    __tablename__ = "material_submission_snapshots"
+    __table_args__ = (UniqueConstraint("material_id", "version", name="uq_material_snapshot_version"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    material_id: Mapped[str] = mapped_column(String(36), ForeignKey("materials.id"), nullable=False, index=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    industry: Mapped[str] = mapped_column(String(50), default="")
+    platforms: Mapped[list] = mapped_column(JSON, default=list)
+    material_type: Mapped[str] = mapped_column(String(30), default="文字")
+    raw_text: Mapped[str] = mapped_column(Text, default="")
+    priority: Mapped[str] = mapped_column(String(20), default="normal")
+    deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

@@ -50,6 +50,7 @@ def list_materials(db: Session, user: User) -> list[Material]:
                     MaterialStatus.pending_legal,
                     MaterialStatus.in_legal_review,
                     MaterialStatus.approved,
+                    MaterialStatus.conditional_approved,
                     MaterialStatus.returned,
                 ]
             )
@@ -84,9 +85,12 @@ def update_material(db: Session, material_id: str, data: MaterialUpdate) -> Mate
 
 def get_material_versions(db: Session, material_id: str) -> list[dict]:
     from app.models.review import Review
+    from app.models.material import MaterialSubmissionSnapshot
     reviews = db.query(Review).filter(Review.material_id == material_id).order_by(Review.version.desc()).all()
-    return [
-        {
+    versions = []
+    for r in reviews:
+        snapshot = db.get(MaterialSubmissionSnapshot, r.submission_snapshot_id) if r.submission_snapshot_id else None
+        versions.append({
             "version": r.version,
             "risk_score": r.ai_risk_score,
             "task_status": r.task_status,
@@ -96,6 +100,14 @@ def get_material_versions(db: Session, material_id: str) -> list[dict]:
             "reviewed_at": r.reviewed_at.isoformat() if r.reviewed_at else None,
             "created_at": r.created_at.isoformat(),
             "version_label": f"第{r.version}次提交",
-        }
-        for r in reviews
-    ]
+            "submission": {
+                "name": snapshot.name,
+                "raw_text": snapshot.raw_text,
+                "industry": snapshot.industry,
+                "platforms": snapshot.platforms,
+                "material_type": snapshot.material_type,
+                "priority": snapshot.priority,
+                "deadline": snapshot.deadline.isoformat() if snapshot.deadline else None,
+            } if snapshot else None,
+        })
+    return versions

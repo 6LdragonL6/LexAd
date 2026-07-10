@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 class MatchedRule(BaseModel):
     rule_id: str
@@ -65,6 +65,12 @@ class LegalDecisionRequest(BaseModel):
     decision: str = Field(..., pattern="^(approved|returned|conditional)$")
     notes: str = ""
     return_reasons: str = ""
+
+    @model_validator(mode="after")
+    def conditional_requires_notes(self):
+        if self.decision == "conditional" and not self.notes.strip():
+            raise ValueError("有条件通过必须填写附加条件")
+        return self
 
 class ReviewQueueItem(BaseModel):
     id: str

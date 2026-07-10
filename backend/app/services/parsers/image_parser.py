@@ -28,6 +28,7 @@ def _configure_tesseract() -> None:
 
 class ImageParser:
     MIME_TYPES = {"image/png", "image/jpeg", "image/gif", "image/bmp"}
+    MAX_PIXELS = 25_000_000
 
     @staticmethod
     def supports(mime: str) -> bool:
@@ -42,6 +43,8 @@ class ImageParser:
 
         path = Path(file_path)
         img = Image.open(path)
+        if img.width * img.height > ImageParser.MAX_PIXELS:
+            raise ValueError("图片像素过高，请压缩后重试")
         text = pytesseract.image_to_string(img, lang="chi_sim+eng").strip()
         quality = _assess_ocr_quality(text)
         return ExtractionResult(

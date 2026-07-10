@@ -7,7 +7,7 @@ from app.db.session import SessionLocal
 from app.engine.pipeline import run_review_pipeline
 from app.engine.public_opinion import run_public_opinion_review
 from app.models.knowledge import ReviewModuleStatus
-from app.models.material import Material, MaterialStatus
+from app.models.material import Material, MaterialStatus, MaterialSubmissionSnapshot
 from app.models.review import LegalDecision, Review
 from app.models.user import User, UserRole
 from app.schemas.review import LegalDecisionRequest
@@ -37,9 +37,33 @@ def create_ai_review(db: Session, material_id: str) -> tuple[Review, bool]:
     if material.status not in (MaterialStatus.draft, MaterialStatus.returned):
         raise ValueError("当前物料状态不允许重新发起 AI 审查")
 
+    snapshot = (
+        db.query(MaterialSubmissionSnapshot)
+        .filter(
+            MaterialSubmissionSnapshot.material_id == material.id,
+            MaterialSubmissionSnapshot.version == material.current_version,
+        )
+        .first()
+    )
+    if snapshot is None:
+        snapshot = MaterialSubmissionSnapshot(
+            material_id=material.id,
+            version=material.current_version,
+            name=material.name,
+            industry=material.industry,
+            platforms=material.platforms,
+            material_type=material.material_type,
+            raw_text=material.raw_text,
+            priority=material.priority.value if hasattr(material.priority, "value") else material.priority,
+            deadline=material.deadline,
+        )
+        db.add(snapshot)
+        db.flush()
+
     material.status = MaterialStatus.ai_reviewing
     review = Review(
         material_id=material_id,
+        submission_snapshot_id=snapshot.id,
         version=material.current_version,
         ai_risk_score=0,
         ai_result={},
@@ -51,6 +75,30 @@ def create_ai_review(db: Session, material_id: str) -> tuple[Review, bool]:
     db.commit()
     db.refresh(review)
     return review, True
+
+
+def recover_interrupted_reviews() -> int:
+    """Mark abandoned in-process reviews retryable when the application starts."""
+    db = SessionLocal()
+    try:
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=15)
+        reviews = db.query(Review).filter(Review.task_status == "processing").all()
+        recovered = 0
+        for review in reviews:
+            if _as_utc(review.created_at) > cutoff:
+                continue
+            review.task_status = "failed"
+            review.error_message = "审查任务因服务重启中断，请重新审查"
+            review.completed_at = datetime.now(timezone.utc)
+            material = db.query(Material).filter(Material.id == review.material_id).first()
+            if material and material.status == MaterialStatus.ai_reviewing:
+                material.status = MaterialStatus.draft
+            recovered += 1
+        if recovered:
+            db.commit()
+        return recovered
+    finally:
+        db.close()
 
 
 def execute_ai_review(review_id: str) -> None:
@@ -77,11 +125,6 @@ def execute_ai_review(review_id: str) -> None:
             review.task_status = "completed"
             review.error_message = None
             material.status = MaterialStatus.pending_legal
-        elif public_opinion_succeeded:
-            review.task_status = "completed"
-            review.error_message = review.legal_module_error
-            if material.status == MaterialStatus.ai_reviewing:
-                material.status = MaterialStatus.draft
         else:
             review.task_status = "failed"
             review.error_message = review.legal_module_error or review.public_opinion_module_error
@@ -217,7 +260,9 @@ def submit_legal_decision(db: Session, review_id: str, data: LegalDecisionReques
 
     if data.decision == "approved":
         material.status = MaterialStatus.approved
-    elif data.decision in ("returned", "conditional"):
+    elif data.decision == "conditional":
+        material.status = MaterialStatus.conditional_approved
+    elif data.decision == "returned":
         material.status = MaterialStatus.returned
     db.commit()
     db.refresh(review)

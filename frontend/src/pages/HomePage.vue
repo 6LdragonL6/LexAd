@@ -26,7 +26,7 @@ onMounted(async () => {
   }
 })
 
-const pendingCount = computed(() => materials.value.filter(m => !['approved', 'draft', 'archived'].includes(m.status)).length)
+const pendingCount = computed(() => materials.value.filter(m => !['approved', 'conditional_approved', 'draft', 'archived'].includes(m.status)).length)
 const returnedCount = computed(() => materials.value.filter(m => m.status === 'returned').length)
 const queueCount = computed(() => queue.value.length)
 
@@ -94,12 +94,13 @@ async function handleArchive(material: Material) {
             <span class="text-xs px-2 py-0.5 rounded-full"
                   :class="{
                     'bg-green-100 text-green-700': m.status === 'approved',
+                    'bg-blue-100 text-blue-700': m.status === 'conditional_approved',
                     'bg-yellow-100 text-yellow-700': m.status === 'pending_legal',
                     'bg-red-100 text-red-700': m.status === 'returned',
                     'bg-gray-100 text-gray-600': m.status === 'draft',
                     'bg-gray-100 text-gray-500': m.status === 'archived',
                   }">
-              {{ m.status === 'approved' ? '已通过' : m.status === 'pending_legal' ? '待法务审核' : m.status === 'returned' ? '已退回' : m.status === 'draft' ? '草稿' : m.status === 'archived' ? '已归档' : m.status }}
+              {{ m.status === 'approved' ? '已通过' : m.status === 'conditional_approved' ? '有条件通过' : m.status === 'pending_legal' ? '待法务审核' : m.status === 'returned' ? '已退回' : m.status === 'draft' ? '草稿' : m.status === 'archived' ? '已归档' : m.status }}
             </span>
           </div>
           <!-- Return info for marketing -->

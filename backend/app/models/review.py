@@ -18,6 +18,7 @@ class Review(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     material_id: Mapped[str] = mapped_column(String(36), ForeignKey("materials.id"), nullable=False, index=True)
+    submission_snapshot_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("material_submission_snapshots.id"), nullable=True, index=True)
     version: Mapped[int] = mapped_column(Integer, default=1)
     ai_risk_score: Mapped[int] = mapped_column(Integer, default=0)
     ai_result: Mapped[dict] = mapped_column(JSON, default=dict)

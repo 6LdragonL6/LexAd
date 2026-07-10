@@ -4,12 +4,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 import pytest
+from datetime import datetime, timedelta, timezone
 
 from app.db.base import Base
-from app.models.material import Material, MaterialStatus
+from app.models.material import Material, MaterialStatus, MaterialSubmissionSnapshot
 from app.models.review import Review
 from app.models.user import User, UserRole
 from app.schemas.review import EngineResult
+from app.engine.public_opinion import PublicOpinionReview
 from app.services import review_service
 
 
@@ -62,12 +64,19 @@ def test_background_review_completes_and_prevents_duplicate(monkeypatch):
     assert created is True
     assert duplicate_created is False
     assert duplicate.id == review.id
+    review_id = review.id
+    snapshot = db.query(MaterialSubmissionSnapshot).filter(MaterialSubmissionSnapshot.id == review.submission_snapshot_id).one()
+    assert snapshot.raw_text == "普通广告文案"
+    material = db.query(Material).filter(Material.id == "material-1").one()
+    material.raw_text = "修改后的工作副本"
+    db.commit()
+    assert snapshot.raw_text == "普通广告文案"
     db.close()
 
-    review_service.execute_ai_review(review.id)
+    review_service.execute_ai_review(review_id)
 
     db = factory()
-    stored = db.query(Review).filter(Review.id == review.id).one()
+    stored = db.query(Review).filter(Review.id == review_id).one()
     material = db.query(Material).filter(Material.id == "material-1").one()
     assert stored.task_status == "completed"
     assert stored.ai_risk_score == 95
@@ -83,7 +92,7 @@ def test_background_review_completes_and_prevents_duplicate(monkeypatch):
     db.add(legal)
     db.commit()
     queue = review_service.get_legal_queue(db, legal)
-    assert [item["id"] for item in queue] == [review.id]
+    assert [item["id"] for item in queue] == [review_id]
     with pytest.raises(ValueError, match="状态不允许"):
         review_service.create_ai_review(db, "material-1")
     db.close()
@@ -109,5 +118,51 @@ def test_background_review_failure_is_persisted_and_material_recovers(monkeypatc
     material = db.query(Material).filter(Material.id == "material-1").one()
     assert stored.task_status == "failed"
     assert "upstream unavailable" in stored.error_message
+    assert material.status == MaterialStatus.draft
+    db.close()
+
+
+def test_legal_failure_is_not_completed_when_public_opinion_succeeds(monkeypatch):
+    factory = _session_factory()
+    _seed(factory)
+    monkeypatch.setattr(review_service, "SessionLocal", factory)
+    monkeypatch.setattr(review_service, "run_review_pipeline", lambda *_args: (_ for _ in ()).throw(RuntimeError("legal unavailable")))
+    monkeypatch.setattr(
+        review_service,
+        "run_public_opinion_review",
+        lambda **_kwargs: PublicOpinionReview(status="completed", result={"risk_level": "low"}),
+    )
+
+    db = factory()
+    review, _ = review_service.create_ai_review(db, "material-1")
+    db.close()
+
+
+def test_startup_recovery_marks_stale_work_retryable(monkeypatch):
+    factory = _session_factory()
+    _seed(factory)
+    monkeypatch.setattr(review_service, "SessionLocal", factory)
+    db = factory()
+    material = db.query(Material).filter(Material.id == "material-1").one()
+    material.status = MaterialStatus.ai_reviewing
+    review = Review(material_id=material.id, task_status="processing", created_at=datetime.now(timezone.utc) - timedelta(minutes=16))
+    db.add(review)
+    db.commit()
+    review_id = review.id
+    material_id = material.id
+    db.close()
+
+    assert review_service.recover_interrupted_reviews() == 1
+
+    db = factory()
+    assert db.query(Review).filter(Review.id == review_id).one().task_status == "failed"
+    assert db.query(Material).filter(Material.id == material_id).one().status == MaterialStatus.draft
+    db.close()
+    review_service.execute_ai_review(review.id)
+
+    db = factory()
+    stored = db.query(Review).filter(Review.id == review.id).one()
+    material = db.query(Material).filter(Material.id == "material-1").one()
+    assert stored.task_status == "failed"
     assert material.status == MaterialStatus.draft
     db.close()

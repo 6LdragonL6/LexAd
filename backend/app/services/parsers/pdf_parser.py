@@ -8,6 +8,7 @@ from app.services.parsers.text_parser import ExtractionResult
 
 class PdfParser:
     MIME_TYPES = {"application/pdf"}
+    MAX_PAGES = 50
 
     @staticmethod
     def supports(mime: str) -> bool:
@@ -20,6 +21,8 @@ class PdfParser:
         path = Path(file_path)
         doc = fitz.open(str(path))
         try:
+            if len(doc) > PdfParser.MAX_PAGES:
+                raise ValueError(f"PDF 页数超过上限（{PdfParser.MAX_PAGES} 页）")
             texts: list[str] = []
 
             for page in doc:

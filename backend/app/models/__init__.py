@@ -1,5 +1,5 @@
 from app.models.user import User, UserRole
-from app.models.material import Material, MaterialStatus, MaterialPriority
+from app.models.material import Material, MaterialStatus, MaterialPriority, MaterialSubmissionSnapshot
 from app.models.review import Review, LegalDecision
 from app.models.knowledge import (
     KnowledgeAuditLog,
@@ -21,6 +21,7 @@ __all__ = [
     "Material",
     "MaterialStatus",
     "MaterialPriority",
+    "MaterialSubmissionSnapshot",
     "Review",
     "LegalDecision",
     "KnowledgeAuditLog",

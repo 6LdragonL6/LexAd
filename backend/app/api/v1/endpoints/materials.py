@@ -1,3 +1,4 @@
+import asyncio
 import json
 from datetime import datetime, timezone
 
@@ -20,6 +21,7 @@ _settings = get_settings()
 
 SUPPORTED_FORMATS = "JPG/PNG/GIF/BMP/PDF/DOCX/PPTX/XLSX/TXT"
 MAX_UPLOAD_BYTES = _settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024
+MAX_EXTRACTED_TEXT_LENGTH = 50_000
 
 
 @router.post("/submit", response_model=MaterialOut, status_code=201)
@@ -43,7 +45,8 @@ async def submit_material(
                     detail=f"不支持的文件格式，支持：{SUPPORTED_FORMATS}",
                 )
             tmp_path = save_upload_temp(file)
-            result = _extraction_svc.extract(tmp_path, mime)
+            result = await asyncio.to_thread(_extraction_svc.extract, tmp_path, mime)
+            _ensure_text_within_limit(result.text)
             extracted_text = result.text
         except ExtractionError as e:
             raise HTTPException(status_code=400, detail=str(e))
@@ -77,7 +80,8 @@ async def preview_text(
     tmp_path = None
     try:
         tmp_path = save_upload_temp(file)
-        result = _extraction_svc.extract(tmp_path, mime)
+        result = await asyncio.to_thread(_extraction_svc.extract, tmp_path, mime)
+        _ensure_text_within_limit(result.text)
         return PreviewTextResponse(
             text=result.text,
             quality=result.quality,
@@ -100,6 +104,14 @@ def _validate_file(file: UploadFile) -> None:
         raise HTTPException(
             status_code=413,
             detail=f"文件过大（上限 {_settings.MAX_UPLOAD_SIZE_MB}MB），请压缩后重试",
+        )
+
+
+def _ensure_text_within_limit(text: str) -> None:
+    if len(text) > MAX_EXTRACTED_TEXT_LENGTH:
+        raise HTTPException(
+            status_code=413,
+            detail="提取文本过长（上限 50000 字符），请拆分文件或精简内容后重试",
         )
 
 

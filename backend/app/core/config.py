@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     # ── 应用基础 ────────────────────────────────────────────────────────────
     APP_ENV: Literal["development", "staging", "production"] = "development"  # 运行环境
     APP_NAME: str = "LexAd"  # 应用名称
-    APP_VERSION: str = "0.5.0"  # 应用版本
+    APP_VERSION: str = "0.5.1"  # 应用版本
     DEBUG: bool = False  # 调试模式开关
 
     # ── 服务器 ─────────────────────────────────────────────────────────────
