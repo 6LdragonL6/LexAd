@@ -66,6 +66,8 @@ alembic upgrade head
 ```text
 c7f4a8b9d012  v0.4.2 舆情资料库、平台规则版本、导入记录、审计日志
 d8a1f0e3b5c6  v0.5.0 物料 archived 状态
+f3a8c2d9e714  v0.5.1 有条件通过状态
+a4b7d1c6e825  v0.5.1 审查提交快照
 ```
 
 `c7f4a8b9d012` 还会为 `reviews` 表新增双模块状态、舆情结果和资料版本快照字段。
@@ -108,7 +110,7 @@ d8a1f0e3b5c6  v0.5.0 物料 archived 状态
 | GET | `/list` | 按角色过滤物料列表 |
 | GET | `/{id}` | 物料详情 |
 | PUT | `/{id}` | 修改物料 |
-| GET | `/{id}/versions` | 版本历史 |
+| GET | `/{id}/versions` | 版本历史（含已提交输入快照） |
 
 ### 审查 `/api/v1/reviews`
 
