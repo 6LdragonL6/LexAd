@@ -1,5 +1,5 @@
 <template>
   <div class="auth-layout">
-    <slot />
+    <router-view />
   </div>
 </template>

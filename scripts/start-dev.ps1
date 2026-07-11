@@ -28,6 +28,14 @@ function Test-PortInUse {
     }
 }
 
+function Write-PidRecords {
+    param([Parameter(Mandatory = $true)][array]$Records)
+
+    $tempPidFile = "$PidFile.tmp"
+    $Records | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath $tempPidFile -Encoding UTF8
+    Move-Item -LiteralPath $tempPidFile -Destination $PidFile -Force
+}
+
 function Assert-Directory {
     param(
         [Parameter(Mandatory = $true)][string]$Path,
@@ -143,16 +151,42 @@ $backendCommand = "& $(Quote-PowerShellString $pythonCommand) -m uvicorn app.mai
 $frontendCommand = "& $(Quote-PowerShellString $npmCommand) run dev -- --host 0.0.0.0 --port 5173 --strictPort"
 
 Write-Host "Starting LexAd backend and frontend..."
-$backendProcess = Start-ServiceWindow -Name "Backend" -WorkingDirectory $BackendDir -Command $backendCommand
-$frontendProcess = Start-ServiceWindow -Name "Frontend" -WorkingDirectory $FrontendDir -Command $frontendCommand
+$startedAt = (Get-Date).ToString("o")
+$records = @()
 
-# 等待健康检查，最多 30 秒
+$backendProcess = Start-ServiceWindow -Name "Backend" -WorkingDirectory $BackendDir -Command $backendCommand
+$records += [pscustomobject]@{
+    name = "backend"
+    rootPid = $backendProcess.Id
+    rootProcessStartTime = $backendProcess.StartTime.ToString("o")
+    startedAt = $startedAt
+    port = 8000
+}
+Write-PidRecords -Records $records
+
+$frontendProcess = Start-ServiceWindow -Name "Frontend" -WorkingDirectory $FrontendDir -Command $frontendCommand
+$records += [pscustomobject]@{
+    name = "frontend"
+    rootPid = $frontendProcess.Id
+    rootProcessStartTime = $frontendProcess.StartTime.ToString("o")
+    startedAt = $startedAt
+    port = 5173
+}
+Write-PidRecords -Records $records
+
+# Wait for both services to become healthy, for at most 30 seconds.
 $timeout = (Get-Date).AddSeconds(30)
 $backendOk = $false
 $frontendOk = $false
 
 while ((Get-Date) -lt $timeout) {
     Start-Sleep -Milliseconds 1500
+
+    $backendProcess.Refresh()
+    $frontendProcess.Refresh()
+    if ($backendProcess.HasExited -or $frontendProcess.HasExited) {
+        break
+    }
 
     if (-not $backendOk) {
         try {
@@ -184,27 +218,22 @@ if (-not $frontendOk) {
     Write-Host "  Frontend health check: FAILED (port 5173 not responding)"
 }
 
-$startedAt = (Get-Date).ToString("o")
-$records = @(
-    [pscustomobject]@{
-        name = "backend"
-        rootPid = $backendProcess.Id
-        rootProcessStartTime = $backendProcess.StartTime.ToString("o")
-        startedAt = $startedAt
-        port = 8000
-    },
-    [pscustomobject]@{
-        name = "frontend"
-        rootPid = $frontendProcess.Id
-        rootProcessStartTime = $frontendProcess.StartTime.ToString("o")
-        startedAt = $startedAt
-        port = 5173
-    }
-)
-
-$records | ConvertTo-Json -Depth 3 | Set-Content -LiteralPath $PidFile -Encoding UTF8
+if (-not ($backendOk -and $frontendOk)) {
+    Write-Host "Startup did not complete. Process records were kept at scripts\.dev-pids.json."
+    Write-Host "Review the Backend and Frontend windows, then run stop-dev.bat to clean up."
+    throw "LexAd health checks failed."
+}
 
 Write-Host "Started LexAd dev services."
 Write-Host ("  Backend:  http://localhost:8000/docs   PID {0}" -f $backendProcess.Id)
 Write-Host ("  Frontend: http://localhost:5173        PID {0}" -f $frontendProcess.Id)
 Write-Host "Use stop-dev.bat to close the recorded service windows."
+
+try {
+    Start-Process -FilePath "http://localhost:5173"
+    Write-Host "Opened the LexAd frontend in the default browser."
+}
+catch {
+    Write-Host "Warning: the browser could not be opened automatically."
+    Write-Host "Open http://localhost:5173 manually."
+}
