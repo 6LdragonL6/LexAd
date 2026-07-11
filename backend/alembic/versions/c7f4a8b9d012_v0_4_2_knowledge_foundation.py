@@ -253,13 +253,14 @@ def upgrade() -> None:
         sa.Column("public_opinion_module_retry_count", sa.Integer(), nullable=False, server_default="0"),
     )
     op.add_column("reviews", sa.Column("public_opinion_module_completed_at", sa.DateTime(timezone=True), nullable=True))
-    op.create_foreign_key(
-        "fk_reviews_public_opinion_library_version_id",
-        "reviews",
-        "public_opinion_library_versions",
-        ["public_opinion_library_version_id"],
-        ["id"],
-    )
+    # Use batch_alter_table for SQLite FK compatibility
+    with op.batch_alter_table("reviews") as batch_op:
+        batch_op.create_foreign_key(
+            "fk_reviews_public_opinion_library_version_id",
+            "public_opinion_library_versions",
+            ["public_opinion_library_version_id"],
+            ["id"],
+        )
     op.create_index("ix_reviews_legal_module_status", "reviews", ["legal_module_status"])
     op.create_index("ix_reviews_public_opinion_module_status", "reviews", ["public_opinion_module_status"])
 
