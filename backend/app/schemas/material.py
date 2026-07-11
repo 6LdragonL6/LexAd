@@ -18,6 +18,7 @@ class MaterialUpdate(BaseModel):
     platforms: list[str] | None = Field(default=None, max_length=10)
     priority: str | None = Field(default=None, pattern="^(normal|urgent|extreme)$")
     deadline: datetime | None = None
+    brand_id: str | None = None
 
 class MaterialOut(BaseModel):
     id: str
@@ -32,6 +33,7 @@ class MaterialOut(BaseModel):
     status: str
     current_version: int
     submitter_id: str
+    brand_id: str | None
     created_at: datetime
     updated_at: datetime
 

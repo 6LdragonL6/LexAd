@@ -144,6 +144,10 @@ def update_material(material_id: str, body: MaterialUpdate, db: Session = Depend
         raise HTTPException(status_code=403, detail="Not your material")
     if material.status.value not in ("draft", "returned"):
         raise HTTPException(status_code=400, detail="Can only edit draft or returned materials")
+    if body.brand_id is not None:
+        brand = db.query(Brand).filter(Brand.id == body.brand_id, Brand.status == BrandStatus.active).first()
+        if not brand:
+            raise HTTPException(status_code=422, detail="引用的品牌不存在或已归档")
     return material_service.update_material(db, material_id, body)
 
 

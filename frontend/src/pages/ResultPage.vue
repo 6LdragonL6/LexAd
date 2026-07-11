@@ -5,7 +5,9 @@ import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
-import type { Material, MatchedRule, Review } from '@/types'
+import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
+import { brandsApi } from '@/api/brands'
+import type { Material, MatchedRule, Review, BrandProfile } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -19,6 +21,9 @@ const retrying = ref(false)
 const pollStartedAt = ref(Date.now())
 let pollTimer: ReturnType<typeof setTimeout> | null = null
 let consecutivePollErrors = 0
+
+const brandProfile = ref<BrandProfile | null>(null)
+const brandProfileLoading = ref(false)
 
 const isProcessing = computed(() => review.value?.task_status === 'processing')
 const isFailed = computed(() => review.value?.task_status === 'failed')
@@ -123,6 +128,7 @@ async function loadReview() {
     }
 
     if (response.data.task_status === 'processing') schedulePoll()
+    if (material.value?.brand_id) loadBrandProfile(material.value.brand_id)
   } catch (error: any) {
     if (review.value?.task_status === 'processing') {
       consecutivePollErrors += 1
@@ -140,6 +146,18 @@ async function loadReview() {
 function schedulePoll(delay = 2000) {
   if (pollTimer) clearTimeout(pollTimer)
   pollTimer = setTimeout(loadReview, delay)
+}
+
+async function loadBrandProfile(brandId: string) {
+  brandProfileLoading.value = true
+  try {
+    const res = await brandsApi.profile(brandId)
+    brandProfile.value = res.data
+  } catch {
+    brandProfile.value = null
+  } finally {
+    brandProfileLoading.value = false
+  }
 }
 
 async function retryReview() {
@@ -209,13 +227,16 @@ onUnmounted(() => {
                   </p>
                   <p class="text-xs text-gray-400 mt-1">不计入法律合规分</p>
                 </div>
-                <StatusBadge :variant="publicOpinionStatus === 'succeeded' ? 'success' : publicOpinionStatus === 'unavailable' ? 'gray' : 'warning'">
+                <StatusBadge :variant="publicOpinionStatus === 'succeeded' ? 'success' : publicOpinionStatus === 'unavailable' ? 'gray' : publicOpinionStatus === 'failed' ? 'danger' : 'warning'">
                   {{ statusText(publicOpinionStatus) }}
                 </StatusBadge>
               </div>
               <div class="mt-4 rounded-lg border px-3 py-2 text-sm" :class="publicOpinionRiskClass">
                 {{ publicOpinion.explanation || publicOpinion.message || '暂无舆情分析说明' }}
               </div>
+              <p v-if="review.public_opinion_module_error && publicOpinionStatus !== 'unavailable'" class="mt-3 text-sm text-red-500">
+                {{ review.public_opinion_module_error }}
+              </p>
             </div>
           </section>
 
@@ -281,6 +302,14 @@ onUnmounted(() => {
               </div>
             </div>
           </section>
+
+          <!-- Brand profile (if associated) -->
+          <div v-if="material.brand_id" class="card">
+            <BrandMemoryCard
+              :profile="brandProfile"
+              :loading="brandProfileLoading"
+            />
+          </div>
         </main>
 
         <aside class="space-y-4">
@@ -289,6 +318,9 @@ onUnmounted(() => {
             <div class="space-y-2 text-sm">
               <div class="flex justify-between"><span class="text-gray-500">版本</span><span class="font-medium">{{ review.version }} 次提交</span></div>
               <div class="flex justify-between"><span class="text-gray-500">完成时间</span><span class="font-medium">{{ formatDate(review.completed_at) }}</span></div>
+              <div v-if="review.public_opinion_library_version_id" class="flex justify-between">
+                <span class="text-gray-500">舆情资料库</span><span class="font-medium text-xs">{{ review.public_opinion_library_version_id }}</span>
+              </div>
               <div v-if="review.ai_result?.platform_version_labels && Object.keys(review.ai_result.platform_version_labels).length" class="border-t border-gray-100 dark:border-gray-700 pt-2 mt-2">
                 <p class="text-xs text-gray-400 mb-2">平台规则版本</p>
                 <p v-for="(label, vid) in review.ai_result.platform_version_labels" :key="vid" class="text-sm text-gray-700 dark:text-gray-300">{{ label }}</p>

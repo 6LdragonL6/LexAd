@@ -48,3 +48,7 @@ def downgrade() -> None:
         batch_op.drop_column('brand_id')
 
     op.drop_table('brands')
+    # PostgreSQL: drop the enum type so re-upgrade does not fail
+    bind = op.get_bind()
+    if bind.dialect.name == 'postgresql':
+        op.execute('DROP TYPE IF EXISTS brandstatus')

@@ -6,7 +6,9 @@ import { reviewsApi } from '@/api/reviews'
 import { useUserStore } from '@/stores/user'
 import ReviewLayout from '@/layouts/ReviewLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
-import type { Material, Review, MatchedRule } from '@/types'
+import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
+import { brandsApi } from '@/api/brands'
+import type { Material, Review, MatchedRule, BrandProfile } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,6 +23,8 @@ const notes = ref('')
 const returnReasons = ref('')
 const submitting = ref(false)
 const decisionError = ref('')
+const brandProfile = ref<BrandProfile | null>(null)
+const brandProfileLoading = ref(false)
 
 function getAllIssues(): MatchedRule[] {
   if (!review.value) return []
@@ -41,6 +45,18 @@ onMounted(async () => {
     versions.value = []
   }
   loading.value = false
+
+  if (material.value?.brand_id) {
+    brandProfileLoading.value = true
+    try {
+      const profileRes = await brandsApi.profile(material.value.brand_id)
+      brandProfile.value = profileRes.data
+    } catch {
+      brandProfile.value = null
+    } finally {
+      brandProfileLoading.value = false
+    }
+  }
 })
 
 async function handleDecision() {
@@ -164,6 +180,14 @@ async function handleDecision() {
           </ul>
         </div>
       </div>
+
+      <!-- Brand memory card -->
+      <BrandMemoryCard
+        v-if="material.brand_id"
+        :profile="brandProfile"
+        :loading="brandProfileLoading"
+        class="mt-6"
+      />
 
       <div v-if="store.isLegal && review.legal_decision === null" class="card mt-6">
         <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">法务审核决定</h3>

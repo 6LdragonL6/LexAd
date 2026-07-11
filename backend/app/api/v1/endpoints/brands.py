@@ -26,7 +26,15 @@ def create_brand(
     user: User = Depends(get_current_user),
 ):
     try:
+        existing = brand_service.find_by_normalized_name(db, body.name)
+        if existing and existing.status.value == "archived":
+            raise HTTPException(
+                status_code=409,
+                detail="同名品牌已归档，请先恢复后再创建",
+            )
         return brand_service.create_brand(db, body, user.id)
+    except HTTPException:
+        raise
     except Exception:
         raise HTTPException(status_code=500, detail="创建品牌失败")
 
@@ -56,6 +64,6 @@ def update_brand(
         msg = str(e)
         if "not found" in msg.lower():
             raise HTTPException(status_code=404, detail=msg)
-        if "conflict" in msg.lower():
+        if "conflict" in msg.lower() or "blank" in msg.lower():
             raise HTTPException(status_code=409, detail=msg)
         raise HTTPException(status_code=400, detail=msg)

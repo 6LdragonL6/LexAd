@@ -58,7 +58,6 @@ def find_by_normalized_name(db: Session, name: str) -> Brand | None:
     normalized = _normalize(name)
     candidates = (
         db.query(Brand)
-        .filter(Brand.status == BrandStatus.active)
         .all()
     )
     for brand in candidates:
@@ -111,13 +110,19 @@ def update_brand(db: Session, brand_id: str, data: BrandUpdate) -> Brand:
     if not brand:
         raise ValueError("Brand not found")
 
-    if data.name is not None and data.name.strip():
+    if data.name is not None:
         new_name = data.name.strip()
+        if not new_name:
+            raise ValueError("Brand name must not be blank")
         normalized_new = _normalize(new_name)
         if normalized_new != _normalize(brand.name):
             conflict = find_by_normalized_name(db, new_name)
             if conflict and conflict.id != brand.id:
                 raise ValueError("Brand name conflict")
+        data.name = new_name
+
+    if data.industry is not None:
+        data.industry = data.industry.strip()
 
     update_data = data.model_dump(exclude_unset=True)
     for key, value in update_data.items():
@@ -147,23 +152,22 @@ def get_brand_profile(db: Session, brand_id: str) -> BrandProfile:
     total_materials = len(materials)
 
     reviews = (
-        db.query(Review).filter(Review.material_id.in_(material_ids)).all()
+        db.query(Review).filter(Review.material_id.in_(material_ids), Review.task_status == "completed").all()
     ) if material_ids else []
     total_reviews = len(reviews)
 
-    completed = [r for r in reviews if r.task_status == "completed"]
-    decided = [r for r in completed if r.legal_decision is not None]
+    decided = [r for r in reviews if r.legal_decision is not None]
     decided_reviews = len(decided)
 
     approved = [r for r in decided if r.legal_decision == LegalDecision.approved]
     approved_count = len(approved)
     pass_rate = (approved_count / decided_reviews * 100) if decided_reviews > 0 else None
 
-    versions = [r.version for r in reviews]
+    versions = [m.current_version for m in materials]
     avg_versions = sum(versions) / len(versions) if versions else None
 
     violation_counter: Counter = Counter()
-    for review in completed:
+    for review in reviews:
         weight = 2 if review.legal_decision == LegalDecision.returned else 1
         ai = review.ai_result or {}
         for layer_key in ("layer1", "layer2", "layer3", "layer4"):
@@ -179,7 +183,7 @@ def get_brand_profile(db: Session, brand_id: str) -> BrandProfile:
     ]
 
     sorted_completed = sorted(
-        completed, key=lambda r: r.completed_at or r.created_at, reverse=True
+        reviews, key=lambda r: r.completed_at or r.created_at, reverse=True
     )
     recent_reviews = [
         RecentReview(
@@ -199,7 +203,7 @@ def get_brand_profile(db: Session, brand_id: str) -> BrandProfile:
             raw_text_preview=_raw_text_preview(m.raw_text),
         )
         for m in materials
-        if m.status in (MaterialStatus.approved, MaterialStatus.conditional_approved)
+        if m.status == MaterialStatus.approved
     ][:10]
 
     return BrandProfile(
