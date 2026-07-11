@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import StatusBadge from '@/components/common/StatusBadge.vue'
 import type { Material, MatchedRule, Review } from '@/types'
 
 const route = useRoute()
@@ -169,178 +170,155 @@ onUnmounted(() => {
     <div v-if="!loading && material && review?.task_status === 'completed'" class="max-w-7xl mx-auto p-4 lg:p-8">
       <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-6">
         <div>
-          <h2 class="page-heading !mb-1">风险审查结果</h2>
+          <div class="flex items-center gap-3 mb-2">
+            <h2 class="page-heading !mb-0">审查结果</h2>
+            <StatusBadge :variant="review.ai_risk_score >= 80 ? 'success' : review.ai_risk_score >= 60 ? 'warning' : 'danger'">
+              {{ review.ai_risk_score >= 80 ? '低风险' : review.ai_risk_score >= 60 ? '中风险' : '高风险' }}
+            </StatusBadge>
+            <span class="text-sm text-gray-400">{{ formatDate(review.completed_at) }}</span>
+          </div>
           <p class="text-sm text-gray-500">{{ material.name }} · {{ material.industry }} · {{ material.platforms.join('、') || '未指定平台' }}</p>
         </div>
         <button class="btn-outline text-sm" @click="router.push('/')">返回工作台</button>
       </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] gap-6">
-        <main class="space-y-6 min-w-0">
-          <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6">
+        <main class="space-y-5 min-w-0">
+          <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="card border-l-4 border-l-sky-500">
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="text-sm text-gray-400">法律合规风险</p>
-                  <p class="text-4xl font-bold text-gray-800 mt-2">{{ review.ai_risk_score }}</p>
-                  <p class="text-xs text-gray-400 mt-1">分数越高，合规风险越低</p>
+                  <p class="text-4xl font-bold text-gray-800 dark:text-gray-200 mt-2">{{ review.ai_risk_score }}</p>
+                  <p class="text-xs text-gray-400 mt-1">/100，分数越高风险越低</p>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-xs" :class="statusClass(legalStatus)">
+                <StatusBadge :variant="legalStatus === 'succeeded' ? 'success' : legalStatus === 'failed' ? 'danger' : 'warning'">
                   {{ statusText(legalStatus) }}
-                </span>
+                </StatusBadge>
               </div>
               <p v-if="review.legal_module_error" class="mt-3 text-sm text-red-500">{{ review.legal_module_error }}</p>
-              <div class="mt-4 text-sm text-gray-600 whitespace-pre-wrap">{{ review.ai_result?.summary }}</div>
+              <div class="mt-4 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{{ review.ai_result?.summary }}</div>
             </div>
 
             <div class="card border-l-4 border-l-purple-500">
               <div class="flex items-start justify-between gap-3">
                 <div>
                   <p class="text-sm text-gray-400">舆情风险</p>
-                  <p class="text-3xl font-bold mt-2" :class="publicOpinionRiskClass.split(' ')[0]">{{ publicOpinionRiskLabel }}</p>
-                  <p class="text-xs text-gray-400 mt-1">不计入法律合规分，单独提示品牌风险</p>
+                  <p class="text-3xl font-bold mt-2" :class="publicOpinionRiskLabel === '低' ? 'text-green-600' : publicOpinionRiskLabel === '高' || publicOpinionRiskLabel === '严重' ? 'text-red-600' : 'text-amber-600'">
+                    {{ publicOpinionRiskLabel }}
+                  </p>
+                  <p class="text-xs text-gray-400 mt-1">不计入法律合规分</p>
                 </div>
-                <span class="px-2 py-0.5 rounded-full text-xs" :class="statusClass(publicOpinionStatus)">
+                <StatusBadge :variant="publicOpinionStatus === 'succeeded' ? 'success' : publicOpinionStatus === 'unavailable' ? 'gray' : 'warning'">
                   {{ statusText(publicOpinionStatus) }}
-                </span>
+                </StatusBadge>
               </div>
               <div class="mt-4 rounded-lg border px-3 py-2 text-sm" :class="publicOpinionRiskClass">
                 {{ publicOpinion.explanation || publicOpinion.message || '暂无舆情分析说明' }}
               </div>
-              <p v-if="review.public_opinion_module_error && publicOpinionStatus !== 'unavailable'" class="mt-3 text-sm text-red-500">
-                {{ review.public_opinion_module_error }}
-              </p>
             </div>
           </section>
 
           <section class="card">
             <div class="flex items-center justify-between gap-3 mb-4">
-              <h3 class="font-semibold text-gray-800">物料内容与命中标记</h3>
-              <span class="text-xs text-gray-400">{{ legalIssues.length }} 项法律/平台命中</span>
+              <h3 class="font-semibold text-gray-800 dark:text-gray-200">物料内容与命中标记</h3>
+              <span class="text-xs text-gray-400">{{ legalIssues.length }} 项命中</span>
             </div>
-            <div class="rounded-xl bg-gray-50 border border-gray-100 p-4 text-sm leading-7 whitespace-pre-wrap" v-html="highlightedHtml()" />
+            <div class="rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4 text-sm leading-7 whitespace-pre-wrap" v-html="highlightedHtml()" />
           </section>
 
           <section class="card">
-            <h3 class="font-semibold text-gray-800 mb-4">法律与平台规则依据</h3>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">法律与平台规则依据</h3>
             <div v-if="legalIssues.length" class="space-y-3">
-              <div v-for="issue in legalIssues" :key="issue.rule_id" class="rounded-xl border border-gray-200 p-4">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <span class="font-medium text-gray-800">{{ issue.match_type }}</span>
-                  <span class="text-xs text-gray-400">规则命中</span>
+              <div v-for="issue in legalIssues" :key="issue.rule_id" class="flex gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div class="w-1.5 rounded flex-shrink-0" :class="issue.rule_id?.startsWith('L4-') ? 'bg-sky-500' : 'bg-orange-500'"></div>
+                <div class="flex-1">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="font-semibold text-sm text-gray-800 dark:text-gray-200">{{ issue.match_type }}</span>
+                    <StatusBadge :variant="issue.rule_id?.startsWith('L4-') ? 'info' : 'danger'">规则命中</StatusBadge>
+                  </div>
+                  <p class="text-sm text-gray-700 dark:text-gray-300">{{ issue.rule_text }}</p>
+                  <p class="text-xs text-gray-400 mt-1">依据：{{ issue.source_law || '未提供' }}</p>
                 </div>
-                <p class="text-sm text-gray-700 mt-2">{{ issue.rule_text }}</p>
-                <p class="text-xs text-gray-400 mt-2">依据：{{ issue.source_law || '未提供' }}</p>
-                <details class="mt-2">
-                  <summary class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">技术详情</summary>
-                  <p class="mt-1 text-xs text-gray-400 font-mono break-all">规则编号：{{ issue.rule_id }}</p>
-                </details>
               </div>
             </div>
             <p v-else class="text-sm text-gray-400">未命中明确法律或平台规则。</p>
           </section>
 
           <section class="card">
-            <h3 class="font-semibold text-gray-800 mb-4">舆情风险详情</h3>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">舆情风险详情</h3>
             <div v-if="publicOpinion.status === 'knowledge_base_empty'" class="rounded-xl bg-yellow-50 text-yellow-700 p-4 text-sm">
               {{ publicOpinion.message }}。这不是低风险结论，只表示资料库还不能支撑案例化判断。
             </div>
             <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div class="rounded-xl border border-gray-200 p-4">
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                 <p class="text-xs text-gray-400">风险议题</p>
-                <p class="text-sm text-gray-700 mt-2">{{ publicOpinion.risk_topics?.join('、') || '暂无' }}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.risk_topics?.join('、') || '暂无' }}</p>
               </div>
-              <div class="rounded-xl border border-gray-200 p-4">
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                 <p class="text-xs text-gray-400">受影响群体</p>
-                <p class="text-sm text-gray-700 mt-2">{{ publicOpinion.affected_groups?.join('、') || '暂无' }}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.affected_groups?.join('、') || '暂无' }}</p>
               </div>
-              <div class="rounded-xl border border-gray-200 p-4">
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                 <p class="text-xs text-gray-400">传播诱因</p>
-                <p class="text-sm text-gray-700 mt-2">{{ publicOpinion.propagation_drivers?.join('、') || '暂无' }}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.propagation_drivers?.join('、') || '暂无' }}</p>
               </div>
-              <div class="rounded-xl border border-gray-200 p-4">
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                 <p class="text-xs text-gray-400">置信度</p>
-                <p class="text-sm text-gray-700 mt-2">{{ publicOpinion.confidence ?? '-' }}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.confidence ?? '-' }}</p>
               </div>
             </div>
-
-            <div class="mt-5">
-              <h4 class="text-sm font-semibold text-gray-700 mb-3">相似舆情事件</h4>
-              <div v-if="publicOpinion.similar_events?.length" class="space-y-3">
-                <div v-for="event in publicOpinion.similar_events" :key="event.event_id" class="rounded-xl border border-gray-200 p-4">
+            <div v-if="publicOpinion.similar_events?.length" class="mt-5">
+              <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">相似舆情事件</h4>
+              <div class="space-y-3">
+                <div v-for="event in publicOpinion.similar_events" :key="event.event_id" class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <span class="font-medium text-gray-800">{{ event.title }}</span>
+                    <span class="font-medium text-gray-800 dark:text-gray-200">{{ event.title }}</span>
                     <span class="text-xs text-gray-400">相似度 {{ event.similarity }}</span>
                   </div>
                   <pre class="mt-2 text-xs text-gray-500 whitespace-pre-wrap">{{ JSON.stringify(event.historical_consequence || {}, null, 2) }}</pre>
                 </div>
               </div>
-              <p v-else class="text-sm text-gray-400">暂无相似事件。</p>
-            </div>
-
-            <div v-if="publicOpinion.suggestions?.length" class="mt-5 rounded-xl bg-purple-50 text-purple-700 p-4">
-              <h4 class="text-sm font-semibold mb-2">建议</h4>
-              <ul class="list-disc pl-5 text-sm space-y-1">
-                <li v-for="suggestion in publicOpinion.suggestions" :key="suggestion">{{ suggestion }}</li>
-              </ul>
             </div>
           </section>
         </main>
 
         <aside class="space-y-4">
           <div class="card">
-            <h3 class="font-semibold text-gray-800 mb-3">资料版本快照</h3>
-            <div class="space-y-3 text-sm">
-              <div>
-                <p class="text-xs text-gray-400">平台规则版本</p>
-                <template v-if="review.ai_result?.platform_version_labels && Object.keys(review.ai_result.platform_version_labels).length > 0">
-                  <p v-for="(label, vid) in review.ai_result.platform_version_labels" :key="vid" class="text-gray-700">{{ label }}</p>
-                </template>
-                <p v-else class="text-gray-500">未命中或待补充</p>
-              </div>
-              <div>
-                <p class="text-xs text-gray-400">舆情资料库版本</p>
-                <p class="text-gray-700">{{ review.public_opinion_result?.library_version || review.public_opinion_library_version_id || '未使用' }}</p>
-              </div>
-              <div>
-                <p class="text-xs text-gray-400">法律模块完成时间</p>
-                <p class="text-gray-700">{{ formatDate(review.legal_module_completed_at) }}</p>
-              </div>
-              <div>
-                <p class="text-xs text-gray-400">舆情模块完成时间</p>
-                <p class="text-gray-700">{{ formatDate(review.public_opinion_module_completed_at) }}</p>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">审核信息</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between"><span class="text-gray-500">版本</span><span class="font-medium">{{ review.version }} 次提交</span></div>
+              <div class="flex justify-between"><span class="text-gray-500">完成时间</span><span class="font-medium">{{ formatDate(review.completed_at) }}</span></div>
+              <div v-if="review.ai_result?.platform_version_labels && Object.keys(review.ai_result.platform_version_labels).length" class="border-t border-gray-100 dark:border-gray-700 pt-2 mt-2">
+                <p class="text-xs text-gray-400 mb-2">平台规则版本</p>
+                <p v-for="(label, vid) in review.ai_result.platform_version_labels" :key="vid" class="text-sm text-gray-700 dark:text-gray-300">{{ label }}</p>
               </div>
             </div>
-            <!-- Tech details collapsible -->
-            <details class="mt-3">
-              <summary class="text-xs text-gray-400 cursor-pointer hover:text-gray-600">技术详情</summary>
-              <div class="mt-2 space-y-1 text-xs text-gray-400 font-mono break-all">
-                <p v-if="review.platform_rule_version_ids?.length">平台版本ID: {{ review.platform_rule_version_ids.join(', ') }}</p>
-                <p v-if="review.public_opinion_library_version_id">舆情资料库ID: {{ review.public_opinion_library_version_id }}</p>
-                <p>审查ID: {{ review.id }}</p>
-                <p>物料ID: {{ review.material_id }}</p>
-              </div>
-            </details>
           </div>
 
           <div class="card">
-            <h3 class="font-semibold text-gray-800 mb-3">平台规则状态</h3>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">平台状态</h3>
             <div v-if="review.ai_result?.unavailable_platforms?.length" class="space-y-2">
-              <div v-for="platform in review.ai_result.unavailable_platforms" :key="platform" class="rounded-lg bg-yellow-50 text-yellow-700 p-3 text-sm">
-                {{ platform }}：暂无生效规则，请管理员补充平台规则。
+              <div v-for="p in review.ai_result.unavailable_platforms" :key="p" class="rounded-lg bg-yellow-50 text-yellow-700 p-3 text-sm">
+                {{ p }}：暂无生效规则
               </div>
             </div>
-            <p v-else class="text-sm text-gray-600">本次审核已固定可用平台规则版本。</p>
+            <div v-else class="flex flex-wrap gap-2">
+              <span v-for="p in material.platforms" :key="p" class="badge badge-success">{{ p }} &#x2713;</span>
+            </div>
           </div>
 
           <div class="card">
-            <h3 class="font-semibold text-gray-800 mb-3">下一步</h3>
-            <p v-if="publicOpinion.risk_level === 'high' || publicOpinion.risk_level === 'severe'" class="text-sm text-red-600">
-              法律低风险不代表可以直接发布。舆情风险较高，建议暂停发布并由品牌负责人复核。
-            </p>
-            <p v-else class="text-sm text-gray-600">
-              结果已进入法务待审流程。请结合双风险轴和人工判断决定是否发布。
-            </p>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">下一步</h3>
+            <div class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+              <template v-if="review.ai_result?.suggestions?.length">
+                <div v-for="(s, i) in review.ai_result.suggestions.slice(0, 3)" :key="i" class="flex gap-3">
+                  <div class="w-6 h-6 rounded-full bg-sky-500 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">{{ i + 1 }}</div>
+                  <p>{{ s }}</p>
+                </div>
+              </template>
+              <p v-else>结果已进入法务待审队列，请关注审核通知。</p>
+            </div>
           </div>
         </aside>
       </div>

@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col lg:flex-row lg:gap-0 lg:h-full min-h-0">
-    <aside class="w-full lg:w-72 shrink-0 overflow-y-auto border-b lg:border-b-0 lg:border-r border-gray-200 bg-gray-50 p-4">
+  <div class="three-col">
+    <aside class="three-col-left">
       <slot name="left" />
     </aside>
-    <main class="flex-1 overflow-y-auto p-4">
+    <main class="three-col-center">
       <slot name="center" />
     </main>
-    <aside class="w-full lg:w-96 shrink-0 overflow-y-auto border-t lg:border-t-0 lg:border-l border-gray-200 bg-gray-50 p-4">
+    <aside class="three-col-right">
       <slot name="right" />
     </aside>
   </div>

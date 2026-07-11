@@ -21,6 +21,7 @@ export interface Material {
   status: string
   current_version: number
   submitter_id: string
+  brand_id?: string | null
   created_at: string
   updated_at: string
 }
@@ -132,4 +133,27 @@ export interface PreviewTextResponse {
   text: string
   quality: 'good' | 'degraded' | 'minimal'
   source_format: string
+}
+
+export interface Brand {
+  id: string
+  name: string
+  aliases: string[]
+  industry: string
+  description: string
+  status: 'active' | 'archived'
+  created_at: string
+}
+
+export interface BrandProfile {
+  brand: Brand
+  total_materials: number
+  total_reviews: number
+  decided_reviews: number
+  approved_count: number
+  pass_rate: number | null
+  avg_versions: number | null
+  top_violations: { rule_id: string; rule_text: string; count: number }[]
+  recent_reviews: { id: string; version: number; ai_risk_score: number; legal_decision: string | null; created_at: string }[]
+  approved_materials: { id: string; name: string; raw_text_preview: string }[]
 }

@@ -71,20 +71,20 @@ onMounted(() => loadLayer())
       <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
         <div>
           <h2 class="page-heading !mb-1">法规数据库</h2>
-          <p class="text-sm text-gray-500">按知识层级浏览法规、行业规则、案例、平台规范和合规模板。</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">按知识层级浏览法规、行业规则、案例、平台规范和合规模板。</p>
         </div>
-        <span v-if="catalog" class="text-xs text-gray-400">当前分类共 {{ catalog.total }} 项</span>
+        <span v-if="catalog" class="text-xs text-gray-400 dark:text-gray-500">当前分类共 {{ catalog.total }} 项</span>
       </div>
 
       <div class="card !p-0 overflow-hidden">
-        <div class="flex overflow-x-auto border-b border-gray-200 bg-gray-50">
+        <div class="flex overflow-x-auto border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
           <button
             v-for="layer in layers"
             :key="layer.key"
             class="px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors"
             :class="activeLayer === layer.key
-              ? 'border-sky-500 bg-white text-sky-700'
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-white'"
+              ? 'border-sky-500 bg-white dark:bg-gray-900 text-sky-700 dark:text-sky-400'
+              : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-white dark:hover:bg-gray-900'"
             @click="loadLayer(layer.key)"
           >
             <span class="font-bold mr-1">{{ layer.key }}</span>{{ layer.label }}
@@ -93,7 +93,7 @@ onMounted(() => loadLayer())
 
         <div v-if="loading" class="py-20 text-center">
           <div class="w-8 h-8 border-3 border-sky-100 border-t-sky-500 rounded-full animate-spin mx-auto mb-3" />
-          <p class="text-sm text-gray-400">正在读取知识库目录...</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500">正在读取知识库目录...</p>
         </div>
 
         <div v-else-if="error && !catalog" class="py-16 px-4 text-center">
@@ -102,16 +102,16 @@ onMounted(() => loadLayer())
         </div>
 
         <div v-else-if="catalog" class="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] min-h-520px">
-          <aside class="border-b lg:border-b-0 lg:border-r border-gray-200 bg-gray-50 p-3">
-            <p class="px-2 py-1 text-xs font-semibold text-gray-400 uppercase">分类目录</p>
+          <aside class="border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
+            <p class="px-2 py-1 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase">分类目录</p>
             <div class="flex lg:block gap-2 overflow-x-auto lg:overflow-visible mt-1">
               <button
                 v-for="group in groups"
                 :key="group"
                 class="block shrink-0 lg:w-full text-left px-3 py-2 rounded-lg text-sm transition-colors"
                 :class="selectedGroup === group
-                  ? 'bg-sky-100 text-sky-700 font-medium'
-                  : 'text-gray-600 hover:bg-gray-100'"
+                  ? 'bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 font-medium'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'"
                 @click="selectedGroup = group; selectedContent = null"
               >
                 {{ group }}
@@ -123,37 +123,37 @@ onMounted(() => loadLayer())
           </aside>
 
           <main class="min-w-0">
-            <div v-if="contentLoading" class="py-20 text-center text-sm text-gray-400">正文加载中...</div>
+            <div v-if="contentLoading" class="py-20 text-center text-sm text-gray-400 dark:text-gray-500">正文加载中...</div>
 
             <article v-else-if="selectedContent" class="p-4 sm:p-6">
               <button class="text-sm text-sky-600 hover:text-sky-700 mb-4" @click="selectedContent = null">
                 ← 返回条目列表
               </button>
-              <div class="border-b border-gray-100 pb-4 mb-5">
-                <span class="inline-flex px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 text-xs font-medium">
+              <div class="border-b border-gray-100 dark:border-gray-700 pb-4 mb-5">
+                <span class="inline-flex px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400 text-xs font-medium">
                   {{ selectedContent.layer }}
                 </span>
-                <h3 class="text-lg font-semibold text-gray-800 mt-2 break-words">{{ selectedContent.title }}</h3>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-2 break-words">{{ selectedContent.title }}</h3>
               </div>
-              <pre class="font-sans text-sm leading-7 text-gray-700 whitespace-pre-wrap break-words">{{ selectedContent.content }}</pre>
+              <pre class="font-sans text-sm leading-7 text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">{{ selectedContent.content }}</pre>
             </article>
 
             <div v-else class="p-4 sm:p-6">
-              <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-                <h3 class="font-semibold text-gray-800">{{ selectedGroup || catalog.label }}</h3>
-                <span class="text-xs text-gray-400">{{ visibleItems.length }} 项</span>
+              <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ selectedGroup || catalog.label }}</h3>
+                <span class="text-xs text-gray-400 dark:text-gray-500">{{ visibleItems.length }} 项</span>
               </div>
-              <div v-if="visibleItems.length" class="divide-y divide-gray-100">
+              <div v-if="visibleItems.length" class="divide-y divide-gray-100 dark:divide-gray-700">
                 <button
                   v-for="item in visibleItems"
                   :key="item.id"
-                  class="w-full text-left py-3 px-2 text-sm text-gray-700 hover:text-sky-700 hover:bg-sky-50 rounded-lg break-words transition-colors"
+                  class="w-full text-left py-3 px-2 text-sm text-gray-700 dark:text-gray-300 hover:text-sky-700 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/20 rounded-lg break-words transition-colors"
                   @click="openItem(item)"
                 >
                   {{ item.title }}
                 </button>
               </div>
-              <p v-else class="py-16 text-center text-sm text-gray-400">该分类暂无知识库文件</p>
+              <p v-else class="py-16 text-center text-sm text-gray-400 dark:text-gray-500">该分类暂无知识库文件</p>
             </div>
           </main>
         </div>

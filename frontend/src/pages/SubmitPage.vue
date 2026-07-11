@@ -4,6 +4,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import BrandSelector from '@/components/brand/BrandSelector.vue'
+import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
+import { brandsApi } from '@/api/brands'
+import type { Brand, BrandProfile } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -37,6 +41,14 @@ const isResubmit = ref(false)
 const resubmitVersion = ref(0)
 const resubmitStatus = ref('')
 const loadingEdit = ref(false)
+
+const selectedBrand = ref<Brand | null>(null)
+const brands = ref<Brand[]>([])
+const brandSearchLoading = ref(false)
+const brandSearchError = ref('')
+const brandProfile = ref<BrandProfile | null>(null)
+const brandProfileLoading = ref(false)
+const BRAND_STORAGE_KEY = 'lexad-last-brand'
 
 const finalText = computed({
   get: () => extractedText.value || form.value.raw_text,
@@ -150,33 +162,102 @@ function autoMaterialName() {
   return summary ? `${summary}${finalText.value.trim().length > 24 ? '…' : ''}` : '未命名广告物料'
 }
 
+function restoreBrand() {
+  const stored = localStorage.getItem(BRAND_STORAGE_KEY)
+  if (stored) {
+    try { selectedBrand.value = JSON.parse(stored) } catch { /* ignore */ }
+  }
+}
+
+function persistBrand(brand: Brand | null) {
+  if (brand) localStorage.setItem(BRAND_STORAGE_KEY, JSON.stringify(brand))
+  else localStorage.removeItem(BRAND_STORAGE_KEY)
+}
+
+async function searchBrands(query: string) {
+  brandSearchLoading.value = true
+  brandSearchError.value = ''
+  try {
+    const res = await brandsApi.search(query)
+    brands.value = res.data
+  } catch (e: any) {
+    brandSearchError.value = e.response?.data?.detail || '搜索品牌失败'
+  } finally {
+    brandSearchLoading.value = false
+  }
+}
+
+async function createBrand(name: string) {
+  brandSearchError.value = ''
+  try {
+    const res = await brandsApi.create({ name })
+    if (res.data.brand) {
+      selectedBrand.value = res.data.brand
+      persistBrand(res.data.brand)
+      await loadBrandProfile(res.data.brand.id)
+    }
+  } catch (e: any) {
+    brandSearchError.value = e.response?.data?.detail || '创建品牌失败'
+  }
+}
+
+function selectBrand(brand: Brand) {
+  selectedBrand.value = brand
+  persistBrand(brand)
+  loadBrandProfile(brand.id)
+}
+
+function clearBrand() {
+  selectedBrand.value = null
+  persistBrand(null)
+  brandProfile.value = null
+}
+
+async function loadBrandProfile(brandId: string) {
+  brandProfileLoading.value = true
+  try {
+    const res = await brandsApi.profile(brandId)
+    brandProfile.value = res.data
+  } catch {
+    brandProfile.value = null
+  } finally {
+    brandProfileLoading.value = false
+  }
+}
+
 onMounted(async () => {
   const editId = route.query.edit as string | undefined
-  if (!editId) return
-  editMaterialId.value = editId
-  loadingEdit.value = true
-  try {
-    const mRes = await materialsApi.get(editId)
-    const m = mRes.data
-    if (m.status !== 'returned') {
-      error.value = '该物料当前状态不允许重新提交'
-      return
+  if (editId) {
+    editMaterialId.value = editId
+    loadingEdit.value = true
+    try {
+      const mRes = await materialsApi.get(editId)
+      const m = mRes.data
+      if (m.status !== 'returned') {
+        error.value = '该物料当前状态不允许重新提交'
+        return
+      }
+      isResubmit.value = true
+      resubmitVersion.value = m.current_version
+      resubmitStatus.value = m.status
+      form.value.name = m.name
+      form.value.raw_text = m.raw_text
+      form.value.industries = m.industry ? m.industry.split('、') : []
+      form.value.platforms = m.platforms || []
+      form.value.material_type = m.material_type
+      form.value.priority = m.priority as string
+      form.value.deadline = m.deadline ? m.deadline.slice(0, 16) : null
+    } catch (e: any) {
+      error.value = e.response?.data?.detail || '加载物料失败'
+    } finally {
+      loadingEdit.value = false
     }
-    isResubmit.value = true
-    resubmitVersion.value = m.current_version
-    resubmitStatus.value = m.status
-    form.value.name = m.name
-    form.value.raw_text = m.raw_text
-    form.value.industries = m.industry ? m.industry.split('、') : []
-    form.value.platforms = m.platforms || []
-    form.value.material_type = m.material_type
-    form.value.priority = m.priority as string
-    form.value.deadline = m.deadline ? m.deadline.slice(0, 16) : null
-  } catch (e: any) {
-    error.value = e.response?.data?.detail || '加载物料失败'
-  } finally {
-    loadingEdit.value = false
   }
+  restoreBrand()
+  if (selectedBrand.value) {
+    loadBrandProfile(selectedBrand.value.id)
+  }
+  searchBrands('')
 })
 
 async function handleSubmit() {
@@ -205,6 +286,7 @@ async function handleSubmit() {
         platforms: form.value.platforms,
         priority: form.value.priority,
         deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
+        brand_id: selectedBrand.value?.id || null,
       })
       const reviewResponse = await reviewsApi.aiReview(editMaterialId.value)
       router.push(`/result/${reviewResponse.data.id}`)
@@ -217,6 +299,7 @@ async function handleSubmit() {
         industry: form.value.industries.join('、'),
         raw_text: finalText.value,
         deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
+        brand_id: selectedBrand.value?.id || null,
       })
       fd.append('body', body)
       if (selectedFile.value) fd.append('file', selectedFile.value)
@@ -294,6 +377,23 @@ async function handleSubmit() {
               placeholder="粘贴广告文案全文。上传文件后，也可以在这里核对和修改提取文本。"
             />
           </div>
+        </section>
+
+        <!-- Brand selection -->
+        <section class="card">
+          <BrandSelector
+            :model-value="selectedBrand"
+            :brands="brands"
+            :loading="brandSearchLoading"
+            :error="brandSearchError"
+            @update:model-value="(b: Brand | null) => { if (b) selectBrand(b); else clearBrand(); }"
+            @search="searchBrands"
+            @create="createBrand"
+          />
+          <BrandMemoryCard
+            :profile="brandProfile"
+            :loading="brandProfileLoading"
+          />
         </section>
 
         <section class="card">

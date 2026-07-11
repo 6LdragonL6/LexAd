@@ -374,25 +374,25 @@ onMounted(loadAll)
       <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-6">
         <div>
           <h2 class="page-heading !mb-1">管理员资料中心</h2>
-          <p class="text-sm text-gray-500">维护舆情案例、平台规则版本、导入记录和审计日志。所有写操作仅管理员可用。</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">维护舆情案例、平台规则版本、导入记录和审计日志。所有写操作仅管理员可用。</p>
         </div>
         <button class="btn-outline text-sm" :disabled="loading" @click="loadAll">刷新资料</button>
       </div>
 
-      <div v-if="notice" class="mb-4 rounded-xl border border-green-200 bg-green-50 text-green-700 px-4 py-3 text-sm">
+      <div v-if="notice" class="mb-4 rounded-xl border border-green-200 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-4 py-3 text-sm">
         {{ notice }}
       </div>
-      <div v-if="error" class="mb-4 rounded-xl border border-red-200 bg-red-50 text-red-600 px-4 py-3 text-sm">
+      <div v-if="error" class="mb-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-3 text-sm">
         {{ error }}
       </div>
 
       <div class="card !p-0 overflow-hidden">
-        <div class="flex overflow-x-auto border-b border-gray-200 bg-gray-50">
+        <div class="flex overflow-x-auto border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
           <button
             v-for="tab in tabs"
             :key="tab.key"
             class="min-w-36 px-4 py-3 text-left border-b-2 transition-colors"
-            :class="activeTab === tab.key ? 'border-sky-500 bg-white text-sky-700' : 'border-transparent text-gray-500 hover:bg-white'"
+            :class="activeTab === tab.key ? 'border-sky-500 bg-white dark:bg-gray-900 text-sky-700 dark:text-sky-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:bg-white dark:hover:bg-gray-900'"
             @click="activeTab = tab.key"
           >
             <span class="block text-sm font-semibold">{{ tab.label }}</span>
@@ -403,9 +403,9 @@ onMounted(loadAll)
         <section v-if="activeTab === 'public-opinion'" class="p-4 lg:p-6">
           <div class="grid grid-cols-1 xl:grid-cols-[420px_minmax(0,1fr)] gap-6">
             <div class="space-y-4">
-              <div class="rounded-xl border border-sky-100 bg-sky-50 p-4">
-                <h3 class="font-semibold text-gray-800">新增舆情案例</h3>
-                <p class="text-xs text-gray-500 mt-1">普通管理员只需要描述事件和后果，不需要理解 JSON。</p>
+              <div class="rounded-xl border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-900/20 p-4">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">新增舆情案例</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">普通管理员只需要描述事件和后果，不需要理解 JSON。</p>
                 <div class="mt-4 space-y-3">
                   <label class="block">
                     <span class="label">事件标题</span>
@@ -419,8 +419,8 @@ onMounted(loadAll)
                     <span class="label">造成了什么后果</span>
                     <textarea v-model="eventForm.consequence_text" class="input min-h-24" placeholder="描述声誉、业务、监管或其他影响" />
                   </label>
-                  <details class="rounded-lg border border-gray-200 bg-white p-3">
-                    <summary class="cursor-pointer text-sm font-medium text-gray-700">可选信息</summary>
+                  <details class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+                    <summary class="cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300">可选信息</summary>
                     <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <input v-model="eventForm.external_id" class="input" placeholder="外部编号" />
                       <input v-model="eventForm.occurred_at" class="input" type="date" />
@@ -434,21 +434,21 @@ onMounted(loadAll)
                 </div>
               </div>
 
-              <div class="rounded-xl border border-gray-200 bg-white p-4">
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                 <div class="flex items-center justify-between gap-2">
-                  <h3 class="font-semibold text-gray-800">舆情资料库</h3>
-                  <span class="text-xs text-gray-400">{{ events.length }} 条</span>
+                  <h3 class="font-semibold text-gray-800 dark:text-gray-200">舆情资料库</h3>
+                  <span class="text-xs text-gray-400 dark:text-gray-500">{{ events.length }} 条</span>
                 </div>
                 <input v-model="eventFilter" class="input mt-3" placeholder="按关键词搜索" @keyup.enter="loadEvents" />
-                <div class="mt-3 max-h-96 overflow-y-auto divide-y divide-gray-100">
+                <div class="mt-3 max-h-96 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
                   <button
                     v-for="event in events"
                     :key="event.id"
-                    class="w-full text-left py-3 px-2 rounded-lg hover:bg-gray-50"
-                    :class="selectedEventId === event.id ? 'bg-sky-50' : ''"
+                    class="w-full text-left py-3 px-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                    :class="selectedEventId === event.id ? 'bg-sky-50 dark:bg-sky-900/20' : ''"
                     @click="loadEventDetail(event.id)"
                   >
-                    <span class="block font-medium text-gray-800 truncate">{{ event.title || '未命名案例' }}</span>
+                    <span class="block font-medium text-gray-800 dark:text-gray-200 truncate">{{ event.title || '未命名案例' }}</span>
                     <span class="mt-1 inline-flex px-2 py-0.5 rounded-full text-xs" :class="statusClass(event.status)">
                       {{ statusText(event.status) }}
                     </span>
@@ -459,14 +459,14 @@ onMounted(loadAll)
             </div>
 
             <div class="min-w-0">
-              <div v-if="selectedEvent" class="rounded-xl border border-gray-200 bg-white p-4 lg:p-5">
+              <div v-if="selectedEvent" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 lg:p-5">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
                   <div>
                     <span class="inline-flex px-2 py-0.5 rounded-full text-xs" :class="statusClass(selectedEvent.event.status)">
                       {{ statusText(selectedEvent.event.status) }}
                     </span>
-                    <h3 class="text-lg font-semibold text-gray-800 mt-2">{{ selectedEvent.event.title || '未命名案例' }}</h3>
-                    <p class="text-xs text-gray-400 mt-1">更新时间：{{ formatDate(selectedEvent.event.updated_at) }}</p>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-2">{{ selectedEvent.event.title || '未命名案例' }}</h3>
+                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">更新时间：{{ formatDate(selectedEvent.event.updated_at) }}</p>
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <button class="btn-outline text-sm" :disabled="loading" @click="structureEvent(selectedEvent.event.id)">AI 帮我整理事件</button>
@@ -479,44 +479,44 @@ onMounted(loadAll)
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
                   <div>
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">事件材料</h4>
-                    <p class="rounded-lg bg-gray-50 p-3 text-sm text-gray-700 whitespace-pre-wrap">{{ selectedEvent.event.source_text || '暂无' }}</p>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">事件材料</h4>
+                    <p class="rounded-lg bg-gray-50 dark:bg-gray-700 p-3 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ selectedEvent.event.source_text || '暂无' }}</p>
                   </div>
                   <div>
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">后果描述</h4>
-                    <p class="rounded-lg bg-gray-50 p-3 text-sm text-gray-700 whitespace-pre-wrap">{{ selectedEvent.event.consequence_text || '暂无' }}</p>
+                    <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">后果描述</h4>
+                    <p class="rounded-lg bg-gray-50 dark:bg-gray-700 p-3 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ selectedEvent.event.consequence_text || '暂无' }}</p>
                   </div>
                 </div>
 
                 <div class="mt-5">
-                  <h4 class="text-sm font-semibold text-gray-700 mb-2">系统整理结果</h4>
+                  <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">系统整理结果</h4>
                   <div v-if="selectedEventLatestVersion" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div class="rounded-lg border border-gray-200 p-3">
-                      <p class="text-xs text-gray-400">摘要</p>
-                      <p class="text-sm text-gray-700 mt-1">{{ selectedEventLatestVersion.summary || '暂无摘要' }}</p>
+                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <p class="text-xs text-gray-400 dark:text-gray-500">摘要</p>
+                      <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">{{ selectedEventLatestVersion.summary || '暂无摘要' }}</p>
                     </div>
-                    <div class="rounded-lg border border-gray-200 p-3">
-                      <p class="text-xs text-gray-400">风险议题</p>
-                      <p class="text-sm text-gray-700 mt-1">{{ selectedEventLatestVersion.risk_topics?.join('、') || '待补充' }}</p>
+                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <p class="text-xs text-gray-400 dark:text-gray-500">风险议题</p>
+                      <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">{{ selectedEventLatestVersion.risk_topics?.join('、') || '待补充' }}</p>
                     </div>
-                    <div class="rounded-lg border border-gray-200 p-3">
-                      <p class="text-xs text-gray-400">受影响群体</p>
-                      <p class="text-sm text-gray-700 mt-1">{{ selectedEventLatestVersion.affected_groups?.join('、') || '待补充' }}</p>
+                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <p class="text-xs text-gray-400 dark:text-gray-500">受影响群体</p>
+                      <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">{{ selectedEventLatestVersion.affected_groups?.join('、') || '待补充' }}</p>
                     </div>
-                    <div class="rounded-lg border border-gray-200 p-3">
-                      <p class="text-xs text-gray-400">置信度 / 整理方式</p>
-                      <p class="text-sm text-gray-700 mt-1">{{ selectedEventLatestVersion.confidence ?? 0 }} / {{ selectedEventLatestVersion.model_name }}</p>
+                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <p class="text-xs text-gray-400 dark:text-gray-500">置信度 / 整理方式</p>
+                      <p class="text-sm text-gray-700 dark:text-gray-300 mt-1">{{ selectedEventLatestVersion.confidence ?? 0 }} / {{ selectedEventLatestVersion.model_name }}</p>
                     </div>
                   </div>
-                  <p v-else class="rounded-lg bg-yellow-50 text-yellow-700 p-3 text-sm">尚未整理。点击“AI 帮我整理事件”后再人工复核。</p>
+                  <p v-else class="rounded-lg bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-3 text-sm">尚未整理。点击“AI 帮我整理事件”后再人工复核。</p>
                 </div>
               </div>
-              <div v-else class="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-400">
+              <div v-else class="rounded-xl border border-dashed border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-10 text-center text-gray-400 dark:text-gray-500">
                 请选择一个舆情案例，或先新增草稿。
               </div>
 
-              <div class="mt-4 rounded-xl border border-gray-200 bg-white p-4">
-                <button class="text-sm font-semibold text-sky-700" @click="showImportTools = !showImportTools">
+              <div class="mt-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+                <button class="text-sm font-semibold text-sky-700 dark:text-sky-400" @click="showImportTools = !showImportTools">
                   {{ showImportTools ? '收起更多工具' : '更多工具：JSON 批量导入' }}
                 </button>
                 <div v-if="showImportTools" class="mt-4 space-y-3">
@@ -530,9 +530,9 @@ onMounted(loadAll)
                     </label>
                   </div>
                   <textarea v-model="importText" class="input font-mono text-xs min-h-64" placeholder="将舆情 JSON 粘贴到这里。普通录入不需要使用该工具。" />
-                  <div v-if="importPreview" class="rounded-lg bg-gray-50 p-3 text-sm">
+                  <div v-if="importPreview" class="rounded-lg bg-gray-50 dark:bg-gray-700 p-3 text-sm text-gray-700 dark:text-gray-300">
                     <p>预检结果：{{ statusText(importPreview.status) }}；总计 {{ importPreview.total_items }}，合格 {{ importPreview.valid_items }}，需修复 {{ importPreview.invalid_items }}</p>
-                    <pre v-if="importPreview.error_summary" class="mt-2 text-xs whitespace-pre-wrap">{{ JSON.stringify(importPreview.error_summary, null, 2) }}</pre>
+                    <pre v-if="importPreview.error_summary" class="mt-2 text-xs whitespace-pre-wrap text-gray-700 dark:text-gray-300">{{ JSON.stringify(importPreview.error_summary, null, 2) }}</pre>
                   </div>
                 </div>
               </div>
@@ -543,8 +543,8 @@ onMounted(loadAll)
         <section v-else-if="activeTab === 'platform-rules'" class="p-4 lg:p-6">
           <div class="grid grid-cols-1 xl:grid-cols-[380px_minmax(0,1fr)] gap-6">
             <div class="space-y-4">
-              <div class="rounded-xl border border-gray-200 bg-white p-4">
-                <h3 class="font-semibold text-gray-800">新增平台规则集</h3>
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">新增平台规则集</h3>
                 <div class="mt-3 space-y-3">
                   <input v-model="ruleSetForm.platform_name" class="input" placeholder="平台标识，例如抖音" />
                   <input v-model="ruleSetForm.display_name" class="input" placeholder="显示名称，例如 抖音" />
@@ -553,18 +553,18 @@ onMounted(loadAll)
                 </div>
               </div>
 
-              <div class="rounded-xl border border-gray-200 bg-white p-4">
-                <h3 class="font-semibold text-gray-800">平台列表</h3>
-                <div class="mt-3 divide-y divide-gray-100">
+              <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+                <h3 class="font-semibold text-gray-800 dark:text-gray-200">平台列表</h3>
+                <div class="mt-3 divide-y divide-gray-100 dark:divide-gray-700">
                   <button
                     v-for="item in platformRules"
                     :key="item.rule_set.id"
-                    class="w-full text-left py-3 px-2 rounded-lg hover:bg-gray-50"
-                    :class="selectedRuleSetId === item.rule_set.id ? 'bg-sky-50' : ''"
+                    class="w-full text-left py-3 px-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                    :class="selectedRuleSetId === item.rule_set.id ? 'bg-sky-50 dark:bg-sky-900/20' : ''"
                     @click="selectedRuleSetId = item.rule_set.id"
                   >
-                    <span class="block font-medium text-gray-800">{{ item.rule_set.display_name }}</span>
-                    <span class="text-xs text-gray-400">{{ item.rule_set.platform_name }}</span>
+                    <span class="block font-medium text-gray-800 dark:text-gray-200">{{ item.rule_set.display_name }}</span>
+                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ item.rule_set.platform_name }}</span>
                     <span v-if="item.active_version" class="ml-2 inline-flex px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs">
                       当前 {{ item.active_version.version_label }}
                     </span>
@@ -573,18 +573,18 @@ onMounted(loadAll)
               </div>
             </div>
 
-            <div class="rounded-xl border border-gray-200 bg-white p-4 lg:p-5">
+            <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 lg:p-5">
               <div v-if="selectedRuleSet">
                 <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
                   <div>
-                    <h3 class="text-lg font-semibold text-gray-800">{{ selectedRuleSet.rule_set.display_name }}</h3>
-                    <p class="text-sm text-gray-500 mt-1">{{ selectedRuleSet.rule_set.description || '暂无说明' }}</p>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ selectedRuleSet.rule_set.display_name }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ selectedRuleSet.rule_set.description || '暂无说明' }}</p>
                   </div>
-                  <span class="text-xs text-gray-400">版本数：{{ selectedRuleSet.versions.length }}</span>
+                  <span class="text-xs text-gray-400 dark:text-gray-500">版本数：{{ selectedRuleSet.versions.length }}</span>
                 </div>
 
-                <div class="mt-5 rounded-xl border border-sky-100 bg-sky-50 p-4">
-                  <h4 class="font-semibold text-gray-800">新增规则版本</h4>
+                <div class="mt-5 rounded-xl border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-900/20 p-4">
+                  <h4 class="font-semibold text-gray-800 dark:text-gray-200">新增规则版本</h4>
                   <div class="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-3">
                     <input v-model="ruleVersionForm.version_label" class="input" placeholder="版本号，例如 2026-07" />
                     <input v-model="ruleVersionForm.effective_at" class="input" type="datetime-local" />
@@ -597,30 +597,30 @@ onMounted(loadAll)
                 </div>
 
                 <div class="mt-5">
-                  <h4 class="font-semibold text-gray-800 mb-3">版本历史</h4>
+                  <h4 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">版本历史</h4>
                   <div class="space-y-3">
-                    <div v-for="version in selectedRuleSet.versions" :key="version.id" class="rounded-xl border border-gray-200 p-4">
+                    <div v-for="version in selectedRuleSet.versions" :key="version.id" class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                       <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
                         <div>
                           <span class="inline-flex px-2 py-0.5 rounded-full text-xs" :class="statusClass(version.status)">
                             {{ statusText(version.status) }}
                           </span>
-                          <h5 class="font-semibold text-gray-800 mt-2">{{ version.version_label }}</h5>
-                          <p class="text-xs text-gray-400">创建：{{ formatDate(version.created_at) }}；启用：{{ formatDate(version.activated_at) }}</p>
+                          <h5 class="font-semibold text-gray-800 dark:text-gray-200 mt-2">{{ version.version_label }}</h5>
+                          <p class="text-xs text-gray-400 dark:text-gray-500">创建：{{ formatDate(version.created_at) }}；启用：{{ formatDate(version.activated_at) }}</p>
                         </div>
                         <div class="flex flex-wrap gap-2">
                           <button v-if="version.status !== 'active'" class="btn-outline text-sm" @click="activateRuleVersion(version.id)">启用</button>
                           <button v-if="version.status !== 'active'" class="btn-outline text-sm" @click="activateRuleVersion(version.id, true)">回滚到此版本</button>
                         </div>
                       </div>
-                      <div class="mt-3 text-xs text-gray-500">
+                      <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
                         差异：新增 {{ version.diff_summary?.added_count || 0 }}，修改 {{ version.diff_summary?.changed_count || 0 }}，删除 {{ version.diff_summary?.removed_count || 0 }}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <p v-else class="py-20 text-center text-gray-400">请先创建或选择平台规则集。</p>
+              <p v-else class="py-20 text-center text-gray-400 dark:text-gray-500">请先创建或选择平台规则集。</p>
             </div>
           </div>
         </section>
@@ -628,7 +628,7 @@ onMounted(loadAll)
         <section v-else-if="activeTab === 'imports'" class="p-4 lg:p-6">
           <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
-              <thead class="bg-gray-50 text-gray-500">
+              <thead class="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                 <tr>
                   <th class="text-left px-3 py-2">文件</th>
                   <th class="text-left px-3 py-2">状态</th>
@@ -638,37 +638,37 @@ onMounted(loadAll)
                   <th class="text-left px-3 py-2">时间</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-100">
+              <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                 <tr v-for="job in importJobs" :key="job.id">
-                  <td class="px-3 py-3">{{ job.file_name }}</td>
+                  <td class="px-3 py-3 text-gray-700 dark:text-gray-300">{{ job.file_name }}</td>
                   <td class="px-3 py-3"><span class="px-2 py-0.5 rounded-full text-xs" :class="statusClass(job.status)">{{ statusText(job.status) }}</span></td>
-                  <td class="px-3 py-3">{{ job.total_items }}</td>
-                  <td class="px-3 py-3">{{ job.valid_items }}</td>
-                  <td class="px-3 py-3">{{ job.invalid_items }}</td>
-                  <td class="px-3 py-3 text-gray-400">{{ formatDate(job.created_at) }}</td>
+                  <td class="px-3 py-3 text-gray-700 dark:text-gray-300">{{ job.total_items }}</td>
+                  <td class="px-3 py-3 text-gray-700 dark:text-gray-300">{{ job.valid_items }}</td>
+                  <td class="px-3 py-3 text-gray-700 dark:text-gray-300">{{ job.invalid_items }}</td>
+                  <td class="px-3 py-3 text-gray-400 dark:text-gray-500">{{ formatDate(job.created_at) }}</td>
                 </tr>
               </tbody>
             </table>
-            <p v-if="!importJobs.length" class="py-16 text-center text-gray-400">暂无导入记录。</p>
+            <p v-if="!importJobs.length" class="py-16 text-center text-gray-400 dark:text-gray-500">暂无导入记录。</p>
           </div>
         </section>
 
         <section v-else class="p-4 lg:p-6">
           <div class="space-y-3">
-            <div v-for="log in auditLogs" :key="log.id" class="rounded-xl border border-gray-200 bg-white p-4">
+            <div v-for="log in auditLogs" :key="log.id" class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
               <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
                 <div>
-                  <span class="text-sm font-semibold text-gray-800">{{ log.action }}</span>
-                  <span class="ml-2 text-xs text-gray-400">{{ log.target_type }} / {{ log.target_id }}</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ log.action }}</span>
+                  <span class="ml-2 text-xs text-gray-400 dark:text-gray-500">{{ log.target_type }} / {{ log.target_id }}</span>
                 </div>
-                <span class="text-xs text-gray-400">{{ formatDate(log.created_at) }}</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">{{ formatDate(log.created_at) }}</span>
               </div>
               <details class="mt-2">
                 <summary class="cursor-pointer text-xs text-sky-600">查看变更内容</summary>
-                <pre class="mt-2 rounded-lg bg-gray-50 p-3 text-xs whitespace-pre-wrap">{{ JSON.stringify({ before: log.before_state, after: log.after_state }, null, 2) }}</pre>
+                <pre class="mt-2 rounded-lg bg-gray-50 dark:bg-gray-700 p-3 text-xs whitespace-pre-wrap text-gray-700 dark:text-gray-300">{{ JSON.stringify({ before: log.before_state, after: log.after_state }, null, 2) }}</pre>
               </details>
             </div>
-            <p v-if="!auditLogs.length" class="py-16 text-center text-gray-400">暂无审计日志。</p>
+            <p v-if="!auditLogs.length" class="py-16 text-center text-gray-400 dark:text-gray-500">暂无审计日志。</p>
           </div>
         </section>
       </div>

@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, R
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.deps import ensure_material_visible, get_current_user, require_marketing
-from app.models.material import MaterialStatus
+from app.models.material import Material, MaterialStatus
+from app.models.brand import Brand, BrandStatus
 from app.models.review import Review
 from app.models.user import User
 from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialOut, MaterialListItem, PreviewTextResponse
@@ -34,6 +35,11 @@ async def submit_material(
     data = MaterialSubmit(**json.loads(body))
     extracted_text = ""
 
+    if data.brand_id:
+        brand = db.query(Brand).filter(Brand.id == data.brand_id, Brand.status == BrandStatus.active).first()
+        if not brand:
+            raise HTTPException(status_code=422, detail="引用的品牌不存在或已归档")
+
     if file and file.filename:
         _validate_file(file)
         tmp_path = None
@@ -60,7 +66,7 @@ async def submit_material(
             detail="请提供广告文案内容或上传文件",
         )
 
-    material = material_service.create_material(db, data, user.id, extracted_text)
+    material = material_service.create_material(db, data, user.id, extracted_text, brand_id=data.brand_id)
     return material
 
 

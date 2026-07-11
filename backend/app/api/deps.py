@@ -40,6 +40,12 @@ def require_marketing(user: User = Depends(get_current_user)) -> User:
     return user
 
 
+def require_legal_or_admin(user: User = Depends(get_current_user)) -> User:
+    if user.role.value not in ("legal", "admin"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Legal or admin only")
+    return user
+
+
 def can_view_material(user: User, material: Material) -> bool:
     if user.role == UserRole.admin:
         return True

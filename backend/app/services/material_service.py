@@ -10,6 +10,7 @@ def create_material(
     data: MaterialSubmit,
     submitter_id: str,
     extracted_text: str = "",
+    brand_id: str | None = None,
 ) -> Material:
     final_text = _merge_texts(extracted_text, data.raw_text)
     material = Material(
@@ -22,6 +23,7 @@ def create_material(
         deadline=data.deadline,
         status=MaterialStatus.draft,
         submitter_id=submitter_id,
+        brand_id=brand_id,
     )
     db.add(material)
     db.commit()

@@ -9,6 +9,7 @@ class MaterialSubmit(BaseModel):
     raw_text: str = Field(default="", max_length=50_000)
     priority: str = Field(default="normal", pattern="^(normal|urgent|extreme)$")
     deadline: datetime | None = None
+    brand_id: str | None = None
 
 class MaterialUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=200)
