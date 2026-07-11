@@ -370,13 +370,13 @@ onMounted(loadAll)
 
 <template>
   <DefaultLayout>
-    <div class="max-w-7xl mx-auto p-4 lg:p-8">
-      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-6">
+    <div class="page-container max-w-7xl">
+      <div class="responsive-toolbar mb-6">
         <div>
           <h2 class="page-heading !mb-1">管理员资料中心</h2>
           <p class="text-sm text-gray-500 dark:text-gray-400">维护舆情案例、平台规则版本、导入记录和审计日志。所有写操作仅管理员可用。</p>
         </div>
-        <button class="btn-outline text-sm" :disabled="loading" @click="loadAll">刷新资料</button>
+        <button class="btn-outline text-sm shrink-0" :disabled="loading" @click="loadAll">刷新资料</button>
       </div>
 
       <div v-if="notice" class="mb-4 rounded-xl border border-green-200 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-4 py-3 text-sm">
@@ -626,7 +626,7 @@ onMounted(loadAll)
         </section>
 
         <section v-else-if="activeTab === 'imports'" class="p-4 lg:p-6">
-          <div class="overflow-x-auto">
+          <div class="table-scroll">
             <table class="min-w-full text-sm">
               <thead class="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
                 <tr>

@@ -28,15 +28,29 @@ async function handleLogin() {
   <div class="login-page">
     <!-- Left: Brand panel -->
     <div class="login-brand">
+      <!-- Decorative elements -->
+      <span class="login-deco login-deco-1" aria-hidden="true">§</span>
+      <span class="login-deco login-deco-2" aria-hidden="true">¶</span>
+      <span class="login-deco login-deco-3" aria-hidden="true">§</span>
+      <span class="login-deco login-deco-4" aria-hidden="true">¶</span>
+      <svg class="login-balance-svg" aria-hidden="true" width="180" height="180" viewBox="0 0 180 180" fill="none">
+        <circle cx="90" cy="90" r="88" stroke="white" stroke-opacity="0.06" stroke-width="2"/>
+        <line x1="90" y1="20" x2="90" y2="50" stroke="white" stroke-opacity="0.1" stroke-width="2" stroke-linecap="round"/>
+        <line x1="35" y1="90" x2="145" y2="90" stroke="white" stroke-opacity="0.1" stroke-width="1.5"/>
+        <path d="M55 120 L90 60 L125 120" stroke="white" stroke-opacity="0.12" stroke-width="2" stroke-linejoin="round"/>
+        <circle cx="55" cy="120" r="6" fill="white" fill-opacity="0.08"/>
+        <circle cx="125" cy="120" r="6" fill="white" fill-opacity="0.08"/>
+      </svg>
+
       <div class="login-brand-content">
-        <div class="flex items-center gap-3 mb-10">
-          <div class="sidebar-logo" style="width:40px;height:40px;background:rgba(14,165,233,0.2);border-radius:8px;">
+        <div class="login-logo-row">
+          <div class="login-logo-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M12 2L4 6V12C4 16.5 7 20.5 12 22C17 20.5 20 16.5 20 12V6L12 2Z" fill="white" fill-opacity="0.15" stroke="white" stroke-width="1.8" stroke-linejoin="round"/>
               <path d="M8.5 12L11 14.5L15.5 9.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-          <span class="text-white text-2xl font-bold">LexAd</span>
+          <span class="login-logo-text">LexAd</span>
         </div>
         <h1 class="login-title">智能合规 · 广告无忧</h1>
         <p class="login-subtitle">让每一则广告都经得起法律检验</p>
@@ -78,19 +92,19 @@ async function handleLogin() {
       <p class="text-sm text-gray-400 mb-8">请输入您的账号信息以继续</p>
       <form @submit.prevent="handleLogin" class="space-y-5">
         <div>
-          <label class="label">用户名</label>
-          <input v-model="username" class="input" placeholder="请输入用户名" required />
+          <label class="label" for="login-username">用户名</label>
+          <input id="login-username" v-model="username" class="input" placeholder="请输入用户名" required />
         </div>
         <div>
-          <label class="label">密码</label>
-          <input v-model="password" type="password" class="input" placeholder="请输入密码" required />
+          <label class="label" for="login-password">密码</label>
+          <input id="login-password" v-model="password" type="password" class="input" placeholder="请输入密码" required />
         </div>
-        <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+        <p v-if="error" role="alert" class="text-red-500 text-sm">{{ error }}</p>
         <button type="submit" :disabled="loading" class="btn-primary w-full min-h-12 text-[15px]">
           {{ loading ? '登录中...' : '登录' }}
         </button>
       </form>
-      <div class="mt-7 p-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+      <div class="login-test-accounts">
         <p class="text-xs text-gray-400 font-semibold mb-2">测试账号</p>
         <p class="text-xs text-gray-600 dark:text-gray-300">market01 / test1234（市场部）</p>
         <p class="text-xs text-gray-600 dark:text-gray-300">legal01 / test1234（法务部）</p>

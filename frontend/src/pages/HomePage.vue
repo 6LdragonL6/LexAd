@@ -77,7 +77,7 @@ async function handleArchive(material: Material) {
 
 <template>
   <DefaultLayout>
-    <div class="max-w-4xl mx-auto p-4 lg:p-8">
+    <div class="page-container max-w-4xl">
       <!-- Welcome Banner -->
       <div class="welcome-banner">
         <h2 class="text-white text-xl font-bold mb-1">
@@ -87,7 +87,7 @@ async function handleArchive(material: Material) {
       </div>
 
       <!-- Stat Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <div class="card text-center">
           <div class="stat-icon bg-sky-50 text-sky-600">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -112,7 +112,7 @@ async function handleArchive(material: Material) {
       </div>
 
       <!-- Quick Actions -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         <router-link to="/submit" class="card quick-action-card">
           <div class="flex items-center gap-3">
             <div class="quick-action-icon bg-sky-50">
@@ -149,27 +149,27 @@ async function handleArchive(material: Material) {
       </div>
 
       <!-- Recent + Compliance Tip -->
-      <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+      <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 min-w-0">
         <div class="card" v-if="materials.length">
           <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">最近提交</h3>
           <p v-if="navigationError" class="text-sm text-red-500 mb-2">{{ navigationError }}</p>
           <div v-for="m in materials.slice(0, 5)" :key="m.id"
                class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-3 border-b border-gray-100 dark:border-gray-700 last:border-0 gap-2">
-            <div>
-              <button class="text-sky-600 hover:underline text-left font-medium" @click="openMaterial(m)">{{ m.name }}</button>
+            <div class="min-w-0">
+              <button class="text-sky-600 hover:underline text-left font-medium break-words" @click="openMaterial(m)">{{ m.name }}</button>
               <span class="text-xs text-gray-400 ml-2">{{ m.industry }}</span>
               <span v-if="m.current_version > 1" class="text-xs text-gray-400 ml-1">第{{ m.current_version }}次</span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 shrink-0">
               <StatusBadge :variant="statusVariant(m.status)">{{ statusLabel(m.status) }}</StatusBadge>
             </div>
-            <div v-if="store.isMarketing && m.status === 'returned'" class="flex flex-wrap gap-2 items-center text-xs">
-              <span class="text-orange-600">
+            <div v-if="store.isMarketing && m.status === 'returned'" class="flex flex-wrap gap-2 items-center text-xs w-full sm:w-auto">
+              <span class="text-orange-600 break-words">
                 法务已退回
                 <template v-if="getQueueInfo(m.id)?.return_reasons">：{{ getQueueInfo(m.id)?.return_reasons }}</template>
               </span>
-              <router-link :to="`/submit?edit=${m.id}`" class="text-sky-600 hover:underline">修改并重新提交</router-link>
-              <button @click.stop="handleArchive(m)" :disabled="archiving[m.id]" class="text-gray-500 hover:text-gray-700 hover:underline">归档</button>
+              <router-link :to="`/submit?edit=${m.id}`" class="text-sky-600 hover:underline shrink-0">修改并重新提交</router-link>
+              <button @click.stop="handleArchive(m)" :disabled="archiving[m.id]" class="text-gray-500 hover:text-gray-700 hover:underline shrink-0">归档</button>
             </div>
           </div>
         </div>

@@ -185,19 +185,19 @@ onUnmounted(() => {
 
 <template>
   <DefaultLayout>
-    <div v-if="!loading && material && review?.task_status === 'completed'" class="max-w-7xl mx-auto p-4 lg:p-8">
-      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 mb-6">
-        <div>
-          <div class="flex items-center gap-3 mb-2">
+    <div v-if="!loading && material && review?.task_status === 'completed'" class="page-container max-w-7xl">
+      <div class="responsive-toolbar mb-6">
+        <div class="min-w-0">
+          <div class="flex items-center gap-3 mb-2 flex-wrap">
             <h2 class="page-heading !mb-0">审查结果</h2>
             <StatusBadge :variant="review.ai_risk_score >= 80 ? 'success' : review.ai_risk_score >= 60 ? 'warning' : 'danger'">
               {{ review.ai_risk_score >= 80 ? '低风险' : review.ai_risk_score >= 60 ? '中风险' : '高风险' }}
             </StatusBadge>
             <span class="text-sm text-gray-400">{{ formatDate(review.completed_at) }}</span>
           </div>
-          <p class="text-sm text-gray-500">{{ material.name }} · {{ material.industry }} · {{ material.platforms.join('、') || '未指定平台' }}</p>
+          <p class="text-sm text-gray-500 break-words">{{ material.name }} · {{ material.industry }} · {{ material.platforms.join('、') || '未指定平台' }}</p>
         </div>
-        <button class="btn-outline text-sm" @click="router.push('/')">返回工作台</button>
+        <button class="btn-outline text-sm shrink-0" @click="router.push('/')">返回工作台</button>
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6">

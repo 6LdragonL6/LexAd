@@ -35,7 +35,6 @@ export const useUserStore = defineStore('user', () => {
   function logout() {
     user.value = null
     localStorage.removeItem('access_token')
-    window.location.href = '/login'
   }
 
   return { user, loading, isLoggedIn, isMarketing, isLegal, isAdmin, canSubmit, login, fetchUser, logout }

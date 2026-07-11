@@ -67,8 +67,8 @@ onMounted(() => loadLayer())
 
 <template>
   <DefaultLayout>
-    <div class="max-w-6xl mx-auto p-4 lg:p-8">
-      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
+    <div class="page-container max-w-6xl">
+      <div class="responsive-toolbar mb-6">
         <div>
           <h2 class="page-heading !mb-1">法规数据库</h2>
           <p class="text-sm text-gray-500 dark:text-gray-400">按知识层级浏览法规、行业规则、案例、平台规范和合规模板。</p>
@@ -101,7 +101,7 @@ onMounted(() => loadLayer())
           <button class="btn-outline mt-4 text-sm" @click="loadLayer()">重新加载</button>
         </div>
 
-        <div v-else-if="catalog" class="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] min-h-520px">
+        <div v-else-if="catalog" class="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] min-h-520px min-w-0">
           <aside class="border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
             <p class="px-2 py-1 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase">分类目录</p>
             <div class="flex lg:block gap-2 overflow-x-auto lg:overflow-visible mt-1">

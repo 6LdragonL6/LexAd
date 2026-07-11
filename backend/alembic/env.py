@@ -1,4 +1,4 @@
-"""Alembic environment configuration for Neon PostgreSQL migrations."""
+"""Alembic environment configuration — uses unified database URL resolution."""
 
 import os
 from logging.config import fileConfig
@@ -8,6 +8,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.db.base import Base
+from app.core.config import get_settings
+from app.db.url import resolve_database_url
 
 load_dotenv()
 
@@ -19,7 +21,8 @@ target_metadata = Base.metadata
 
 
 def get_url() -> str:
-    return os.environ.get("DATABASE_URL", "sqlite:///./lexad.db")
+    settings = get_settings()
+    return resolve_database_url(settings)
 
 
 def run_migrations_offline() -> None:

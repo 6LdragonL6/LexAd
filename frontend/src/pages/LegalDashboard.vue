@@ -84,8 +84,8 @@ async function handleArchive(item: ReviewQueueItem) {
 
 <template>
   <DefaultLayout>
-    <div class="max-w-6xl mx-auto p-4 lg:p-8">
-      <div class="flex items-center justify-between mb-6">
+    <div class="page-container max-w-6xl">
+      <div class="responsive-toolbar mb-6">
         <div>
           <h2 class="page-heading">{{ store.isMarketing ? '我的提交' : '法务审核台' }}</h2>
           <p class="text-sm text-gray-400 mt-1">智能合规 · 广告无忧</p>

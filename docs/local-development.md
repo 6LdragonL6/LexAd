@@ -1,13 +1,13 @@
 # LexAd 本地开发指南
 
-本文说明如何在 Windows 和 macOS 上运行 LexAd。版本号 `v0.5.1`。
+本文说明如何在 Windows 和 macOS 上运行 LexAd。当前版本为 `v0.6.0`。
 
 ## 环境要求
 
 - Python 3.10+
 - Node.js 18+
 - npm
-- 可选：PostgreSQL。不配置 `DATABASE_URL` 时，后端使用本地 SQLite 回退。
+- 可选：Neon PostgreSQL。日常开发默认使用本地 SQLite，只有显式选择 `neon` 模式时才需要。
 - 可选：Tesseract OCR。只有需要 OCR 文件解析时才需要。
 
 ## Windows
@@ -35,6 +35,8 @@ npm install
 start-dev.bat
 ```
 
+批处理入口默认使用 `local` 模式。它会在启动前迁移本地 SQLite，并以幂等方式补充测试用户和演示品牌。
+
 脚本会打开两个窗口：
 
 - `LexAd Backend`：后端日志，默认端口 `8000`。
@@ -44,6 +46,23 @@ start-dev.bat
 
 - 前端：<http://localhost:5173>
 - 后端 API 文档：<http://localhost:8000/docs>
+
+### 显式数据库模式
+
+本地模式（默认）：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\start-dev.ps1 -DatabaseMode local
+```
+
+Neon 只读预检模式：
+
+```powershell
+$env:DATABASE_URL = 'postgresql://...'
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\start-dev.ps1 -DatabaseMode neon
+```
+
+`neon` 启动流程只检查连接和迁移版本，不会自动迁移云数据库。SQLite 与 Neon 是独立数据源，切换模式不会自动同步数据。
 
 ### 日常关闭
 

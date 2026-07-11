@@ -17,9 +17,13 @@
 
   /* Surfaces */
   --color-page: #F9FAFB;
+  --color-shell: #F1F5F9;
   --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+  --color-surface-inset: #F8FAFC;
   --color-surface-muted: #F1F5F9;
   --color-surface-soft: #F8FAFC;
+  --color-hover: #F1F5F9;
   --color-overlay: rgba(15, 23, 42, 0.38);
   --color-sidebar: #0F172A;
   --color-sidebar-text: rgba(255, 255, 255, 0.5);
@@ -53,7 +57,9 @@
   /* Layout */
   --sidebar-width: 200px;
   --topbar-height: 56px;
-  --breakpoint-mobile: 1024px;
+  /* semantic tokens — use 1280px / 768px literals in @media */
+  --breakpoint-compact: 1280px;
+  --breakpoint-phone: 768px;
 
   /* Shape */
   --radius-sm: 6px;
@@ -78,17 +84,21 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-page: #0F172A;
-  --color-surface: #111827;
-  --color-surface-muted: #1E293B;
-  --color-surface-soft: #172033;
+  --color-page: #070D19;
+  --color-shell: #0B1220;
+  --color-surface: #111B2E;
+  --color-surface-elevated: #17243A;
+  --color-surface-inset: #0D1627;
+  --color-surface-muted: #162238;
+  --color-surface-soft: #162238;
+  --color-hover: #1D2D47;
   --color-overlay: rgba(2, 6, 23, 0.68);
-  --color-text-primary: #E5E7EB;
-  --color-text-secondary: #CBD5E1;
-  --color-text-muted: #94A3B8;
+  --color-text-primary: #E8EEF7;
+  --color-text-secondary: #B7C4D6;
+  --color-text-muted: #7F91AA;
   --color-text-inverse: #020617;
-  --color-border: #334155;
-  --color-border-strong: #475569;
+  --color-border: #2A3A55;
+  --color-border-strong: #3D4F6B;
   --color-brand: #38BDF8;
   --color-brand-hover: #7DD3FC;
   --color-brand-active: #0EA5E9;
@@ -120,6 +130,8 @@
 
 html {
   font-size: 16px;
+  max-width: 100%;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--color-page);
@@ -132,6 +144,13 @@ body {
   background: var(--color-page);
   line-height: 1.6;
   min-height: 100vh;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+#app {
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 button,
@@ -198,6 +217,18 @@ img {
   box-shadow: var(--shadow-card);
 }
 
+.surface-elevated {
+  background: var(--color-surface-elevated);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-card);
+}
+
+.surface-inset {
+  background: var(--color-surface-inset);
+  color: var(--color-text-secondary);
+}
+
 .surface-muted {
   background: var(--color-surface-muted);
   color: var(--color-text-secondary);
@@ -236,6 +267,60 @@ img {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: var(--space-card-pad);
+}
+
+/* phone: slightly tighter card padding; tablet / desktop keep the token value */
+@media (max-width: 767px) {
+  .card {
+    padding: 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Shared Layout Utilities
+   ═══════════════════════════════════════════════════════════════════════════ */
+.page-container {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin-inline: auto;
+  padding-inline: 16px;
+  padding-block: 16px;
+}
+
+/* tablet (768px–1279px) — 24px inline, 24px block padding */
+@media (min-width: 768px) {
+  .page-container {
+    padding-inline: 24px;
+    padding-block: 24px;
+  }
+}
+
+/* wide (>=1280px) — 32px inline, 32px block padding */
+@media (min-width: 1280px) {
+  .page-container {
+    padding-inline: 32px;
+    padding-block: 32px;
+  }
+}
+
+.page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.responsive-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -421,7 +506,8 @@ textarea.input {
   display: none;
 }
 
-@media (min-width: 1024px) {
+/* Sidebar visible at >=1280px; main gets margin-left to match */
+@media (min-width: 1280px) {
   .app-shell-sidebar {
     display: flex;
   }
@@ -440,6 +526,8 @@ textarea.input {
 
 .app-shell-content {
   flex: 1;
+  min-width: 0;
+  overflow-x: clip;
   overflow-y: auto;
 }
 
@@ -599,7 +687,58 @@ textarea.input {
   font-weight: 600;
 }
 
-@media (max-width: 1023px) {
+.topbar-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--control-height-sm);
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 8px;
+}
+
+.topbar-logout-btn:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+.topbar-logout-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.topbar-logout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1279px) {
+  .topbar-logout-text {
+    display: none;
+  }
+
+  .topbar-logout-btn {
+    padding: 6px 10px;
+    gap: 0;
+  }
+}
+
+/* Desktop TopBar visible at >=1280px (matches sidebar) */
+@media (min-width: 1280px) {
+  .app-shell .topbar {
+    display: flex;
+  }
+}
+
+@media (max-width: 1279px) {
   .app-shell .topbar {
     display: none;
   }
@@ -650,7 +789,13 @@ textarea.input {
   color: var(--color-text-muted);
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 480px) {
+  .mobile-topbar-slogan {
+    display: none;
+  }
+}
+
+@media (max-width: 1279px) {
   .mobile-topbar {
     display: flex;
   }
@@ -713,9 +858,7 @@ textarea.input {
   background: var(--color-brand);
 }
 
-/* ═══════════════════════════════════════════════════════════════════════════
-   Three-Column Layout (LegalDetail)
-   ═══════════════════════════════════════════════════════════════════════════ */
+/* ── Vertical (default): columns stack in document order ─────────────────── */
 .three-col {
   display: flex;
   flex-direction: column;
@@ -727,32 +870,56 @@ textarea.input {
 .three-col-center,
 .three-col-right {
   padding: 16px;
-  overflow-y: auto;
+  width: 100%;
+  overflow: visible;
 }
 
-@media (min-width: 1024px) {
+/* ── Wide row layout: >=1280px ─────────────────────────────────────────── */
+@media (min-width: 1280px) {
   .three-col {
     flex-direction: row;
-    height: calc(100vh - var(--topbar-height));
+    height: calc(100dvh - var(--topbar-height));
   }
 
   .three-col-left {
-    width: 280px;
+    width: clamp(220px, 20vw, 280px);
     flex-shrink: 0;
     border-right: 1px solid var(--color-border);
     background: var(--color-surface-muted);
+    overflow-y: auto;
   }
 
   .three-col-center {
     flex: 1;
     min-width: 0;
+    overflow-y: auto;
   }
 
   .three-col-right {
-    width: 380px;
+    width: clamp(300px, 27vw, 380px);
     flex-shrink: 0;
     border-left: 1px solid var(--color-border);
     background: var(--color-surface-muted);
+    overflow-y: auto;
+  }
+}
+
+/* Below 1280px: clear any inherited fixed height / independent scroll
+   so the page scrolls naturally */
+@media (max-width: 1279px) {
+  .three-col {
+    height: auto;
+  }
+
+  .three-col-left,
+  .three-col-center,
+  .three-col-right {
+    overflow: visible;
+    width: 100%;
+    flex: none;
+    border-right: none;
+    border-left: none;
+    background: transparent;
   }
 }
 
@@ -761,7 +928,9 @@ textarea.input {
    ═══════════════════════════════════════════════════════════════════════════ */
 .login-page {
   display: flex;
-  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .login-brand {
@@ -773,6 +942,7 @@ textarea.input {
   padding: 60px 56px;
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 
 .login-brand::before {
@@ -785,6 +955,53 @@ textarea.input {
   background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
   transform: translateY(-50%);
   pointer-events: none;
+}
+
+.login-deco {
+  position: absolute;
+  font-size: 120px;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  user-select: none;
+  font-family: serif;
+}
+
+.login-deco-1 { top: 8%; left: 10%; transform: rotate(-15deg); }
+.login-deco-2 { top: 12%; right: 18%; transform: rotate(10deg); font-size: 96px; }
+.login-deco-3 { bottom: 14%; left: 14%; transform: rotate(8deg); font-size: 80px; }
+.login-deco-4 { bottom: 10%; right: 12%; transform: rotate(-12deg); font-size: 104px; }
+
+.login-balance-svg {
+  position: absolute;
+  right: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.login-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.login-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(14, 165, 233, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.login-logo-text {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .login-brand-content {
@@ -829,15 +1046,68 @@ textarea.input {
 }
 
 .login-form-panel {
-  width: 440px;
+  width: 480px;
+  flex: 0 0 480px;
   background: var(--color-surface);
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 60px 48px;
+  min-width: 0;
 }
 
-@media (max-width: 1023px) {
+.login-test-accounts {
+  margin-top: 28px;
+  padding: 16px;
+  background: var(--color-surface-inset);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  word-break: break-all;
+}
+
+.login-brand-content {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+}
+
+/* ── Compact zone: 768px–1279px ─────────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .login-brand {
+    padding: 40px 32px;
+  }
+
+  .login-deco,
+  .login-balance-svg {
+    display: none;
+  }
+
+  .login-title {
+    font-size: 26px;
+  }
+
+  .login-subtitle {
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .login-features {
+    gap: 12px;
+  }
+
+  .login-feature-item {
+    font-size: 13px;
+  }
+
+  .login-form-panel {
+    width: clamp(360px, 42vw, 480px);
+    flex: 0 0 clamp(360px, 42vw, 480px);
+    padding: 40px 32px;
+  }
+}
+
+/* ── Phone zone: <768px ─────────────────────────────────────────────────── */
+@media (max-width: 767px) {
   .login-page {
     flex-direction: column;
   }
@@ -845,6 +1115,11 @@ textarea.input {
   .login-brand {
     flex: 0 0 auto;
     padding: 40px 24px 24px;
+  }
+
+  .login-deco,
+  .login-balance-svg {
+    display: none;
   }
 
   .login-title {
@@ -862,8 +1137,17 @@ textarea.input {
 
   .login-form-panel {
     width: 100%;
-    flex: 1;
-    padding: 32px 24px;
+    flex: 1 1 auto;
+    padding: 32px 20px;
+  }
+
+  .login-form-panel .input,
+  .login-form-panel .btn-primary {
+    min-height: 44px;
+  }
+
+  .login-logo-row {
+    margin-bottom: 24px;
   }
 }
 
@@ -975,20 +1259,32 @@ textarea.input {
    Dark Mode — UnoCSS Overrides
    ═══════════════════════════════════════════════════════════════════════════ */
 
-:root[data-theme='dark'] .bg-white,
-:root[data-theme='dark'] .bg-gray-50,
-:root[data-theme='dark'] .bg-gray-100 {
+:root[data-theme='dark'] .bg-white {
   background-color: var(--color-surface) !important;
 }
 
-:root[data-theme='dark'] .bg-gray-200 {
+:root[data-theme='dark'] .bg-gray-50 {
+  background-color: var(--color-surface-inset) !important;
+}
+
+:root[data-theme='dark'] .bg-gray-100 {
   background-color: var(--color-surface-muted) !important;
 }
 
-:root[data-theme='dark'] .hover\:bg-white:hover,
-:root[data-theme='dark'] .hover\:bg-gray-50:hover,
+:root[data-theme='dark'] .bg-gray-200 {
+  background-color: var(--color-hover) !important;
+}
+
+:root[data-theme='dark'] .hover\:bg-white:hover {
+  background-color: var(--color-surface-elevated) !important;
+}
+
+:root[data-theme='dark'] .hover\:bg-gray-50:hover {
+  background-color: var(--color-surface-inset) !important;
+}
+
 :root[data-theme='dark'] .hover\:bg-gray-100:hover {
-  background-color: var(--color-surface-muted) !important;
+  background-color: var(--color-hover) !important;
 }
 
 :root[data-theme='dark'] .active\:bg-gray-200:active {

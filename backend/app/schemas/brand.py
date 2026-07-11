@@ -18,9 +18,9 @@ class BrandUpdate(BaseModel):
 class BrandOut(BaseModel):
     id: str
     name: str
-    aliases: list
+    aliases: list[str]
     industry: str
-    description: str
+    description: str | None
     status: str
     created_at: datetime
 

@@ -1,22 +1,34 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { brandsApi } from '@/api/brands'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BrandProfilePanel from '@/components/brand/BrandProfilePanel.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import EmptyState from '@/components/common/EmptyState.vue'
 import type { Brand, BrandProfile } from '@/types'
 
 const store = useUserStore()
 const brands = ref<Brand[]>([])
 const searchText = ref('')
-const loading = ref(true)
-const error = ref('')
 const selectedBrand = ref<Brand | null>(null)
 const profile = ref<BrandProfile | null>(null)
 const profileLoading = ref(false)
+const profileError = ref('')
 const saving = ref(false)
 const saveError = ref('')
+
+type ListState = 'loading' | 'ready' | 'empty' | 'error'
+type LoadErrorKind = 'network' | 'forbidden' | 'server' | 'unknown'
+
+interface LoadError {
+  kind: LoadErrorKind
+  message: string
+}
+
+const listState = ref<ListState>('loading')
+const listError = ref<LoadError | null>(null)
 
 const editForm = ref({
   name: '',
@@ -30,31 +42,62 @@ onMounted(async () => {
   await loadBrands()
 })
 
-async function loadBrands(query = '') {
-  loading.value = true
-  error.value = ''
+async function loadBrands(query = '', preserveExisting = false) {
+  if (!preserveExisting) {
+    listState.value = 'loading'
+  }
+  listError.value = null
   try {
     const res = await brandsApi.search(query)
-    brands.value = res.data
+    if (res.data.length === 0) {
+      if (preserveExisting) {
+        brands.value = []
+      }
+      listState.value = 'empty'
+    } else {
+      brands.value = res.data
+      listState.value = 'ready'
+    }
   } catch (e: any) {
-    error.value = e.response?.data?.detail || '加载品牌列表失败'
-  } finally {
-    loading.value = false
+    if (!preserveExisting) {
+      brands.value = []
+    }
+    if (axios.isAxiosError(e)) {
+      if (!e.response) {
+        listError.value = { kind: 'network', message: '无法连接本地后端，请确认一键启动已成功完成。' }
+      } else if (e.response.status === 403) {
+        listError.value = { kind: 'forbidden', message: '当前账号无权访问品牌档案。' }
+      } else if (e.response.status >= 500) {
+        listError.value = { kind: 'server', message: e.response.data?.detail || '品牌服务暂时不可用。' }
+      } else {
+        listError.value = { kind: 'unknown', message: '加载品牌列表失败。' }
+      }
+    } else {
+      listError.value = { kind: 'unknown', message: '加载品牌列表失败。' }
+    }
+    listState.value = 'error'
   }
 }
 
 async function selectBrand(brand: Brand) {
   selectedBrand.value = brand
   profile.value = null
+  profileError.value = ''
   profileLoading.value = true
   try {
     const res = await brandsApi.profile(brand.id)
     profile.value = res.data
   } catch {
     profile.value = null
+    profileError.value = '加载品牌档案失败，请重试。'
   } finally {
     profileLoading.value = false
   }
+}
+
+async function retryProfile() {
+  if (!selectedBrand.value) return
+  await selectBrand(selectedBrand.value)
 }
 
 function handleSearch() {
@@ -98,6 +141,8 @@ async function handleSave() {
       description: editForm.value.description.trim(),
     })
     selectedBrand.value = updated.data
+    const idx = brands.value.findIndex(b => b.id === updated.data.id)
+    if (idx !== -1) brands.value[idx] = updated.data
     showEdit.value = false
     await selectBrand(updated.data)
   } catch (e: any) {
@@ -114,8 +159,13 @@ async function handleArchive() {
   saveError.value = ''
   try {
     const updated = await brandsApi.update(selectedBrand.value.id, { status: 'archived' })
-    selectedBrand.value = updated.data
+    brands.value = brands.value.filter(b => b.id !== updated.data.id)
+    selectedBrand.value = null
     profile.value = null
+    profileError.value = ''
+    if (brands.value.length === 0) {
+      listState.value = 'empty'
+    }
   } catch (e: any) {
     saveError.value = e.response?.data?.detail || '归档失败'
   } finally {
@@ -130,6 +180,10 @@ async function handleReactivate() {
   saveError.value = ''
   try {
     const updated = await brandsApi.update(selectedBrand.value.id, { status: 'active' })
+    const idx = brands.value.findIndex(b => b.id === updated.data.id)
+    if (idx !== -1) {
+      brands.value[idx] = updated.data
+    }
     selectedBrand.value = updated.data
     profile.value = null
   } catch (e: any) {
@@ -142,13 +196,15 @@ async function handleReactivate() {
 
 <template>
   <DefaultLayout>
-    <div class="max-w-6xl mx-auto p-4 lg:p-8">
-      <div class="mb-6">
-        <h2 class="page-heading">品牌档案</h2>
-        <p class="text-sm text-gray-400 mt-1">查看品牌的合规历史记录。品牌数据由物料提交自动关联。</p>
+    <div class="page-container max-w-6xl">
+      <div class="responsive-toolbar mb-6">
+        <div>
+          <h2 class="page-heading">品牌档案</h2>
+          <p class="text-sm text-gray-400 mt-1">查看品牌的合规历史记录。品牌数据由物料提交自动关联。</p>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
+      <div class="grid grid-cols-1 xl:grid-cols-[300px_minmax(0,1fr)] gap-6">
         <!-- Left: Brand list -->
         <div class="space-y-4">
           <div class="flex gap-2">
@@ -161,9 +217,17 @@ async function handleReactivate() {
             <button class="btn-primary min-h-[44px] px-4" @click="handleSearch">搜索</button>
           </div>
 
-          <div v-if="loading" class="text-gray-400 text-center py-8">加载中...</div>
-          <div v-else-if="error" class="text-red-500 text-center py-8">{{ error }}</div>
-          <div v-else-if="!brands.length" class="card text-center text-gray-400 py-8">暂无品牌记录</div>
+          <div v-if="listState === 'loading'" class="text-gray-400 text-center py-8">加载中...</div>
+          <div v-else-if="listState === 'error'" class="card">
+            <EmptyState :message="listError?.message || '加载失败'">
+              <template #action>
+                <button class="btn-primary text-sm min-h-[36px] px-4" @click="loadBrands(searchText)">重新加载</button>
+              </template>
+            </EmptyState>
+          </div>
+          <div v-else-if="listState === 'empty'" class="card">
+            <EmptyState message="暂无品牌记录" />
+          </div>
           <div v-else class="card !p-0 overflow-hidden">
             <button
               v-for="brand in brands"
@@ -234,7 +298,16 @@ async function handleReactivate() {
             </div>
           </div>
 
-          <BrandProfilePanel :profile="profile" :loading="profileLoading" />
+          <!-- Profile loading/error states -->
+          <div v-if="profileLoading" class="text-gray-400 text-center py-8">加载品牌档案中...</div>
+          <div v-else-if="profileError && selectedBrand" class="card">
+            <EmptyState :message="profileError">
+              <template #action>
+                <button class="btn-primary text-sm min-h-[36px] px-4" @click="retryProfile">重试</button>
+              </template>
+            </EmptyState>
+          </div>
+          <BrandProfilePanel v-else :profile="profile" :loading="false" />
         </div>
       </div>
     </div>

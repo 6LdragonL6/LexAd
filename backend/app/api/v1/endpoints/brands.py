@@ -4,13 +4,13 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user, require_legal_or_admin
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.brand import BrandCreate, BrandUpdate, BrandCreateResponse, BrandProfile
+from app.schemas.brand import BrandCreate, BrandUpdate, BrandCreateResponse, BrandProfile, BrandOut
 from app.services import brand_service
 
 router = APIRouter()
 
 
-@router.get("", response_model=list)
+@router.get("", response_model=list[BrandOut])
 def list_brands(
     search: str = Query(default="", max_length=100),
     db: Session = Depends(get_db),
@@ -51,7 +51,7 @@ def get_profile(
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@router.patch("/{brand_id}")
+@router.patch("/{brand_id}", response_model=BrandOut)
 def update_brand(
     brand_id: str,
     body: BrandUpdate,

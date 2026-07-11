@@ -27,9 +27,10 @@ function handleKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape' && menuOpen.value) closeMenu()
 }
 
-function handleLogout() {
+async function handleLogout() {
   closeMenu()
   store.logout()
+  await router.replace('/login')
 }
 
 watch(() => route.fullPath, () => closeMenu())

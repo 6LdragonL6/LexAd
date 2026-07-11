@@ -318,10 +318,12 @@ async function handleSubmit() {
 
 <template>
   <DefaultLayout>
-    <div class="max-w-3xl mx-auto p-4 lg:p-8">
-      <div class="mb-6">
-        <h2 class="page-heading !mb-1">提交广告物料</h2>
-        <p class="text-sm text-gray-500">只需提供物料内容、行业和投放平台即可开始法律与舆情双轴风险审查。</p>
+    <div class="page-container max-w-3xl">
+      <div class="responsive-toolbar mb-6">
+        <div>
+          <h2 class="page-heading !mb-1">提交广告物料</h2>
+          <p class="text-sm text-gray-500">只需提供物料内容、行业和投放平台即可开始法律与舆情双轴风险审查。</p>
+        </div>
       </div>
 
         <div v-if="loadingEdit" class="text-gray-400 py-4 text-center">加载物料中...</div>
@@ -341,7 +343,7 @@ async function handleSubmit() {
           </div>
 
           <div
-            class="mt-4 border-2 border-dashed rounded-xl p-6 text-center transition-colors"
+            class="mt-4 border-2 border-dashed rounded-xl p-6 text-center transition-colors min-w-0"
             :class="isDragOver ? 'border-sky-500 bg-sky-50' : 'border-gray-300 bg-gray-50'"
             @dragover.prevent="isDragOver = true"
             @dragleave.prevent="isDragOver = false"
@@ -399,12 +401,12 @@ async function handleSubmit() {
         <section class="card">
           <h3 class="font-semibold text-gray-800">2. 行业（可多选）</h3>
           <p class="text-xs text-gray-400 mt-1">可选择多个相关行业。系统会按多行业匹配法律规则、行业规则和舆情案例。</p>
-          <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             <button
               v-for="industry in industries"
               :key="industry"
               type="button"
-              class="btn text-sm border"
+              class="btn text-sm border break-words"
               :class="form.industries.includes(industry) ? 'bg-sky-600 text-white border-sky-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-sky-50'"
               @click="toggleIndustry(industry)"
             >

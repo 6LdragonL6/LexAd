@@ -99,7 +99,7 @@ async function handleDecision() {
       <div class="space-y-2">
         <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">问题清单 ({{ getAllIssues().length }})</h3>
         <div v-for="issue in getAllIssues()" :key="issue.rule_id"
-          class="p-2 rounded-lg text-sm cursor-pointer border transition-colors"
+          class="p-2 rounded-lg text-sm cursor-pointer border transition-colors break-words"
           :class="{
             'border-red-200 bg-red-50 dark:bg-red-900/20': issue.match_type === '绝对化用语' || issue.match_type === '涉医用语',
             'border-orange-200 bg-orange-50 dark:bg-orange-900/20': issue.match_type === '效果保证' || issue.match_type === '功效宣称',

@@ -9,6 +9,8 @@ export default defineConfig({
     'btn-outline': 'btn border border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-brand)] hover:bg-[var(--color-brand-soft)] active:bg-[var(--color-surface-muted)]',
     'btn-ghost': 'btn text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-muted)] active:bg-[var(--color-border)]',
     'card': 'bg-[var(--color-surface)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-xl shadow-sm p-6',
+    'surface-inset': 'bg-[var(--color-surface-inset)] text-[var(--color-text-secondary)]',
+    'surface-elevated': 'bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] border border-[var(--color-border)] shadow-sm',
     'input': 'w-full px-3 py-2 border border-[var(--color-border-strong)] rounded-lg bg-[var(--color-surface)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] focus:border-transparent',
     'label': 'block text-sm font-medium text-[var(--color-text-secondary)] mb-1',
     'page-heading': 'text-xl font-bold text-[var(--color-text-primary)] mb-6',

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useTheme, type ThemePreference } from '@/composables/useTheme'
 import { useUserStore } from '@/stores/user'
 
 const store = useUserStore()
+const router = useRouter()
 const { themePreference, setThemePreference } = useTheme()
 
 const themeOptions: { value: ThemePreference; label: string }[] = [
@@ -17,6 +19,11 @@ const roleLabel = computed(() => {
   if (store.user?.role === 'legal') return '法务部'
   return '市场部'
 })
+
+async function handleLogout() {
+  store.logout()
+  await router.replace('/login')
+}
 </script>
 
 <template>
@@ -54,5 +61,16 @@ const roleLabel = computed(() => {
         <p class="text-xs text-gray-400">{{ roleLabel }}</p>
       </div>
     </div>
+    <button
+      type="button"
+      class="topbar-logout-btn"
+      aria-label="退出登录"
+      @click="handleLogout"
+    >
+      <svg class="topbar-logout-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="topbar-logout-text">退出登录</span>
+    </button>
   </header>
 </template>

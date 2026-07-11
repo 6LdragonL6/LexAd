@@ -6,6 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # 路径常量 —— 必须在 Settings 类之前定义，因为字段默认值依赖它们
@@ -29,10 +30,12 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"  # 监听地址
     PORT: int = 8000  # 监听端口
 
-    # ── 数据库 (Neon PostgreSQL) ──────────────────────────────────────────
-    DATABASE_URL: str = ""  # 数据库连接串，为空时自动回退 SQLite
-    DATABASE_POOL_SIZE: int = 10  # 连接池大小
-    DATABASE_MAX_OVERFLOW: int = 20  # 连接池溢出上限
+    # ── 数据库模式 ─────────────────────────────────────────────────────────
+    DATABASE_MODE: Literal["local", "neon"] = "local"  # 数据库目标：始终显式选择
+    LOCAL_DATABASE_URL: str = "sqlite:///./lexad.db"  # 本地 SQLite 路径
+    DATABASE_URL: str = ""  # Neon PostgreSQL 连接串，仅在 DATABASE_MODE=neon 时使用
+    DATABASE_POOL_SIZE: int = 10  # 连接池大小（仅 PostgreSQL）
+    DATABASE_MAX_OVERFLOW: int = 20  # 连接池溢出上限（仅 PostgreSQL）
     DATABASE_SSL_MODE: str = "require"  # SSL 模式
 
     # ── 前端 ───────────────────────────────────────────────────────────────
@@ -64,6 +67,13 @@ class Settings(BaseSettings):
 
     # ── Knowledge Base ────────────────────────────────────────────────
     KNOWLEDGE_DIR: str = str(PROJECT_ROOT.parent / "knowledge")
+
+    @model_validator(mode="after")
+    def validate_database_mode(self) -> "Settings":
+        if self.APP_ENV == "production" and self.DATABASE_MODE == "local":
+            raise ValueError("production 环境必须使用 DATABASE_MODE=neon")
+        return self
+
 
 @lru_cache()
 def get_settings() -> Settings:

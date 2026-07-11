@@ -1,3 +1,8 @@
+param(
+    [ValidateSet("local", "neon")]
+    [string]$DatabaseMode = "local"
+)
+
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
@@ -128,6 +133,15 @@ Write-Host '$title exited. Review the output above, then close this window.'
     ) -PassThru
 }
 
+function Extract-AlembicRevision {
+    param([Parameter(Mandatory = $true)][string]$Text)
+    $match = [regex]::Match($Text, '\b([0-9a-f]{12})\b')
+    if ($match.Success) {
+        return $match.Groups[1].Value
+    }
+    return $null
+}
+
 Assert-Directory -Path $BackendDir -Name "Backend"
 Assert-Directory -Path $FrontendDir -Name "Frontend"
 Assert-NoRecordedInstance
@@ -143,14 +157,74 @@ if (Test-PortInUse -Port 5173) {
 $pythonCommand = Get-PythonCommand
 $npmCommand = Assert-Command "npm.cmd"
 
+# ── Database preflight ───────────────────────────────────────────────────
+$env:DATABASE_MODE = $DatabaseMode
+if ($DatabaseMode -eq "local") {
+    Write-Host "Database target: local SQLite"
+    Write-Host "Running alembic upgrade head..."
+
+    Push-Location $BackendDir
+    try {
+        & $pythonCommand -m alembic upgrade head
+        if ($LASTEXITCODE -ne 0) {
+            throw "Alembic migration failed. Check the output above for details."
+        }
+        Write-Host "Alembic migration: OK"
+
+        & $pythonCommand -m app.db.seed
+        if ($LASTEXITCODE -ne 0) {
+            throw "Database seed failed. Check the output above for details."
+        }
+        Write-Host "Database seed: OK"
+    }
+    finally {
+        Pop-Location
+    }
+}
+else {
+    Write-Host "Database target: Neon PostgreSQL"
+    Write-Host "Running read-only preflight checks..."
+
+    Push-Location $BackendDir
+    try {
+        $currentOutput = & $pythonCommand -m alembic current 2>&1 | Out-String
+        if ($LASTEXITCODE -ne 0) {
+            throw "Neon connection or SSL session failed. Check DATABASE_URL and network reachability."
+        }
+
+        $headsOutput = & $pythonCommand -m alembic heads 2>&1 | Out-String
+        if ($LASTEXITCODE -ne 0) {
+            throw "Cannot read Alembic heads revision."
+        }
+
+        $currentRev = Extract-AlembicRevision -Text $currentOutput
+        $headsRev = Extract-AlembicRevision -Text $headsOutput
+
+        if (-not $currentRev) {
+            throw "Neon migration is behind: no Alembic revision found in the database. Run manual migration first."
+        }
+        if (-not $headsRev) {
+            throw "Cannot determine the latest Alembic revision."
+        }
+        if ($currentRev -ne $headsRev) {
+            throw "Neon migration is behind: database is at $currentRev, latest is $headsRev. Run manual migration first."
+        }
+        Write-Host "Neon migration check: OK (revision $currentRev)"
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 if (-not (Test-Path -LiteralPath (Join-Path $FrontendDir "node_modules") -PathType Container)) {
     Write-Host "Warning: frontend\node_modules was not found. If Vite fails, run npm install in frontend first."
 }
 
-$backendCommand = "& $(Quote-PowerShellString $pythonCommand) -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+$backendCommand = "`$env:DATABASE_MODE = $(Quote-PowerShellString $DatabaseMode); & $(Quote-PowerShellString $pythonCommand) -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 $frontendCommand = "& $(Quote-PowerShellString $npmCommand) run dev -- --host 0.0.0.0 --port 5173 --strictPort"
 
 Write-Host "Starting LexAd backend and frontend..."
+Write-Host ("Database mode: {0}" -f $DatabaseMode)
 $startedAt = (Get-Date).ToString("o")
 $records = @()
 
