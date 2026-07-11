@@ -10,6 +10,11 @@ from app.core.config import get_settings
 settings = get_settings()
 
 
+def get_logger(name: str) -> logging.Logger:
+    """获取模块级 logger，无需调用 setup_logging。"""
+    return logging.getLogger(name)
+
+
 def setup_logging() -> None:
     """初始化应用日志：设置格式、级别，并降低第三方库的日志噪音。"""
     level = getattr(logging, settings.LOG_LEVEL, logging.INFO)

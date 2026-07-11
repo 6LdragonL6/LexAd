@@ -37,6 +37,8 @@ catch {
     exit 0
 }
 
+$allStopped = $true
+
 foreach ($record in @($records)) {
     if ($null -eq $record.rootPid) {
         continue
@@ -55,8 +57,17 @@ foreach ($record in @($records)) {
     }
 
     Write-Host ("Stopping {0}: PID {1}" -f $record.name, $pidValue)
-    & taskkill.exe /PID $pidValue /T /F | Out-Host
+    & taskkill.exe /PID $pidValue /T /F 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ("  WARNING: taskkill exited with code {0}, {1} may still be running" -f $LASTEXITCODE, $record.name)
+        $allStopped = $false
+    }
 }
 
-Remove-Item -LiteralPath $PidFile -Force
-Write-Host "Finished stopping recorded LexAd dev services."
+if ($allStopped) {
+    Remove-Item -LiteralPath $PidFile -Force
+    Write-Host "Finished stopping recorded LexAd dev services."
+}
+else {
+    Write-Host "Some services could not be stopped. PID file preserved at $PidFile"
+}

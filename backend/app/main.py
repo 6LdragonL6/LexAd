@@ -17,13 +17,19 @@ from app.core.config import get_settings
 from app.core.exceptions import LexAdError
 from app.core.logging import setup_logging
 from app.services.review_service import recover_interrupted_reviews
+from app.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期管理：启动时初始化日志，关闭时清理资源。"""
     setup_logging()
-    await asyncio.to_thread(recover_interrupted_reviews)
+    try:
+        await asyncio.to_thread(recover_interrupted_reviews)
+    except Exception:
+        logger.warning("跳过启动时的审查恢复（数据库可能暂不可用）")
     yield
 
 

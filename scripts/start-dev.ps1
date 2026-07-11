@@ -146,7 +146,43 @@ Write-Host "Starting LexAd backend and frontend..."
 $backendProcess = Start-ServiceWindow -Name "Backend" -WorkingDirectory $BackendDir -Command $backendCommand
 $frontendProcess = Start-ServiceWindow -Name "Frontend" -WorkingDirectory $FrontendDir -Command $frontendCommand
 
-Start-Sleep -Milliseconds 300
+# 等待健康检查，最多 30 秒
+$timeout = (Get-Date).AddSeconds(30)
+$backendOk = $false
+$frontendOk = $false
+
+while ((Get-Date) -lt $timeout) {
+    Start-Sleep -Milliseconds 1500
+
+    if (-not $backendOk) {
+        try {
+            $b = Invoke-WebRequest -Uri "http://localhost:8000/health" -TimeoutSec 2 -UseBasicParsing
+            if ($b.StatusCode -eq 200 -and ($b.Content | ConvertFrom-Json).status -eq "ok") {
+                $backendOk = $true
+                Write-Host "  Backend health check: OK"
+            }
+        } catch {}
+    }
+
+    if (-not $frontendOk) {
+        try {
+            $f = Invoke-WebRequest -Uri "http://localhost:5173" -TimeoutSec 2 -UseBasicParsing
+            if ($f.StatusCode -eq 200) {
+                $frontendOk = $true
+                Write-Host "  Frontend health check: OK"
+            }
+        } catch {}
+    }
+
+    if ($backendOk -and $frontendOk) { break }
+}
+
+if (-not $backendOk) {
+    Write-Host "  Backend health check: FAILED (port 8000 not responding)"
+}
+if (-not $frontendOk) {
+    Write-Host "  Frontend health check: FAILED (port 5173 not responding)"
+}
 
 $startedAt = (Get-Date).ToString("o")
 $records = @(
