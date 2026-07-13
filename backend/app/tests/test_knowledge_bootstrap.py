@@ -6,7 +6,7 @@ from sqlalchemy.pool import StaticPool
 
 from app.db.base import Base
 from app.engine.layer4_platform import run_platform_review
-from app.models.knowledge import PlatformRuleSet, PlatformRuleVersion, PublicOpinionLibraryVersion
+from app.models.knowledge import KnowledgeImportJob, PlatformRuleSet, PlatformRuleVersion, PublicOpinionLibraryVersion
 from app.models.user import User, UserRole
 from app.services import knowledge_bootstrap
 
@@ -39,6 +39,7 @@ def test_bootstrap_imports_missing_pinduoduo_rules_and_is_idempotent(monkeypatch
         rule_set = db.query(PlatformRuleSet).filter_by(platform_name="pinduoduo").one()
         assert db.query(PlatformRuleVersion).filter_by(rule_set_id=rule_set.id).count() == 1
         assert db.query(PublicOpinionLibraryVersion).one().event_count == 1
+        assert db.query(KnowledgeImportJob).count() == 1
         result = run_platform_review("这是一段虚假宣传文案", ["pdd"], db)
         assert result.platform_rule_version_ids
         assert result.matched_rules
@@ -46,5 +47,6 @@ def test_bootstrap_imports_missing_pinduoduo_rules_and_is_idempotent(monkeypatch
         second = knowledge_bootstrap.bootstrap_builtin_knowledge(db)
         assert second["platforms"] == 0
         assert db.query(PlatformRuleVersion).filter_by(rule_set_id=rule_set.id).count() == 1
+        assert db.query(KnowledgeImportJob).count() == 1
     finally:
         db.close()

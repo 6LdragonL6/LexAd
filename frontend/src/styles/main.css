@@ -130,8 +130,6 @@
 
 html {
   font-size: 16px;
-  max-width: 100%;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--color-page);
@@ -144,13 +142,10 @@ body {
   background: var(--color-page);
   line-height: 1.6;
   min-height: 100vh;
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 #app {
-  max-width: 100%;
-  overflow-x: clip;
+  min-width: 0;
 }
 
 button,
@@ -504,7 +499,7 @@ textarea.input {
   min-width: 0;
 }
 
-.app-shell-sidebar {
+.app-shell > .app-shell-sidebar {
   display: none;
 }
 
@@ -514,7 +509,7 @@ textarea.input {
     grid-template-columns: 72px minmax(0, 1fr);
   }
 
-  .app-shell-sidebar {
+  .app-shell > .app-shell-sidebar {
     display: flex;
   }
 }

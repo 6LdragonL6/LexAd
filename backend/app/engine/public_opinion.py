@@ -77,7 +77,7 @@ def run_public_opinion_review(
 
     deterministic_hits = _deterministic_hits(material_text, industry, platforms, cases)
     trigger_word_hits = _trigger_word_hits(material_text)
-    similar_events = _similar_events(deterministic_hits, cases)
+    similar_events = _similar_events(deterministic_hits)
     fallback_result = _fallback_result(deterministic_hits, similar_events, trigger_word_hits)
 
     try:
@@ -177,11 +177,11 @@ def _deterministic_hits(
         matched_phrase = shared_phrase(material_text, case_text)
         industry_bonus = bool(normalized_industries & {_normalize(item) for item in version.industry})
         platform_bonus = bool(normalized_platforms & {_normalize(item) for item in version.platforms})
-        contextual_match = industry_bonus or platform_bonus
-        if not matched_tokens and (similarity_score < 0.18 or len(matched_phrase) < 2) and not contextual_match:
+        has_similarity_evidence = similarity_score >= 0.18 and len(matched_phrase) >= 2
+        if not matched_tokens and not has_similarity_evidence:
             continue
         score = len(matched_tokens) * 20
-        if similarity_score >= 0.18 and len(matched_phrase) >= 2:
+        if has_similarity_evidence:
             score += int(similarity_score * 60)
         if industry_bonus:
             score += 10
@@ -207,7 +207,6 @@ def _deterministic_hits(
 
 def _similar_events(
     deterministic_hits: list[dict[str, Any]],
-    cases: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     if deterministic_hits:
         source = deterministic_hits[:5]
@@ -222,16 +221,7 @@ def _similar_events(
             for hit in source
         ]
 
-    return [
-        {
-            "event_id": case["event"].id,
-            "title": case["event"].title or case["version"].title,
-            "similarity": 0,
-            "severity_level": case["version"].severity_level,
-            "historical_consequence": case["version"].consequences,
-        }
-        for case in cases[:3]
-    ]
+    return []
 
 
 def _fallback_result(

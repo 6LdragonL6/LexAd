@@ -1,12 +1,16 @@
 """Read-only, classified access to the local L1-L5 knowledge base."""
 
+from datetime import datetime, timezone
 from pathlib import Path
 import re
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.core.config import get_settings
+from app.db.session import get_db
+from app.models.knowledge import PlatformRuleSet, PlatformRuleStatus, PlatformRuleVersion
 
 
 settings = get_settings()
@@ -35,6 +39,27 @@ IGNORED_FILE_PATTERNS = [
 ]
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
+
+
+@router.get("/platforms")
+def list_platform_options(db: Session = Depends(get_db)):
+    """Return platform choices backed by a rule version effective right now."""
+    now = datetime.now(timezone.utc)
+    items = []
+    for rule_set in db.query(PlatformRuleSet).order_by(PlatformRuleSet.display_name.asc()).all():
+        versions = (
+            db.query(PlatformRuleVersion)
+            .filter(
+                PlatformRuleVersion.rule_set_id == rule_set.id,
+                PlatformRuleVersion.status == PlatformRuleStatus.active,
+            )
+            .order_by(PlatformRuleVersion.activated_at.desc(), PlatformRuleVersion.created_at.desc())
+            .all()
+        )
+        if not any(version.is_effective_at(now) for version in versions):
+            continue
+        items.append({"value": rule_set.platform_name, "label": rule_set.display_name})
+    return {"items": items, "total": len(items)}
 
 
 @router.get("/catalog/{layer}")

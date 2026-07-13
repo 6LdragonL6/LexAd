@@ -64,6 +64,10 @@ def bootstrap_builtin_knowledge(db: Session) -> dict[str, Any]:
         db.rollback()
         summary["failures"].append({"source": _relative(_L3_ROOT), "error": str(exc)[:180]})
 
+    if summary["platforms"] == 0 and summary["cases"] == 0 and not summary["failures"]:
+        summary["status"] = "skipped"
+        return summary
+
     job = KnowledgeImportJob(
         import_type="builtin_baseline",
         file_name="knowledge/L3_cases + knowledge/L4_platforms",

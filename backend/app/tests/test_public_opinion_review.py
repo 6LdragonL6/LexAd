@@ -140,7 +140,7 @@ def test_split_industries_supports_compatible_joined_string():
     assert format_industries(["食品", "直播电商", "食品"]) == "食品、直播电商"
 
 
-def test_public_opinion_review_matches_multi_industry_string(monkeypatch):
+def test_public_opinion_review_does_not_show_context_only_case(monkeypatch):
     factory = _session_factory()
     db = factory()
     user = _seed_user(db)
@@ -163,9 +163,9 @@ def test_public_opinion_review_matches_multi_industry_string(monkeypatch):
             db=db,
         )
         assert result.status == "succeeded"
-        assert result.result["deterministic_hits"][0]["event_id"] == "po-event-1"
-        assert result.result["deterministic_hits"][0]["score"] == 10
-        assert result.result["risk_level"] == "low"
+        assert result.result["deterministic_hits"] == []
+        assert result.result["similar_events"] == []
+        assert result.result["risk_level"] == "uncertain"
     finally:
         db.close()
 

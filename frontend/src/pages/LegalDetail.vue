@@ -23,6 +23,7 @@ const showVersions = ref(false)
 const selectedVersion = ref<MaterialVersion | null>(null)
 const selectedReview = ref<Review | null>(null)
 const historyLoading = ref(false)
+const historyError = ref('')
 const decision = ref('approved')
 const notes = ref('')
 const returnReasons = ref('')
@@ -34,7 +35,12 @@ const brandProfileLoading = ref(false)
 function getAllIssues(): MatchedRule[] {
   if (!review.value) return []
   const r = review.value.ai_result
-  return [...r.layer1.matched_rules, ...r.layer2.matched_rules, ...r.layer3.matched_rules]
+  return [
+    ...(r.layer1?.matched_rules ?? []),
+    ...(r.layer2?.matched_rules ?? []),
+    ...(r.layer3?.matched_rules ?? []),
+    ...(r.layer4?.matched_rules ?? []),
+  ]
 }
 
 onMounted(async () => {
@@ -85,9 +91,12 @@ async function handleDecision() {
 async function openHistory(version: MaterialVersion) {
   selectedVersion.value = version
   selectedReview.value = null
+  historyError.value = ''
   historyLoading.value = true
   try {
     selectedReview.value = (await reviewsApi.get(version.review_id)).data
+  } catch (error: any) {
+    historyError.value = error.response?.data?.detail || '无法加载该历史审核报告'
   } finally {
     historyLoading.value = false
   }
@@ -220,5 +229,12 @@ async function openHistory(version: MaterialVersion) {
     </template>
   </ReviewLayout>
   <div v-else class="flex items-center justify-center min-h-[60vh] text-gray-500">加载中...</div>
-  <ReviewHistoryDrawer :open="Boolean(selectedVersion)" :version="selectedVersion" :review="selectedReview" @close="selectedVersion = null" />
+  <ReviewHistoryDrawer
+    :open="Boolean(selectedVersion)"
+    :version="selectedVersion"
+    :review="selectedReview"
+    :loading="historyLoading"
+    :error="historyError"
+    @close="selectedVersion = null"
+  />
 </template>

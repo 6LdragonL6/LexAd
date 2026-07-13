@@ -107,6 +107,13 @@ async function handleArchive(material: Material) {
           <p class="text-3xl font-bold text-amber-600">{{ returnedCount }}</p>
           <p class="text-sm text-gray-500 mt-1">需修改</p>
         </div>
+        <div v-if="store.isMarketing" class="card text-center">
+          <div class="stat-icon bg-green-50 text-green-600 mx-auto">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p class="text-3xl font-bold text-green-600">{{ approvedCount }}</p>
+          <p class="text-sm text-gray-500 mt-1">已通过</p>
+        </div>
         <div v-if="!store.isMarketing" class="card text-center">
           <div class="stat-icon bg-red-50 text-red-600">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>

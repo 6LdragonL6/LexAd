@@ -26,6 +26,11 @@ export interface Material {
   updated_at: string
 }
 
+export interface PlatformOption {
+  value: string
+  label: string
+}
+
 export interface MatchedRule {
   rule_id: string
   rule_text: string

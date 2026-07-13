@@ -7,6 +7,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BrandSelector from '@/components/brand/BrandSelector.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import { brandsApi } from '@/api/brands'
+import { knowledgeApi } from '@/api/knowledge'
 import type { Brand, BrandProfile } from '@/types'
 
 const route = useRoute()
@@ -14,7 +15,8 @@ const router = useRouter()
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 const industries = ['食品', '医疗', '教育', '汽车', '金融', '美妆', '直播电商']
-const platforms = ['抖音', '小红书', '微信', '微博', '京东', '淘宝']
+const defaultPlatforms = ['抖音', '小红书', '微信', '微博', '京东', '淘宝', '拼多多']
+const platforms = ref([...defaultPlatforms])
 const materialTypes = ['文字', '图片', 'PDF文档', 'Word文档', 'PPT演示', 'Excel表格', '视频脚本', '直播话术']
 const allowedExtensions = '.jpg,.jpeg,.png,.gif,.bmp,.pdf,.docx,.pptx,.xlsx,.txt'
 
@@ -140,6 +142,28 @@ function toggleIndustry(industry: string) {
   else form.value.industries.push(industry)
 }
 
+async function loadPlatforms() {
+  try {
+    const response = await knowledgeApi.platforms()
+    const activeLabels = response.data.items.map(item => platformDisplayName(item.value, item.label)).filter(Boolean)
+    platforms.value = Array.from(new Set([...defaultPlatforms, ...activeLabels]))
+  } catch {
+    platforms.value = [...defaultPlatforms]
+  }
+}
+
+function platformDisplayName(value: string, label: string): string {
+  const aliases = `${value} ${label}`.toLowerCase()
+  if (/pinduoduo|\bpdd\b|拼多多/.test(aliases)) return '拼多多'
+  if (/xiaohongshu|\bxhs\b|小红书/.test(aliases)) return '小红书'
+  if (/douyin|抖音/.test(aliases)) return '抖音'
+  if (/wechat|weixin|微信/.test(aliases)) return '微信'
+  if (/weibo|微博/.test(aliases)) return '微博'
+  if (/jingdong|\bjd\b|京东/.test(aliases)) return '京东'
+  if (/taobao|\btb\b|淘宝/.test(aliases)) return '淘宝'
+  return label || value
+}
+
 async function handlePreview() {
   if (!selectedFile.value) return
   previewing.value = true
@@ -226,6 +250,7 @@ async function loadBrandProfile(brandId: string) {
 }
 
 onMounted(async () => {
+  void loadPlatforms()
   const editId = route.query.edit as string | undefined
   if (editId) {
     editMaterialId.value = editId

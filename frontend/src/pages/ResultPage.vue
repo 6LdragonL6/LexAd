@@ -28,6 +28,8 @@ const brandProfileLoading = ref(false)
 const versions = ref<MaterialVersion[]>([])
 const selectedVersion = ref<MaterialVersion | null>(null)
 const selectedReview = ref<Review | null>(null)
+const historyLoading = ref(false)
+const historyError = ref('')
 
 const isProcessing = computed(() => review.value?.task_status === 'processing')
 const isFailed = computed(() => review.value?.task_status === 'failed')
@@ -103,19 +105,40 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#039;')
 }
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
 function highlightedHtml(): string {
   if (!material.value) return ''
-  let safeText = escapeHtml(material.value.raw_text)
+  const fragments = new Map<string, string>()
   for (const issue of legalIssues.value) {
-    if (!issue.rule_text) continue
-    const safeRule = escapeHtml(issue.rule_text)
     const color = issue.rule_id?.startsWith('L4-') ? '#0EA5E9' : '#f97316'
-    safeText = safeText.replace(
-      safeRule,
-      `<mark style="background:${color}20;border-bottom:2px solid ${color}" class="px-0.5 rounded">${safeRule}</mark>`,
-    )
+    const candidates = issue.matched_text
+      ? issue.matched_text.split(/[,，、；;]/)
+      : [issue.rule_text]
+    for (const candidate of candidates) {
+      const fragment = candidate.trim()
+      if (fragment.length >= 2 && material.value.raw_text.includes(fragment)) {
+        fragments.set(fragment, color)
+      }
+    }
   }
-  return safeText
+  if (!fragments.size) return escapeHtml(material.value.raw_text)
+
+  const ordered = [...fragments.keys()].sort((left, right) => right.length - left.length)
+  const pattern = new RegExp(ordered.map(escapeRegExp).join('|'), 'gu')
+  let output = ''
+  let lastIndex = 0
+  for (const match of material.value.raw_text.matchAll(pattern)) {
+    const index = match.index ?? 0
+    const text = match[0]
+    const color = fragments.get(text) || '#f97316'
+    output += escapeHtml(material.value.raw_text.slice(lastIndex, index))
+    output += `<mark style="background:${color}20;border-bottom:2px solid ${color}" class="px-0.5 rounded">${escapeHtml(text)}</mark>`
+    lastIndex = index + text.length
+  }
+  return output + escapeHtml(material.value.raw_text.slice(lastIndex))
 }
 
 async function loadReview() {
@@ -152,10 +175,14 @@ async function loadReview() {
 async function openHistory(version: MaterialVersion) {
   selectedVersion.value = version
   selectedReview.value = null
+  historyError.value = ''
+  historyLoading.value = true
   try {
     selectedReview.value = (await reviewsApi.get(version.review_id)).data
-  } catch {
-    selectedReview.value = null
+  } catch (error: any) {
+    historyError.value = error.response?.data?.detail || '无法加载该历史审核报告'
+  } finally {
+    historyLoading.value = false
   }
 }
 
@@ -421,5 +448,12 @@ onUnmounted(() => {
       </div>
     </div>
   </DefaultLayout>
-  <ReviewHistoryDrawer :open="Boolean(selectedVersion)" :version="selectedVersion" :review="selectedReview" @close="selectedVersion = null" />
+  <ReviewHistoryDrawer
+    :open="Boolean(selectedVersion)"
+    :version="selectedVersion"
+    :review="selectedReview"
+    :loading="historyLoading"
+    :error="historyError"
+    @close="selectedVersion = null"
+  />
 </template>

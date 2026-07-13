@@ -6,6 +6,14 @@ from pydantic import Field
 
 from app.models.knowledge import PlatformRuleSet, PlatformRuleStatus, PlatformRuleVersion
 from app.schemas.review import LayerResult, MatchedRule
+
+
+_MAX_MATCHES = 12
+_MAX_MATCHES_PER_EVIDENCE = 3
+_GENERIC_KEYWORDS = {
+    "使用", "商品", "商家", "平台", "内容", "相关", "进行", "可以", "包括",
+    "信息", "要求", "规定", "提供", "服务", "用户", "发布", "广告",
+}
 from app.engine.text_similarity import shared_phrase, similarity
 
 _PLATFORM_ALIASES: dict[str, set[str]] = {
@@ -117,7 +125,7 @@ def _find_active_version(db: Session, rule_set_id: str) -> PlatformRuleVersion |
     for version in versions:
         if version.is_effective_at(now):
             return version
-    return versions[0] if versions else None
+    return None
 
 
 def _match_version_rules(
@@ -138,7 +146,7 @@ def _match_version_rules(
         if not hit_keywords:
             score = similarity(text, " ".join([rule_text, *keywords]))
             matched_text = shared_phrase(text, rule_text or " ".join(keywords))
-            if score < 0.05 or len(matched_text) < 3:
+            if score < 0.08 or len(matched_text) < 4:
                 continue
             match_method = "similarity"
         rule_key = str(rule.get("rule_id") or rule.get("id") or f"rule-{index + 1}")
@@ -155,7 +163,7 @@ def _match_version_rules(
                 suggestion=str(rule.get("suggestion") or "请按平台规则调整相关表达"),
             )
         )
-    return matches
+    return _prioritize_matches(matches)
 
 
 def _extract_keywords(rule: dict[str, Any]) -> list[str]:
@@ -172,7 +180,41 @@ def _extract_keywords(rule: dict[str, Any]) -> list[str]:
             value = rule.get(field)
             if isinstance(value, str) and 0 < len(value.strip()) <= 30:
                 values.append(value.strip())
-    return [value for value in values if value]
+    return [
+        value
+        for value in values
+        if value and _normalize(value) not in _GENERIC_KEYWORDS
+    ]
+
+
+def _prioritize_matches(matches: list[MatchedRule]) -> list[MatchedRule]:
+    ordered = sorted(
+        matches,
+        key=lambda match: (
+            match.match_method == "keyword",
+            match.score or 0,
+            len(match.matched_text or ""),
+        ),
+        reverse=True,
+    )
+    result: list[MatchedRule] = []
+    evidence_counts: dict[str, int] = {}
+    seen_rules: set[str] = set()
+    for match in ordered:
+        rule_text = _normalize(match.rule_text)
+        if rule_text in seen_rules:
+            continue
+        evidence = _normalize(match.matched_text or match.rule_text)
+        if any(evidence != selected and evidence in selected for selected in evidence_counts):
+            continue
+        if evidence and evidence_counts.get(evidence, 0) >= _MAX_MATCHES_PER_EVIDENCE:
+            continue
+        seen_rules.add(rule_text)
+        evidence_counts[evidence] = evidence_counts.get(evidence, 0) + 1
+        result.append(match)
+        if len(result) >= _MAX_MATCHES:
+            break
+    return result
 
 
 def _rule_text(rule: dict[str, Any], hit_keywords: list[str]) -> str:

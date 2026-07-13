@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from app.api.v1.endpoints.knowledge import list_platform_options
 from app.db.base import Base
 from app.engine.layer4_platform import run_platform_review
 from app.models.knowledge import PlatformRuleSet, PlatformRuleStatus, PlatformRuleVersion, ReviewModuleStatus
@@ -82,6 +83,35 @@ def test_platform_review_matches_active_platform_rule():
         assert len(result.matched_rules) == 1
         assert result.matched_rules[0].rule_id == "L4-platform-version-1-price-001"
         assert result.matched_rules[0].source_law == "抖音 2026-07"
+        assert list_platform_options(db)["items"] == [{"value": "douyin", "label": "抖音"}]
+    finally:
+        db.close()
+
+
+def test_platform_review_limits_duplicate_evidence_and_ignores_generic_keywords():
+    factory = _session_factory()
+    _seed_user_material_and_platform_rule(factory)
+    db = factory()
+    try:
+        version = db.query(PlatformRuleVersion).filter_by(id="platform-version-1").one()
+        version.structured_rules = [
+            {
+                "rule_id": f"duplicate-{index}",
+                "text": f"规则 {index}：不得进行虚假宣传",
+                "keywords": ["虚假宣传"],
+                "risk_level": "平台规则",
+            }
+            for index in range(20)
+        ] + [
+            {"rule_id": "generic", "text": "商品使用说明", "keywords": ["使用"]},
+            {"rule_id": "overlap", "text": "普通宣传规则", "keywords": ["宣传"]},
+        ]
+        db.commit()
+
+        result = run_platform_review("本商品使用了虚假宣传表达", ["抖音"], db)
+
+        assert len(result.matched_rules) == 3
+        assert {item.matched_text for item in result.matched_rules} == {"虚假宣传"}
     finally:
         db.close()
 
@@ -95,6 +125,48 @@ def test_platform_review_reports_missing_active_rules_without_false_pass():
         assert result.platform_rule_version_ids == []
         assert result.unavailable_platforms == ["unknown-platform"]
         assert "暂无规则集" in result.explanations[0]
+    finally:
+        db.close()
+
+
+def test_platform_review_rejects_rules_outside_effective_window():
+    factory = _session_factory()
+    db = factory()
+    try:
+        user = User(
+            id="user-window",
+            username="window-test",
+            password="not-used",
+            display_name="时间窗口测试",
+            role=UserRole.admin,
+            dept_name="管理部",
+        )
+        rule_set = PlatformRuleSet(
+            id="rule-set-window",
+            platform_name="pinduoduo",
+            display_name="拼多多",
+        )
+        now = datetime.now(timezone.utc)
+        future = PlatformRuleVersion(
+            id="platform-version-future",
+            rule_set_id=rule_set.id,
+            version_label="future",
+            structured_rules=[{"rule_id": "future-1", "text": "不得虚假宣传", "keywords": ["虚假宣传"]}],
+            status=PlatformRuleStatus.active,
+            effective_at=now + timedelta(days=1),
+            imported_by_id=user.id,
+            activated_by_id=user.id,
+            activated_at=now,
+        )
+        db.add_all([user, rule_set, future])
+        db.commit()
+
+        result = run_platform_review("虚假宣传", ["拼多多"], db)
+
+        assert result.matched_rules == []
+        assert result.platform_rule_version_ids == []
+        assert result.unavailable_platforms == ["拼多多"]
+        assert list_platform_options(db)["items"] == []
     finally:
         db.close()
 
