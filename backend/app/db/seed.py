@@ -1,6 +1,7 @@
 from app.db.session import SessionLocal
 from app.models.user import User, UserRole
 from app.models.brand import Brand, BrandStatus
+from app.services.knowledge_bootstrap import bootstrap_builtin_knowledge
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -45,7 +46,9 @@ def seed():
     if existing > 0:
         print(f"Database already has {existing} users, skipping seed.")
         seed_brands(db)
+        summary = bootstrap_builtin_knowledge(db)
         db.close()
+        print(f"Builtin knowledge baseline: {summary}")
         return
 
     for username, password, display_name, role, dept_name in SEED_USERS:
@@ -60,8 +63,9 @@ def seed():
     db.commit()
 
     seed_brands(db)
+    summary = bootstrap_builtin_knowledge(db)
     db.close()
-    print(f"Seeded {len(SEED_USERS)} users and {len(DEMO_BRANDS)} brands.")
+    print(f"Seeded {len(SEED_USERS)} users and {len(DEMO_BRANDS)} brands. Builtin knowledge baseline: {summary}")
 
 if __name__ == "__main__":
     seed()

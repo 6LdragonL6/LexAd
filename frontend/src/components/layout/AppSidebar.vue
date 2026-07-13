@@ -42,6 +42,8 @@ const knowledgeItems = computed(() => navItems.value.filter(i => i.group === 'kn
         v-for="item in mainItems"
         :key="item.route"
         :to="item.route"
+        :title="item.label"
+        :aria-label="item.label"
         :class="{ active: isActive(item.route) }"
       >
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -64,7 +66,7 @@ const knowledgeItems = computed(() => navItems.value.filter(i => i.group === 'kn
             <path d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke-linecap="round" stroke-linejoin="round"/>
           </template>
         </svg>
-        {{ item.label }}
+        <span class="sidebar-nav-label">{{ item.label }}</span>
       </router-link>
     </nav>
 
@@ -74,6 +76,8 @@ const knowledgeItems = computed(() => navItems.value.filter(i => i.group === 'kn
         v-for="item in knowledgeItems"
         :key="item.route"
         :to="item.route"
+        :title="item.label"
+        :aria-label="item.label"
         :class="{ active: isActive(item.route) }"
       >
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -84,7 +88,7 @@ const knowledgeItems = computed(() => navItems.value.filter(i => i.group === 'kn
             <path d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke-linecap="round" stroke-linejoin="round"/>
           </template>
         </svg>
-        {{ item.label }}
+        <span class="sidebar-nav-label">{{ item.label }}</span>
       </router-link>
     </nav>
 

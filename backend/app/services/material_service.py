@@ -93,6 +93,7 @@ def get_material_versions(db: Session, material_id: str) -> list[dict]:
     for r in reviews:
         snapshot = db.get(MaterialSubmissionSnapshot, r.submission_snapshot_id) if r.submission_snapshot_id else None
         versions.append({
+            "review_id": r.id,
             "version": r.version,
             "risk_score": r.ai_risk_score,
             "task_status": r.task_status,
@@ -102,6 +103,8 @@ def get_material_versions(db: Session, material_id: str) -> list[dict]:
             "reviewed_at": r.reviewed_at.isoformat() if r.reviewed_at else None,
             "created_at": r.created_at.isoformat(),
             "version_label": f"第{r.version}次提交",
+            "legal_review_label": f"第{r.version}次法务审核" if r.legal_decision else "尚未法务审核",
+            "snapshot_complete": bool(snapshot),
             "submission": {
                 "name": snapshot.name,
                 "raw_text": snapshot.raw_text,

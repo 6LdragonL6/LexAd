@@ -7,11 +7,18 @@ class MatchedRule(BaseModel):
     source_law: str = ""
     match_type: str = "keyword"
     explanation: str = ""
+    matched_text: str = ""
+    match_method: str = "keyword"
+    score: float | None = None
+    source_id: str = ""
+    suggestion: str = ""
 
 class LayerResult(BaseModel):
     layer: str
     matched_rules: list[MatchedRule] = Field(default_factory=list)
     explanations: list[str] = Field(default_factory=list)
+    status: str = "no_match"
+    source_versions: list[str] = Field(default_factory=list)
 
 class EngineResult(BaseModel):
     risk_score: int = 100
@@ -25,6 +32,8 @@ class EngineResult(BaseModel):
     platform_rule_version_ids: list[str] = Field(default_factory=list)
     unavailable_platforms: list[str] = Field(default_factory=list)
     platform_version_labels: dict[str, str] = Field(default_factory=dict)
+    hit_count: int = 0
+    risk_topics: list[str] = Field(default_factory=list)
 
 class AIReviewRequest(BaseModel):
     material_id: str

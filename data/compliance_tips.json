@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "tips": [
+    {
+      "id": "absolute-claims",
+      "title": "避免绝对化表述",
+      "body": "“最”“第一”“国家级”等绝对化用语通常需要删除或改为可验证、有限定条件的表达。提交前请检查标题、主文案和图片文字。",
+      "source": "《广告法》第九条",
+      "source_path": "knowledge/L1_laws/中华人民共和国广告法(2021修正)(FBM-CLI.1.5012735).txt",
+      "roles": ["marketing", "legal", "admin"],
+      "tags": ["绝对化用语", "文案"],
+      "enabled": true
+    },
+    {
+      "id": "evidence-claims",
+      "title": "功效和数据要有证据",
+      "body": "涉及功效、检测、认证、销量或用户评价的数据，应保留可核验的证明材料，并避免把个案效果表述为普遍结论。",
+      "source": "广告合规资料库",
+      "source_path": "knowledge/L5_templates/standards",
+      "roles": ["marketing", "legal", "admin"],
+      "tags": ["功效宣称", "证明材料"],
+      "enabled": true
+    },
+    {
+      "id": "platform-before-publish",
+      "title": "投放前核对平台规则",
+      "body": "不同平台对商品、行业资质和营销表达的限制不同。选择投放平台后，请确认本次物料已按对应平台的生效规则完成检查。",
+      "source": "平台规则资料库",
+      "source_path": "knowledge/L4_platforms",
+      "roles": ["marketing", "legal", "admin"],
+      "tags": ["平台规则", "投放"],
+      "enabled": true
+    },
+    {
+      "id": "return-feedback",
+      "title": "退回意见应逐项闭环",
+      "body": "法务退回后，市场端应逐项核对退回原因和修改建议，再重新提交。不要只改标题而遗漏正文、图片或平台要求。",
+      "source": "LexAd 审核流程规范",
+      "source_path": "docs/technical-reference.md",
+      "roles": ["marketing", "legal", "admin"],
+      "tags": ["退回", "审核流程"],
+      "enabled": true
+    }
+  ]
+}

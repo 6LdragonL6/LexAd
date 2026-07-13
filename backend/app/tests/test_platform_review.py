@@ -250,3 +250,42 @@ def test_platform_version_labels_populated():
         assert result.platform_version_labels["platform-version-1"] == "抖音 / 2026-07"
     finally:
         db.close()
+
+
+def test_pinduoduo_aliases_use_the_same_active_ruleset():
+    factory = _session_factory()
+    db = factory()
+    try:
+        admin = User(
+            id="admin-pdd",
+            username="admin-pdd",
+            password="not-used",
+            display_name="管理员",
+            role=UserRole.admin,
+            dept_name="管理部",
+        )
+        rule_set = PlatformRuleSet(id="rule-set-pdd", platform_name="pinduoduo", display_name="拼多多")
+        version = PlatformRuleVersion(
+            id="platform-version-pdd",
+            rule_set_id=rule_set.id,
+            version_label="builtin-test",
+            raw_text="不得发布虚假宣传信息",
+            structured_rules=[{
+                "rule_id": "pdd-001",
+                "text": "不得发布虚假宣传信息",
+                "keywords": ["虚假宣传"],
+                "risk_level": "平台规则",
+            }],
+            status=PlatformRuleStatus.active,
+            imported_by_id=admin.id,
+            activated_by_id=admin.id,
+            activated_at=datetime.now(timezone.utc),
+        )
+        db.add_all([admin, rule_set, version])
+        db.commit()
+        for alias in ("拼多多", "pdd", "pinduoduo"):
+            result = run_platform_review("本商品存在虚假宣传", [alias], db)
+            assert result.platform_rule_version_ids == ["platform-version-pdd"]
+            assert result.matched_rules[0].match_method == "keyword"
+    finally:
+        db.close()

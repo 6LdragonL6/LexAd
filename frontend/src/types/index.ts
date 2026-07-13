@@ -32,12 +32,19 @@ export interface MatchedRule {
   source_law: string
   match_type: string
   explanation?: string
+  matched_text?: string
+  match_method?: string
+  score?: number | null
+  source_id?: string
+  suggestion?: string
 }
 
 export interface LayerResult {
   layer: string
   matched_rules: MatchedRule[]
   explanations: string[]
+  status?: 'matched' | 'no_match' | 'unavailable' | 'failed'
+  source_versions?: string[]
 }
 
 export interface EngineResult {
@@ -52,6 +59,8 @@ export interface EngineResult {
   platform_rule_version_ids?: string[]
   unavailable_platforms?: string[]
   platform_version_labels?: Record<string, string>
+  hit_count?: number
+  risk_topics?: string[]
 }
 
 export interface Review {
@@ -101,6 +110,30 @@ export interface ReviewQueueItem {
   legal_notes?: string | null
   version?: number
   material_version?: number
+}
+
+export interface MaterialVersion {
+  review_id: string
+  version: number
+  risk_score: number
+  task_status: string
+  legal_decision: 'approved' | 'returned' | 'conditional' | null
+  return_reasons: string | null
+  legal_notes: string | null
+  reviewed_at: string | null
+  created_at: string
+  version_label: string
+  legal_review_label: string
+  snapshot_complete: boolean
+  submission: {
+    name: string
+    raw_text: string
+    industry: string
+    platforms: string[]
+    material_type: string
+    priority: string
+    deadline: string | null
+  } | null
 }
 
 export interface LawItem {

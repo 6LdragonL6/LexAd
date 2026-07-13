@@ -13,11 +13,13 @@ def run_review_pipeline(
 ) -> EngineResult:
     # L1: hard rules
     l1_result = engine_l1.scan(raw_text)
+    l1_result.status = "matched" if l1_result.matched_rules else "no_match"
 
     # L2: semantic review with the shared DeepSeek-compatible model service
     from app.engine.layer2_semantic import run_semantic_review
 
     l2_result = run_semantic_review(raw_text, industry)
+    l2_result.status = "matched" if l2_result.matched_rules else "no_match"
 
     # L3: evidence check
     evidence_patterns = [
@@ -47,6 +49,7 @@ def run_review_pipeline(
         explanations=[f"发现 {len(evidence_matched)} 处需证明材料支撑的表述"]
         if evidence_matched
         else ["无需要证明材料的表述"],
+        status="matched" if evidence_matched else "no_match",
     )
 
     # L4: platform-specific rules
@@ -94,6 +97,8 @@ def run_review_pipeline(
     suggestions.extend([f"语义问题: {v.rule_text}" for v in l2_result.matched_rules[:3]])
     suggestions.extend([f"平台规则问题: {v.rule_text}" for v in l4_result.matched_rules[:3]])
 
+    all_results = [l1_result, l2_result, l3_result, l4_result]
+    risk_topics = list(dict.fromkeys(rule.match_type for result in all_results for rule in result.matched_rules))
     return EngineResult(
         risk_score=risk_score,
         layer1=l1_result,
@@ -106,4 +111,6 @@ def run_review_pipeline(
         platform_rule_version_ids=l4_result.platform_rule_version_ids,
         unavailable_platforms=l4_result.unavailable_platforms,
         platform_version_labels=l4_result.platform_version_labels,
+        hit_count=len(all_violations),
+        risk_topics=risk_topics,
     )

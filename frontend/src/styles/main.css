@@ -498,27 +498,34 @@ textarea.input {
    App Shell
    ═══════════════════════════════════════════════════════════════════════════ */
 .app-shell {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   min-height: 100vh;
+  min-width: 0;
 }
 
 .app-shell-sidebar {
   display: none;
 }
 
-/* Sidebar visible at >=1280px; main gets margin-left to match */
-@media (min-width: 1280px) {
+/* Keep desktop navigation when there is room, without taking space twice. */
+@media (min-width: 900px) {
+  .app-shell {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
   .app-shell-sidebar {
     display: flex;
   }
+}
 
-  .app-shell-main {
-    margin-left: var(--sidebar-width);
+@media (min-width: 1280px) {
+  .app-shell {
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   }
 }
 
 .app-shell-main {
-  flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -527,7 +534,6 @@ textarea.input {
 .app-shell-content {
   flex: 1;
   min-width: 0;
-  overflow-x: clip;
   overflow-y: auto;
 }
 
@@ -535,17 +541,24 @@ textarea.input {
    Desktop Sidebar
    ═══════════════════════════════════════════════════════════════════════════ */
 .sidebar-fixed {
-  position: fixed;
-  left: 0;
+  position: sticky;
   top: 0;
   width: var(--sidebar-width);
-  height: 100vh;
+  height: 100dvh;
   background: var(--color-sidebar);
   display: flex;
   flex-direction: column;
   padding: 20px 0;
   z-index: 40;
   overflow-y: auto;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 16px 24px 0;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+  letter-spacing: 0.04em;
 }
 
 .sidebar-brand {
@@ -618,6 +631,45 @@ textarea.input {
 .sidebar a.active {
   color: var(--color-sidebar-text-active);
   background: var(--color-brand);
+}
+
+@media (min-width: 900px) and (max-width: 1279px) {
+  .sidebar-fixed {
+    width: 72px;
+    align-items: stretch;
+    padding-top: 16px;
+  }
+
+  .sidebar-brand {
+    justify-content: center;
+    padding: 0 0 16px;
+  }
+
+  .sidebar-brand-text,
+  .sidebar-slogan,
+  .sidebar-nav-label {
+    display: none;
+  }
+
+  .sidebar-nav {
+    padding: 8px;
+  }
+
+  .sidebar a {
+    justify-content: center;
+    padding: 12px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar a[title] {
+    position: relative;
+  }
+
+  .sidebar-footer {
+    padding: 12px 0 0;
+    text-align: center;
+    font-size: 9px;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -720,7 +772,7 @@ textarea.input {
   flex-shrink: 0;
 }
 
-@media (max-width: 1279px) {
+@media (max-width: 899px) {
   .topbar-logout-text {
     display: none;
   }
@@ -732,13 +784,13 @@ textarea.input {
 }
 
 /* Desktop TopBar visible at >=1280px (matches sidebar) */
-@media (min-width: 1280px) {
+@media (min-width: 900px) {
   .app-shell .topbar {
     display: flex;
   }
 }
 
-@media (max-width: 1279px) {
+@media (max-width: 899px) {
   .app-shell .topbar {
     display: none;
   }
@@ -795,7 +847,7 @@ textarea.input {
   }
 }
 
-@media (max-width: 1279px) {
+@media (max-width: 899px) {
   .mobile-topbar {
     display: flex;
   }
@@ -857,6 +909,41 @@ textarea.input {
   color: var(--color-sidebar-text-active);
   background: var(--color-brand);
 }
+
+.history-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  justify-content: flex-end;
+  background: var(--color-overlay);
+}
+
+.history-drawer {
+  width: min(620px, 100vw);
+  height: 100dvh;
+  overflow-y: auto;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.history-drawer-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.history-drawer-content { padding: 24px; display: grid; gap: 24px; }
+.history-drawer-content section { display: grid; gap: 8px; }
+.history-drawer-content h4 { font-weight: 600; color: var(--color-text-primary); }
+.history-drawer-text { white-space: pre-wrap; line-height: 1.8; padding: 12px; background: var(--color-surface-inset); border-radius: var(--radius-md); }
 
 /* ── Vertical (default): columns stack in document order ─────────────────── */
 .three-col {

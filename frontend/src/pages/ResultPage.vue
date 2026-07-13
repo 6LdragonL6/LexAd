@@ -6,8 +6,9 @@ import { reviewsApi } from '@/api/reviews'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
+import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
 import { brandsApi } from '@/api/brands'
-import type { Material, MatchedRule, Review, BrandProfile } from '@/types'
+import type { Material, MatchedRule, Review, BrandProfile, MaterialVersion } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -24,6 +25,9 @@ let consecutivePollErrors = 0
 
 const brandProfile = ref<BrandProfile | null>(null)
 const brandProfileLoading = ref(false)
+const versions = ref<MaterialVersion[]>([])
+const selectedVersion = ref<MaterialVersion | null>(null)
+const selectedReview = ref<Review | null>(null)
 
 const isProcessing = computed(() => review.value?.task_status === 'processing')
 const isFailed = computed(() => review.value?.task_status === 'failed')
@@ -125,6 +129,8 @@ async function loadReview() {
     if (!material.value || material.value.id !== response.data.material_id) {
       const materialResponse = await materialsApi.get(response.data.material_id)
       material.value = materialResponse.data
+      const versionsResponse = await materialsApi.versions(response.data.material_id)
+      versions.value = versionsResponse.data.versions || []
     }
 
     if (response.data.task_status === 'processing') schedulePoll()
@@ -140,6 +146,16 @@ async function loadReview() {
     }
   } finally {
     loading.value = false
+  }
+}
+
+async function openHistory(version: MaterialVersion) {
+  selectedVersion.value = version
+  selectedReview.value = null
+  try {
+    selectedReview.value = (await reviewsApi.get(version.review_id)).data
+  } catch {
+    selectedReview.value = null
   }
 }
 
@@ -328,6 +344,14 @@ onUnmounted(() => {
             </div>
           </div>
 
+          <div v-if="versions.length > 1" class="card">
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">历史版本</h3>
+            <button v-for="version in versions" :key="version.review_id" type="button" class="w-full flex items-center justify-between py-2 text-left border-b border-gray-100 dark:border-gray-700 last:border-0" @click="openHistory(version)">
+              <span class="text-sm font-medium">{{ version.version_label }}<span v-if="version.version === review.version" class="ml-2 text-xs text-sky-600">当前</span></span>
+              <span class="text-xs text-gray-400">{{ version.legal_review_label }}</span>
+            </button>
+          </div>
+
           <div class="card">
             <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">平台状态</h3>
             <div v-if="review.ai_result?.unavailable_platforms?.length" class="space-y-2">
@@ -397,4 +421,5 @@ onUnmounted(() => {
       </div>
     </div>
   </DefaultLayout>
+  <ReviewHistoryDrawer :open="Boolean(selectedVersion)" :version="selectedVersion" :review="selectedReview" @close="selectedVersion = null" />
 </template>

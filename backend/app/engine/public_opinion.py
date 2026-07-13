@@ -15,6 +15,7 @@ from app.models.knowledge import (
     PublicOpinionLibraryVersion,
 )
 from app.services import model_service
+from app.engine.text_similarity import shared_phrase, similarity
 
 _TRIGGER_WORDS_PATH = Path(__file__).resolve().parent.parent.parent.parent / "data" / "trigger_words.json"
 
@@ -166,11 +167,22 @@ def _deterministic_hits(
         version: PublicOpinionEventVersion = case["version"]
         tokens = _case_tokens(version)
         matched_tokens = [token for token in tokens if token and token in material_text]
+        case_text = " ".join([
+            version.source_text,
+            version.summary,
+            " ".join(version.trigger_patterns or []),
+            " ".join(version.risk_topics or []),
+        ])
+        similarity_score = similarity(material_text, case_text)
+        matched_phrase = shared_phrase(material_text, case_text)
         industry_bonus = bool(normalized_industries & {_normalize(item) for item in version.industry})
         platform_bonus = bool(normalized_platforms & {_normalize(item) for item in version.platforms})
-        if not matched_tokens and not industry_bonus and not platform_bonus:
+        contextual_match = industry_bonus or platform_bonus
+        if not matched_tokens and (similarity_score < 0.18 or len(matched_phrase) < 2) and not contextual_match:
             continue
         score = len(matched_tokens) * 20
+        if similarity_score >= 0.18 and len(matched_phrase) >= 2:
+            score += int(similarity_score * 60)
         if industry_bonus:
             score += 10
         if platform_bonus:
@@ -186,6 +198,8 @@ def _deterministic_hits(
                 "historical_consequence": version.consequences,
                 "severity_level": version.severity_level,
                 "score": min(score, 100),
+                "match_method": "keyword" if matched_tokens else ("similarity" if matched_phrase else "context"),
+                "matched_text": ", ".join(matched_tokens) or matched_phrase,
             }
         )
     return sorted(hits, key=lambda item: item["score"], reverse=True)

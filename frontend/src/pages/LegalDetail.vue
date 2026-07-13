@@ -7,8 +7,10 @@ import { useUserStore } from '@/stores/user'
 import ReviewLayout from '@/layouts/ReviewLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
+import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
+import EngineReport from '@/components/review/EngineReport.vue'
 import { brandsApi } from '@/api/brands'
-import type { Material, Review, MatchedRule, BrandProfile } from '@/types'
+import type { Material, Review, MatchedRule, BrandProfile, MaterialVersion } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -16,8 +18,11 @@ const store = useUserStore()
 const material = ref<Material | null>(null)
 const review = ref<Review | null>(null)
 const loading = ref(true)
-const versions = ref<any[]>([])
+const versions = ref<MaterialVersion[]>([])
 const showVersions = ref(false)
+const selectedVersion = ref<MaterialVersion | null>(null)
+const selectedReview = ref<Review | null>(null)
+const historyLoading = ref(false)
 const decision = ref('approved')
 const notes = ref('')
 const returnReasons = ref('')
@@ -74,6 +79,17 @@ async function handleDecision() {
     decisionError.value = error.response?.data?.detail || '法务决定提交失败'
   } finally {
     submitting.value = false
+  }
+}
+
+async function openHistory(version: MaterialVersion) {
+  selectedVersion.value = version
+  selectedReview.value = null
+  historyLoading.value = true
+  try {
+    selectedReview.value = (await reviewsApi.get(version.review_id)).data
+  } finally {
+    historyLoading.value = false
   }
 }
 </script>
@@ -138,7 +154,7 @@ async function handleDecision() {
           <span class="text-xs text-sky-600">{{ showVersions ? '收起' : '展开' }}</span>
         </button>
         <div v-if="showVersions" class="mt-3 space-y-2">
-          <div v-for="v in versions" :key="v.version"
+          <button v-for="v in versions" :key="v.review_id" type="button" @click="openHistory(v)"
             class="flex items-center justify-between text-sm py-2 border-b border-gray-100 dark:border-gray-700 last:border-0"
             :class="{ 'bg-sky-50 dark:bg-sky-900/20 -mx-2 px-2 rounded': v.version === review?.version }">
             <div>
@@ -150,35 +166,16 @@ async function handleDecision() {
               <span v-if="v.legal_decision" :class="{ 'text-green-600': v.legal_decision === 'approved', 'text-red-600': v.legal_decision === 'returned' }">
                 {{ v.legal_decision === 'approved' ? '通过' : v.legal_decision === 'returned' ? '退回' : v.legal_decision }}
               </span>
-              <span>{{ v.created_at ? new Date(v.created_at).toLocaleDateString() : '' }}</span>
+              <span>{{ v.legal_review_label }}</span>
             </div>
-          </div>
+          </button>
         </div>
       </div>
     </template>
 
     <template #right>
       <div class="space-y-4">
-        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">审查引擎·执行报告</h3>
-        <details v-for="layer in [review.ai_result.layer1, review.ai_result.layer2, review.ai_result.layer3, review.ai_result.layer4]" :key="layer.layer" open class="text-sm">
-          <summary class="font-medium text-gray-600 dark:text-gray-400 cursor-pointer py-1">{{ layer.layer }}</summary>
-          <div class="pl-4 mt-1 space-y-1">
-            <p v-for="exp in layer.explanations" :key="exp" class="text-gray-500 dark:text-gray-400">{{ exp }}</p>
-            <div v-for="rule in layer.matched_rules" :key="rule.rule_id" class="text-xs py-1">
-              <span class="text-red-600 dark:text-red-400">{{ rule.rule_text }}</span>
-              <span v-if="rule.source_law" class="text-gray-400 ml-2">｜{{ rule.source_law }}</span>
-              <p v-if="rule.explanation" class="text-gray-500 dark:text-gray-400 mt-0.5">{{ rule.explanation }}</p>
-            </div>
-          </div>
-        </details>
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
-          <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">修改建议</h4>
-          <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-1">
-            <li v-for="s in review.ai_result.suggestions" :key="s" class="flex items-start gap-1">
-              <span class="text-sky-500">-</span> {{ s }}
-            </li>
-          </ul>
-        </div>
+        <EngineReport :result="review.ai_result" />
       </div>
 
       <!-- Brand memory card -->
@@ -223,4 +220,5 @@ async function handleDecision() {
     </template>
   </ReviewLayout>
   <div v-else class="flex items-center justify-center min-h-[60vh] text-gray-500">加载中...</div>
+  <ReviewHistoryDrawer :open="Boolean(selectedVersion)" :version="selectedVersion" :review="selectedReview" @close="selectedVersion = null" />
 </template>

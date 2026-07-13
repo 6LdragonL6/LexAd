@@ -6,6 +6,7 @@ from pydantic import Field
 
 from app.models.knowledge import PlatformRuleSet, PlatformRuleStatus, PlatformRuleVersion
 from app.schemas.review import LayerResult, MatchedRule
+from app.engine.text_similarity import shared_phrase, similarity
 
 _PLATFORM_ALIASES: dict[str, set[str]] = {
     "抖音": {"douyin", "douyin_ec", "巨量引擎"},
@@ -42,6 +43,7 @@ def run_platform_review(text: str, platforms: list[str], db: Session | None) -> 
             explanations=["平台规则审核暂不可用：缺少数据库会话"],
             platform_rule_version_ids=[],
             unavailable_platforms=platforms,
+            status="unavailable",
         )
 
     matched: list[MatchedRule] = []
@@ -86,6 +88,8 @@ def run_platform_review(text: str, platforms: list[str], db: Session | None) -> 
         platform_rule_version_ids=_dedupe(version_ids),
         unavailable_platforms=unavailable,
         platform_version_labels=version_labels,
+        status="matched" if matched else ("unavailable" if unavailable else "no_match"),
+        source_versions=list(version_labels.values()),
     )
 
 
@@ -127,8 +131,16 @@ def _match_version_rules(
         if not keywords:
             continue
         hit_keywords = [keyword for keyword in keywords if keyword and keyword in text]
+        rule_text = str(rule.get("text") or rule.get("rule_text") or rule.get("title") or "")
+        score = 0.0
+        match_method = "keyword"
+        matched_text = ", ".join(hit_keywords)
         if not hit_keywords:
-            continue
+            score = similarity(text, " ".join([rule_text, *keywords]))
+            matched_text = shared_phrase(text, rule_text or " ".join(keywords))
+            if score < 0.05 or len(matched_text) < 3:
+                continue
+            match_method = "similarity"
         rule_key = str(rule.get("rule_id") or rule.get("id") or f"rule-{index + 1}")
         matches.append(
             MatchedRule(
@@ -136,6 +148,11 @@ def _match_version_rules(
                 rule_text=_rule_text(rule, hit_keywords),
                 source_law=f"{rule_set.display_name} {version.version_label}",
                 match_type=str(rule.get("risk_level") or rule.get("category") or "平台规则"),
+                matched_text=matched_text,
+                match_method=match_method,
+                score=round(score, 3) if match_method == "similarity" else 1.0,
+                source_id=rule_key,
+                suggestion=str(rule.get("suggestion") or "请按平台规则调整相关表达"),
             )
         )
     return matches

@@ -6,6 +6,7 @@ import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
+import { selectComplianceTip, type ComplianceTip } from '@/data/complianceTips'
 import type { Material, ReviewQueueItem } from '@/types'
 
 const store = useUserStore()
@@ -15,6 +16,7 @@ const queue = ref<ReviewQueueItem[]>([])
 const loading = ref(true)
 const navigationError = ref('')
 const archiving = ref<Record<string, boolean>>({})
+const complianceTip = ref<ComplianceTip | null>(null)
 
 onMounted(async () => {
   try {
@@ -22,13 +24,16 @@ onMounted(async () => {
     materials.value = mRes.data
     queue.value = qRes.data
   } finally {
+    if (store.user) complianceTip.value = selectComplianceTip(store.user.role)
     loading.value = false
   }
 })
 
-const pendingCount = computed(() => materials.value.filter(m => !['approved', 'conditional_approved', 'draft', 'archived'].includes(m.status)).length)
+const pendingCount = computed(() => materials.value.filter(m => ['ai_reviewing', 'pending_legal', 'in_legal_review'].includes(m.status)).length)
 const returnedCount = computed(() => materials.value.filter(m => m.status === 'returned').length)
 const queueCount = computed(() => queue.value.length)
+const approvedCount = computed(() => materials.value.filter(m => ['approved', 'conditional_approved'].includes(m.status)).length)
+const legalPendingCount = computed(() => materials.value.filter(m => ['pending_legal', 'in_legal_review'].includes(m.status)).length)
 
 function statusVariant(status: string): 'success' | 'warning' | 'danger' | 'info' | 'gray' {
   if (status === 'approved' || status === 'conditional_approved') return 'success'
@@ -88,32 +93,46 @@ async function handleArchive(material: Material) {
 
       <!-- Stat Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <div class="card text-center">
+        <div v-if="store.isMarketing" class="card text-center">
           <div class="stat-icon bg-sky-50 text-sky-600">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <p class="text-3xl font-bold text-sky-600">{{ pendingCount }}</p>
           <p class="text-sm text-gray-500 mt-1">待处理</p>
         </div>
-        <div class="card text-center">
+        <div v-if="store.isMarketing" class="card text-center">
           <div class="stat-icon bg-amber-50 text-amber-600">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <p class="text-3xl font-bold text-amber-600">{{ returnedCount }}</p>
           <p class="text-sm text-gray-500 mt-1">需修改</p>
         </div>
-        <div class="card text-center" v-if="store.isLegal">
+        <div v-if="!store.isMarketing" class="card text-center">
           <div class="stat-icon bg-red-50 text-red-600">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
-          <p class="text-3xl font-bold text-red-600">{{ queueCount }}</p>
+          <p class="text-3xl font-bold text-red-600">{{ legalPendingCount || queueCount }}</p>
           <p class="text-sm text-gray-500 mt-1">待审核</p>
+        </div>
+        <div v-if="!store.isMarketing" class="card text-center">
+          <div class="stat-icon bg-green-50 text-green-600 mx-auto">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p class="text-3xl font-bold text-green-600">{{ approvedCount }}</p>
+          <p class="text-sm text-gray-500 mt-1">已通过</p>
+        </div>
+        <div v-if="!store.isMarketing" class="card text-center">
+          <div class="stat-icon bg-orange-50 text-orange-600 mx-auto">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p class="text-3xl font-bold text-orange-600">{{ returnedCount }}</p>
+          <p class="text-sm text-gray-500 mt-1">已退回</p>
         </div>
       </div>
 
       <!-- Quick Actions -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <router-link to="/submit" class="card quick-action-card">
+        <router-link v-if="store.canSubmit" to="/submit" class="card quick-action-card">
           <div class="flex items-center gap-3">
             <div class="quick-action-icon bg-sky-50">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
@@ -183,7 +202,8 @@ async function handleArchive(material: Material) {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <h3 class="text-sm font-semibold text-amber-700">合规小贴士</h3>
           </div>
-          <p class="text-sm text-amber-700 leading-relaxed">广告中使用「最」「第一」等绝对化用语违反《广告法》第九条。提交前请检查文案中是否含有禁用词汇。</p>
+          <p class="text-sm text-amber-700 leading-relaxed">{{ complianceTip?.body }}</p>
+          <p v-if="complianceTip?.source" class="mt-3 text-xs text-amber-700/75">来源：{{ complianceTip.source }}</p>
         </div>
       </div>
     </div>

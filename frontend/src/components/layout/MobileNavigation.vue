@@ -96,7 +96,6 @@ const roleLabel = computed(() => {
         </div>
         <div class="ml-3 min-w-0">
           <p class="font-bold text-lg text-white leading-tight">LexAd</p>
-          <p class="text-xs text-white/40 mt-0.5">v{{ APP_VERSION }}</p>
         </div>
         <button type="button" class="ml-auto w-11 h-11 flex items-center justify-center rounded-xl text-white/60 hover:text-white hover:bg-white/10" aria-label="关闭菜单" @click="closeMenu">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -130,6 +129,7 @@ const roleLabel = computed(() => {
         <button type="button" class="btn-ghost w-full min-h-12 text-white/70 hover:text-white hover:bg-white/5" @click="handleLogout">
           退出登录
         </button>
+        <p class="mt-3 text-center text-[11px] tracking-wide text-white/35">v{{ APP_VERSION }}</p>
       </div>
     </aside>
   </Transition>
