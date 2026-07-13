@@ -42,6 +42,8 @@ start-dev.bat
 - `LexAd Backend`：后端日志，默认端口 `8000`。
 - `LexAd Frontend`：前端日志，默认端口 `5173`。
 
+再次运行 `start-dev.bat` 时，脚本会先关闭上一次记录的 LexAd 实例。若 `5173` 被未记录的旧前端占用，脚本仅在确认监听者是 LexAd Vite 前端后自动关闭它；其他程序不会被结束，启动窗口会显示占用者的 PID、进程名和拒绝接管的原因。
+
 访问：
 
 - 前端：<http://localhost:5173>

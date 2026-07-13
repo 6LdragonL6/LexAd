@@ -33,6 +33,163 @@ function Test-PortInUse {
     }
 }
 
+function Get-PortListenerProcessIds {
+    param([Parameter(Mandatory = $true)][int]$Port)
+
+    return @(
+        Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue |
+            Select-Object -ExpandProperty OwningProcess -Unique
+    )
+}
+
+function Stop-ProcessTree {
+    param([Parameter(Mandatory = $true)][int]$ProcessId)
+
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $taskkillOutput = & taskkill.exe /PID $ProcessId /T /F 2>&1 | Out-String
+        $taskkillExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+
+    if ($taskkillExitCode -ne 0 -and (Test-ProcessIsRunning -ProcessId $ProcessId)) {
+        $detail = $taskkillOutput.Trim()
+        if (-not $detail) {
+            $detail = "taskkill exited with code $taskkillExitCode"
+        }
+        throw "Could not stop PID ${ProcessId}: $detail"
+    }
+}
+
+function Test-RecordedProcessMatches {
+    param(
+        [Parameter(Mandatory = $true)]$Record,
+        [Parameter(Mandatory = $true)]$Process
+    )
+
+    if ($null -eq $Record.rootProcessStartTime) {
+        return $true
+    }
+
+    try {
+        $recordedStart = [datetime]$Record.rootProcessStartTime
+        return [math]::Abs(($Process.StartTime - $recordedStart).TotalSeconds) -lt 2
+    }
+    catch {
+        return $false
+    }
+}
+
+function Get-PortOwnerSummary {
+    param([Parameter(Mandatory = $true)][int[]]$ProcessIds)
+
+    $descriptions = foreach ($processId in $ProcessIds) {
+        $process = Get-Process -Id $processId -ErrorAction SilentlyContinue
+        if ($null -eq $process) {
+            "PID $processId (process exited before it could be inspected)"
+            continue
+        }
+
+        $path = $null
+        try {
+            $path = $process.Path
+        }
+        catch {}
+
+        if ($path) {
+            "PID $processId ($($process.ProcessName), $path)"
+        }
+        else {
+            "PID $processId ($($process.ProcessName))"
+        }
+    }
+
+    return ($descriptions -join "; ")
+}
+
+function Test-IsLexAdFrontendListener {
+    param(
+        [Parameter(Mandatory = $true)][int]$Port,
+        [Parameter(Mandatory = $true)][int]$ProcessId
+    )
+
+    $process = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
+    if ($null -eq $process -or $process.ProcessName -ne "node") {
+        return $false
+    }
+
+    try {
+        $response = Invoke-WebRequest -Uri "http://127.0.0.1:$Port/" -UseBasicParsing -TimeoutSec 2
+    }
+    catch {
+        return $false
+    }
+
+    return (
+        $response.StatusCode -eq 200 -and
+        $response.Content -match '<title>\s*LexAd\b' -and
+        $response.Content -match '/@vite/client' -and
+        $response.Content -match '/src/main\.ts'
+    )
+}
+
+function Stop-VerifiedLexAdFrontendOnPort {
+    param([Parameter(Mandatory = $true)][int]$Port)
+
+    $listenerProcessIds = @(Get-PortListenerProcessIds -Port $Port)
+    if ($listenerProcessIds.Count -eq 0) {
+        return
+    }
+
+    $unverifiedProcessIds = @(
+        $listenerProcessIds | Where-Object {
+            -not (Test-IsLexAdFrontendListener -Port $Port -ProcessId $_)
+        }
+    )
+    if ($unverifiedProcessIds.Count -gt 0) {
+        $owners = Get-PortOwnerSummary -ProcessIds $listenerProcessIds
+        throw "Port $Port is occupied by $owners. The listener is not a verified LexAd Vite frontend, so it was not stopped."
+    }
+
+    Write-Host "Port $Port is used by an existing LexAd frontend. Stopping the old frontend..."
+
+    $frontendWindows = @(
+        Get-Process -ErrorAction SilentlyContinue | Where-Object {
+            $_.ProcessName -in @("powershell", "pwsh") -and
+            $_.MainWindowTitle -eq "LexAd Frontend"
+        }
+    )
+
+    if ($frontendWindows.Count -eq 1) {
+        Stop-ProcessTree -ProcessId $frontendWindows[0].Id
+    }
+    elseif ($frontendWindows.Count -gt 1) {
+        Write-Host "  Multiple LexAd Frontend windows were found; only the verified port listener will be stopped."
+    }
+
+    foreach ($processId in $listenerProcessIds) {
+        if (Test-ProcessIsRunning -ProcessId $processId) {
+            Stop-ProcessTree -ProcessId $processId
+        }
+    }
+
+    $releaseTimeout = (Get-Date).AddSeconds(5)
+    while ((Get-Date) -lt $releaseTimeout -and (Test-PortInUse -Port $Port)) {
+        Start-Sleep -Milliseconds 250
+    }
+
+    if (Test-PortInUse -Port $Port) {
+        $remainingProcessIds = @(Get-PortListenerProcessIds -Port $Port)
+        $owners = Get-PortOwnerSummary -ProcessIds $remainingProcessIds
+        throw "The old LexAd frontend could not release port ${Port}: $owners"
+    }
+
+    Write-Host "Port $Port was released by the old LexAd frontend."
+}
+
 function Write-PidRecords {
     param([Parameter(Mandatory = $true)][array]$Records)
 
@@ -72,7 +229,7 @@ function Get-PythonCommand {
     return (Assert-Command "python")
 }
 
-function Assert-NoRecordedInstance {
+function Stop-RecordedInstanceForRestart {
     if (-not (Test-Path -LiteralPath $PidFile -PathType Leaf)) {
         return
     }
@@ -86,18 +243,62 @@ function Assert-NoRecordedInstance {
     }
 
     $running = @()
+    $mismatched = @()
     foreach ($record in @($records)) {
-        if ($null -ne $record.rootPid -and (Test-ProcessIsRunning -ProcessId ([int]$record.rootPid))) {
-            $running += $record
+        if ($null -eq $record.rootPid) {
+            continue
+        }
+
+        $process = Get-Process -Id ([int]$record.rootPid) -ErrorAction SilentlyContinue
+        if ($null -eq $process) {
+            continue
+        }
+
+        if (Test-RecordedProcessMatches -Record $record -Process $process) {
+            $running += [pscustomobject]@{
+                record = $record
+                process = $process
+            }
+        }
+        else {
+            $mismatched += $record
         }
     }
 
+    if ($mismatched.Count -gt 0) {
+        $details = @(
+            $mismatched | ForEach-Object { "{0}: PID {1}" -f $_.name, $_.rootPid }
+        ) -join "; "
+        throw "The saved LexAd process record is stale and now points to another process ($details). It was not stopped. Delete scripts\.dev-pids.json after verifying the recorded PIDs."
+    }
+
     if ($running.Count -gt 0) {
-        Write-Host "LexAd dev services already look like they are running:"
-        foreach ($record in $running) {
-            Write-Host ("  {0}: PID {1}" -f $record.name, $record.rootPid)
+        Write-Host "A recorded LexAd instance is already running. Stopping it before restart..."
+        foreach ($item in $running) {
+            Write-Host ("  Stopping {0}: PID {1}" -f $item.record.name, $item.record.rootPid)
+            Stop-ProcessTree -ProcessId ([int]$item.record.rootPid)
         }
-        throw "Run stop-dev.bat first, or close the recorded windows and delete scripts\.dev-pids.json if the record is stale."
+
+        $stopTimeout = (Get-Date).AddSeconds(5)
+        do {
+            $stillRunning = @(
+                $running | Where-Object {
+                    $process = Get-Process -Id ([int]$_.record.rootPid) -ErrorAction SilentlyContinue
+                    $null -ne $process -and (Test-RecordedProcessMatches -Record $_.record -Process $process)
+                }
+            )
+            if ($stillRunning.Count -eq 0) {
+                break
+            }
+            Start-Sleep -Milliseconds 250
+        } while ((Get-Date) -lt $stopTimeout)
+
+        if ($stillRunning.Count -gt 0) {
+            $details = @(
+                $stillRunning | ForEach-Object { "{0}: PID {1}" -f $_.record.name, $_.record.rootPid }
+            ) -join "; "
+            throw "The old recorded LexAd instance could not be stopped ($details)."
+        }
     }
 
     Remove-Item -LiteralPath $PidFile -Force
@@ -144,15 +345,13 @@ function Extract-AlembicRevision {
 
 Assert-Directory -Path $BackendDir -Name "Backend"
 Assert-Directory -Path $FrontendDir -Name "Frontend"
-Assert-NoRecordedInstance
+Stop-RecordedInstanceForRestart
 
 if (Test-PortInUse -Port 8000) {
     throw "Port 8000 is already in use. Stop the existing backend before starting LexAd."
 }
 
-if (Test-PortInUse -Port 5173) {
-    throw "Port 5173 is already in use. Stop the existing frontend before starting LexAd."
-}
+Stop-VerifiedLexAdFrontendOnPort -Port 5173
 
 $pythonCommand = Get-PythonCommand
 $npmCommand = Assert-Command "npm.cmd"

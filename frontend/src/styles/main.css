@@ -858,15 +858,23 @@ textarea.input {
 
 .mobile-nav-drawer {
   position: fixed;
-  inset-y: 0;
+  top: 0;
+  bottom: 0;
   left: 0;
+  height: 100vh;
+  height: 100dvh;
   width: 300px;
   max-width: 86vw;
   background: var(--color-sidebar);
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   z-index: 60;
+}
+
+.mobile-nav-drawer > nav {
+  min-height: 0;
 }
 
 .mobile-nav-header {
