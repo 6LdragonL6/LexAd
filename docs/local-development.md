@@ -74,6 +74,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\start-dev.ps1 -D
 stop-dev.bat
 ```
 
+退出脚本只会处理 `scripts/.dev-pids.json` 中服务名、PID 和启动时间均匹配的进程记录。记录损坏、PID 已被复用或停止失败时，脚本不会结束可疑进程，会保留记录并返回失败状态供排查。
+
 关闭脚本只会关闭 `start-dev.bat` 记录的进程，不会批量结束所有 Node、npm、Python 或 uvicorn 进程。
 
 ### 手动启动

@@ -1,10 +1,12 @@
 from types import SimpleNamespace
 
 import pytest
+from pydantic import ValidationError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from app.core.config import Settings
 from app.db.base import Base
 from app.models.admin import SecureSetting
 from app.models.user import User, UserRole
@@ -114,3 +116,20 @@ def test_gateway_rejects_invalid_json(monkeypatch):
     with pytest.raises(deepseek_gateway.DeepSeekGatewayError) as exc_info:
         deepseek_gateway.validate_api_key("unit-test-key")
     assert exc_info.value.category == "invalid_response"
+
+
+def test_legacy_deepseek_environment_fields_are_accepted_but_ignored(monkeypatch):
+    monkeypatch.setenv("DEEPSEEK_BASE_URL", "https://legacy.invalid")
+    monkeypatch.setenv("DEEPSEEK_MODEL", "legacy-model")
+
+    settings = Settings(_env_file=None)
+
+    assert "DEEPSEEK_BASE_URL" not in settings.model_dump()
+    assert "DEEPSEEK_MODEL" not in settings.model_dump()
+    assert deepseek_gateway.FIXED_BASE_URL == "https://api.deepseek.com"
+    assert deepseek_gateway.FIXED_MODEL == "deepseek-v4-flash"
+
+
+def test_unrelated_unknown_configuration_is_still_rejected():
+    with pytest.raises(ValidationError):
+        Settings(_env_file=None, DEEPSEEK_MODELL="typo")

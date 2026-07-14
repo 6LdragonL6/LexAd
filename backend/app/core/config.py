@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import model_validator
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # 路径常量 —— 必须在 Settings 类之前定义，因为字段默认值依赖它们
@@ -48,6 +48,10 @@ class Settings(BaseSettings):
 
     # ── DeepSeek AI ───────────────────────────────────────────────────────
     DEEPSEEK_API_KEY: str = ""  # DeepSeek API 密钥
+    # Compatibility only: v0.6.1 and earlier deployments may still define
+    # these keys. The AI gateway deliberately never consumes their values.
+    DEEPSEEK_BASE_URL: str | None = Field(default=None, exclude=True, repr=False)
+    DEEPSEEK_MODEL: str | None = Field(default=None, exclude=True, repr=False)
 
     # ── 文件上传 ──────────────────────────────────────────────────────────
     MAX_UPLOAD_SIZE_MB: int = 10  # 上传文件大小上限

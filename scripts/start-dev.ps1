@@ -11,6 +11,10 @@ $RootDir = Split-Path -Parent $ScriptDir
 $BackendDir = Join-Path $RootDir "backend"
 $FrontendDir = Join-Path $RootDir "frontend"
 $PidFile = Join-Path $ScriptDir ".dev-pids.json"
+$ExpectedServices = @{
+    backend = 8000
+    frontend = 5173
+}
 
 function Quote-PowerShellString {
     param([Parameter(Mandatory = $true)][string]$Value)
@@ -20,6 +24,61 @@ function Quote-PowerShellString {
 function Test-ProcessIsRunning {
     param([Parameter(Mandatory = $true)][int]$ProcessId)
     return $null -ne (Get-Process -Id $ProcessId -ErrorAction SilentlyContinue)
+}
+
+function Get-RecordProperty {
+    param(
+        [Parameter(Mandatory = $true)]$Record,
+        [Parameter(Mandatory = $true)][string]$Name
+    )
+
+    $property = $Record.PSObject.Properties[$Name]
+    if ($null -eq $property -or $null -eq $property.Value -or [string]::IsNullOrWhiteSpace([string]$property.Value)) {
+        throw "PID record is missing required field '$Name'."
+    }
+    return $property.Value
+}
+
+function ConvertTo-ValidatedPidRecords {
+    param([Parameter(Mandatory = $true)][object[]]$Records)
+
+    if ($Records.Count -eq 0) {
+        throw "PID record file does not contain any service records."
+    }
+
+    $seenServices = @{}
+    $validated = @()
+    foreach ($record in $Records) {
+        $name = ([string](Get-RecordProperty -Record $record -Name "name")).Trim().ToLowerInvariant()
+        if (-not $ExpectedServices.ContainsKey($name)) {
+            throw "PID record contains unsupported service name '$name'."
+        }
+        if ($seenServices.ContainsKey($name)) {
+            throw "PID record contains duplicate service '$name'."
+        }
+
+        $pidValue = 0
+        $rawPid = Get-RecordProperty -Record $record -Name "rootPid"
+        if (-not [int]::TryParse([string]$rawPid, [ref]$pidValue) -or $pidValue -le 0) {
+            throw "PID record for '$name' has an invalid rootPid."
+        }
+
+        $startTime = [datetime]::MinValue
+        $rawStartTime = Get-RecordProperty -Record $record -Name "rootProcessStartTime"
+        if (-not [datetime]::TryParse([string]$rawStartTime, [ref]$startTime)) {
+            throw "PID record for '$name' has an invalid rootProcessStartTime."
+        }
+
+        $seenServices[$name] = $true
+        $validated += [pscustomobject]@{
+            name = $name
+            rootPid = $pidValue
+            rootProcessStartTime = $startTime
+            port = $ExpectedServices[$name]
+        }
+    }
+
+    return @($validated)
 }
 
 function Test-PortInUse {
@@ -70,13 +129,8 @@ function Test-RecordedProcessMatches {
         [Parameter(Mandatory = $true)]$Process
     )
 
-    if ($null -eq $Record.rootProcessStartTime) {
-        return $true
-    }
-
     try {
-        $recordedStart = [datetime]$Record.rootProcessStartTime
-        return [math]::Abs(($Process.StartTime - $recordedStart).TotalSeconds) -lt 2
+        return [math]::Abs(($Process.StartTime - $Record.rootProcessStartTime).TotalSeconds) -lt 2
     }
     catch {
         return $false
@@ -235,11 +289,11 @@ function Stop-RecordedInstanceForRestart {
     }
 
     try {
-        $records = Get-Content -LiteralPath $PidFile -Raw | ConvertFrom-Json
+        $rawRecords = Get-Content -LiteralPath $PidFile -Raw | ConvertFrom-Json
+        $records = @(ConvertTo-ValidatedPidRecords -Records @($rawRecords))
     }
     catch {
-        Remove-Item -LiteralPath $PidFile -Force
-        return
+        throw "Could not validate scripts\.dev-pids.json. The invalid PID file was preserved for diagnosis. $($_.Exception.Message)"
     }
 
     $running = @()
