@@ -7,6 +7,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
+import HistoricalConsequencePanel from '@/components/review/HistoricalConsequencePanel.vue'
 import { brandsApi } from '@/api/brands'
 import type { Material, MatchedRule, Review, BrandProfile, MaterialVersion } from '@/types'
 
@@ -361,7 +362,7 @@ onUnmounted(() => {
                     <span class="text-xs text-gray-400">匹配分 {{ event.similarity }} · {{ event.verification_status || '待核验' }}</span>
                   </div>
                   <p v-if="event.matched_text" class="mt-2 text-xs text-purple-600">匹配依据：{{ event.matched_text }}</p>
-                  <pre class="mt-2 text-xs text-gray-500 whitespace-pre-wrap">{{ JSON.stringify(event.historical_consequence || {}, null, 2) }}</pre>
+                  <HistoricalConsequencePanel :value="event.historical_consequence" />
                 </div>
               </div>
             </div>
