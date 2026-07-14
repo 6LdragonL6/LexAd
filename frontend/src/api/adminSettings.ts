@@ -4,7 +4,10 @@ import type { AiConfigStatus, RecycleBinEntry, RecycleBinList, RecycleTargetType
 export const adminSettingsApi = {
   getAiConfig: () => client.get<AiConfigStatus>('/admin/settings/ai'),
   saveAiConfig: (apiKey: string) => client.put<AiConfigStatus>('/admin/settings/ai', { api_key: apiKey }),
-  testAiConfig: () => client.post<{ ok: boolean; message: string; tested_at: string }>('/admin/settings/ai/test'),
+  testAiConfig: (apiKey?: string) => client.post<{ ok: boolean; message: string; tested_at: string }>(
+    '/admin/settings/ai/test',
+    apiKey ? { api_key: apiKey } : undefined,
+  ),
   clearAiConfig: () => client.delete('/admin/settings/ai'),
   listRecycleBin: (targetType?: RecycleTargetType, page = 1, pageSize = 20) =>
     client.get<RecycleBinList>('/admin/settings/recycle-bin', {

@@ -67,7 +67,8 @@ async function testApiKey() {
   aiError.value = ''
   aiMessage.value = ''
   try {
-    aiMessage.value = (await adminSettingsApi.testAiConfig()).data.message
+    const candidateKey = apiKey.value.trim()
+    aiMessage.value = (await adminSettingsApi.testAiConfig(candidateKey || undefined)).data.message
   } catch (e: any) {
     aiError.value = e.response?.data?.detail || '连通性测试失败'
   } finally {
@@ -175,7 +176,9 @@ onMounted(async () => {
           <p v-if="aiError" role="alert" class="text-sm text-red-600 mt-3">{{ aiError }}</p>
           <div class="flex flex-wrap gap-2 mt-4">
             <button type="submit" class="btn-primary" :disabled="aiLoading || !apiKey.trim()">{{ aiLoading ? '处理中…' : '验证并保存' }}</button>
-            <button type="button" class="btn-outline" :disabled="aiLoading || !aiConfig?.configured" @click="testApiKey">测试当前配置</button>
+            <button type="button" class="btn-outline" :disabled="aiLoading || (!apiKey.trim() && !aiConfig?.configured)" @click="testApiKey">
+              {{ apiKey.trim() ? '测试输入的 Key' : '测试当前配置' }}
+            </button>
             <button type="button" class="btn-outline text-red-600" :disabled="aiLoading || aiConfig?.source !== 'database'" @click="clearApiKey">清除管理员配置</button>
           </div>
         </form>

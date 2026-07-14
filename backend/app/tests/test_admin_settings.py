@@ -10,6 +10,8 @@ from app.core.config import Settings
 from app.db.base import Base
 from app.models.admin import SecureSetting
 from app.models.user import User, UserRole
+from app.schemas.admin import ApiKeyUpdate
+from app.api.v1.endpoints import admin_settings as admin_settings_endpoint
 from app.services import admin_settings_service, deepseek_gateway
 
 
@@ -98,7 +100,52 @@ def test_gateway_uses_fixed_model_and_json_output(monkeypatch):
 
     assert captured["model"] == "deepseek-v4-flash"
     assert captured["response_format"] == {"type": "json_object"}
+    assert captured["max_tokens"] == 64
+    assert captured["extra_body"] == {"thinking": {"type": "disabled"}}
     assert captured["client"]["base_url"] == "https://api.deepseek.com"
+
+
+def test_gateway_retries_an_empty_json_response(monkeypatch):
+    responses = iter(["", '{"ok": true}'])
+    calls = 0
+
+    class FakeCompletions:
+        def create(self, **_kwargs):
+            nonlocal calls
+            calls += 1
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content=next(responses)))]
+            )
+
+    class FakeClient:
+        def __init__(self, **_kwargs):
+            self.chat = SimpleNamespace(completions=FakeCompletions())
+
+    monkeypatch.setattr(deepseek_gateway, "OpenAI", FakeClient)
+    monkeypatch.setattr(deepseek_gateway.time, "sleep", lambda _seconds: None)
+
+    deepseek_gateway.validate_api_key("unit-test-key")
+
+    assert calls == 2
+
+
+def test_test_endpoint_prefers_candidate_key_without_saving(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    tested_keys = []
+    monkeypatch.setattr(deepseek_gateway, "validate_api_key", tested_keys.append)
+
+    result = admin_settings_endpoint.test_ai_config(
+        body=ApiKeyUpdate(api_key="candidate-test-key-1234"),
+        db=db,
+        _=_admin(),
+    )
+
+    assert tested_keys == ["candidate-test-key-1234"]
+    assert result.ok is True
+    assert "尚未保存" in result.message
+    assert db.query(SecureSetting).count() == 0
+    db.close()
 
 
 def test_gateway_rejects_invalid_json(monkeypatch):

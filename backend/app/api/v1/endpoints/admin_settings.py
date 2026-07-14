@@ -40,20 +40,30 @@ def update_ai_config(
     except admin_settings_service.SecureSettingError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
     except deepseek_gateway.DeepSeekGatewayError as exc:
-        code = 400 if exc.category in {"authentication", "bad_request"} else 502
-        raise HTTPException(status_code=code, detail=str(exc))
+        raise HTTPException(status_code=_gateway_http_status(exc), detail=str(exc))
 
 
 @router.post("/ai/test", response_model=AiConfigTestResult)
 def test_ai_config(
+    body: ApiKeyUpdate | None = None,
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ):
     try:
-        deepseek_gateway.validate_api_key(admin_settings_service.get_api_key(db))
-        return AiConfigTestResult(ok=True, message="DeepSeek 配置可用", tested_at=datetime.now(timezone.utc))
-    except (admin_settings_service.SecureSettingError, deepseek_gateway.DeepSeekGatewayError) as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
+        candidate_key = body.api_key if body is not None else admin_settings_service.get_api_key(db)
+        deepseek_gateway.validate_api_key(candidate_key)
+        message = "输入的 DeepSeek API Key 可用（尚未保存）" if body is not None else "当前 DeepSeek 配置可用"
+        return AiConfigTestResult(ok=True, message=message, tested_at=datetime.now(timezone.utc))
+    except admin_settings_service.SecureSettingError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except deepseek_gateway.DeepSeekGatewayError as exc:
+        raise HTTPException(status_code=_gateway_http_status(exc), detail=str(exc))
+
+
+def _gateway_http_status(exc: deepseek_gateway.DeepSeekGatewayError) -> int:
+    if exc.category in {"authentication", "permission", "balance", "bad_request", "unconfigured"}:
+        return 400
+    return 502
 
 
 @router.delete("/ai", status_code=status.HTTP_204_NO_CONTENT)

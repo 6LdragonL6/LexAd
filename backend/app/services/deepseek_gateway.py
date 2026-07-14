@@ -80,10 +80,10 @@ def validate_api_key(api_key: str) -> None:
     _request_json(
         db=None,
         api_key_override=api_key,
-        system_prompt="你是 API 连通性检查器，只返回 JSON。",
+        system_prompt='你是 API 连通性检查器。只返回这个 JSON 示例：{"ok": true}',
         payload={"task": "health_check", "required_output": {"ok": True}},
         output_model=HealthOutput,
-        max_tokens=16,
+        max_tokens=64,
     )
 
 
@@ -202,10 +202,19 @@ def _request_json(
                 response_format={"type": "json_object"},
                 temperature=0.1,
                 max_tokens=max_tokens,
+                extra_body={"thinking": {"type": "disabled"}},
             )
             content = response.choices[0].message.content
             if not content:
-                raise DeepSeekGatewayError("模型返回空响应", category="empty_response")
+                last_error = DeepSeekGatewayError(
+                    "模型返回空响应，请重试",
+                    category="empty_response",
+                    retryable=True,
+                )
+                if attempt < 2:
+                    time.sleep((0.25 * (2**attempt)) + random.uniform(0, 0.1))
+                    continue
+                raise last_error
             parsed = json.loads(_strip_code_fence(content))
             result = output_model.model_validate(parsed)
             logger.info(
@@ -217,13 +226,19 @@ def _request_json(
             return result
         except DeepSeekGatewayError:
             raise
-        except (AuthenticationError, PermissionDeniedError) as exc:
-            raise DeepSeekGatewayError("API Key 无效或无权使用固定模型", category="authentication") from exc
+        except AuthenticationError as exc:
+            raise DeepSeekGatewayError("DeepSeek 拒绝了当前 API Key（HTTP 401）", category="authentication") from exc
+        except PermissionDeniedError as exc:
+            raise DeepSeekGatewayError("当前 API Key 无权使用固定模型（HTTP 403）", category="permission") from exc
         except BadRequestError as exc:
             raise DeepSeekGatewayError("模型请求格式或固定模型不可用", category="bad_request") from exc
         except (APITimeoutError, APIConnectionError, RateLimitError) as exc:
             last_error = DeepSeekGatewayError("模型服务暂时不可用", category="transient", retryable=True)
         except APIStatusError as exc:
+            if exc.status_code == 402:
+                raise DeepSeekGatewayError("DeepSeek 账户余额不足（HTTP 402）", category="balance") from exc
+            if exc.status_code == 422:
+                raise DeepSeekGatewayError("DeepSeek 请求参数无效（HTTP 422）", category="bad_request") from exc
             if exc.status_code >= 500:
                 last_error = DeepSeekGatewayError("模型服务暂时不可用", category="upstream", retryable=True)
             else:
