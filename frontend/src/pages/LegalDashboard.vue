@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { reviewsApi } from '@/api/reviews'
 import { materialsApi } from '@/api/materials'
+import { adminSettingsApi } from '@/api/adminSettings'
 import { useUserStore } from '@/stores/user'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
@@ -13,6 +14,7 @@ const router = useRouter()
 const queue = ref<ReviewQueueItem[]>([])
 const loading = ref(true)
 const archiving = ref<Record<string, boolean>>({})
+const deleting = ref<Record<string, boolean>>({})
 
 onMounted(async () => {
   await loadQueue()
@@ -80,6 +82,19 @@ async function handleArchive(item: ReviewQueueItem) {
   }
 }
 
+async function handleAdminDelete(item: ReviewQueueItem) {
+  if (!confirm(`将物料「${item.material_name}」及其审核记录移入回收站？15 天内可恢复。`)) return
+  deleting.value[item.material_id] = true
+  try {
+    await adminSettingsApi.moveToRecycleBin('material', item.material_id)
+    queue.value = queue.value.filter(queueItem => queueItem.material_id !== item.material_id)
+  } catch (error: any) {
+    alert(error.response?.data?.detail || '删除失败')
+  } finally {
+    deleting.value[item.material_id] = false
+  }
+}
+
 </script>
 
 <template>
@@ -134,7 +149,7 @@ async function handleArchive(item: ReviewQueueItem) {
       <!-- Table -->
       <div v-else class="card !p-0 overflow-hidden">
         <!-- Desktop table header -->
-        <div class="hidden sm:grid grid-cols-7 gap-4 px-5 py-3 bg-gray-50 dark:bg-gray-800 text-xs font-semibold text-gray-500 border-b border-gray-200 dark:border-gray-700">
+        <div class="hidden sm:grid gap-4 px-5 py-3 bg-gray-50 dark:bg-gray-800 text-xs font-semibold text-gray-500 border-b border-gray-200 dark:border-gray-700" :class="store.isAdmin ? 'grid-cols-8' : 'grid-cols-7'">
           <span>物料名称</span>
           <span>提交人</span>
           <span>行业</span>
@@ -142,19 +157,27 @@ async function handleArchive(item: ReviewQueueItem) {
           <span>优先级</span>
           <span>等待时间</span>
           <span>状态</span>
+          <span v-if="store.isAdmin" class="text-right">操作</span>
         </div>
 
         <div v-for="item in queue" :key="item.id">
           <!-- Desktop row -->
-          <router-link :to="detailLink(item)" class="hidden sm:grid grid-cols-7 gap-4 px-5 py-3 text-sm hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 last:border-0 items-center">
-            <span class="text-sky-600 truncate">{{ item.material_name }}</span>
-            <span class="text-gray-600 dark:text-gray-300">{{ item.submitter_name }}</span>
-            <span class="text-gray-500">{{ item.industry }}</span>
-            <span class="font-bold" :class="{ 'text-red-500': item.ai_risk_score < 60, 'text-yellow-500': item.ai_risk_score >= 60 && item.ai_risk_score < 80, 'text-green-500': item.ai_risk_score >= 80 }">{{ item.ai_risk_score }}</span>
-            <span><StatusBadge :variant="item.priority === 'extreme' ? 'danger' : item.priority === 'urgent' ? 'warning' : 'gray'">{{ item.priority === 'extreme' ? '极速' : item.priority === 'urgent' ? '加急' : '普通' }}</StatusBadge></span>
-            <span class="text-gray-400">{{ item.waiting_hours ?? 0 }}h</span>
-            <span><StatusBadge :variant="statusVariant(item.status)">{{ statusLabel(item.status) }}</StatusBadge></span>
-          </router-link>
+          <div class="hidden sm:grid gap-4 px-5 py-3 text-sm hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700 last:border-0 items-center" :class="store.isAdmin ? 'grid-cols-8' : 'grid-cols-7'">
+            <router-link :to="detailLink(item)" class="contents">
+              <span class="text-sky-600 truncate">{{ item.material_name }}</span>
+              <span class="text-gray-600 dark:text-gray-300">{{ item.submitter_name }}</span>
+              <span class="text-gray-500">{{ item.industry }}</span>
+              <span class="font-bold" :class="{ 'text-red-500': item.ai_risk_score < 60, 'text-yellow-500': item.ai_risk_score >= 60 && item.ai_risk_score < 80, 'text-green-500': item.ai_risk_score >= 80 }">{{ item.ai_risk_score }}</span>
+              <span><StatusBadge :variant="item.priority === 'extreme' ? 'danger' : item.priority === 'urgent' ? 'warning' : 'gray'">{{ item.priority === 'extreme' ? '极速' : item.priority === 'urgent' ? '加急' : '普通' }}</StatusBadge></span>
+              <span class="text-gray-400">{{ item.waiting_hours ?? 0 }}h</span>
+              <span><StatusBadge :variant="statusVariant(item.status)">{{ statusLabel(item.status) }}</StatusBadge></span>
+            </router-link>
+            <span v-if="store.isAdmin" class="text-right">
+              <button class="text-xs text-red-600 hover:underline disabled:opacity-50" :disabled="deleting[item.material_id]" @click="handleAdminDelete(item)">
+                {{ deleting[item.material_id] ? '删除中…' : '删除' }}
+              </button>
+            </span>
+          </div>
 
           <!-- Return info for desktop -->
           <div v-if="store.isMarketing && item.status === 'returned'" class="hidden sm:block px-5 py-2 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-100 dark:border-orange-800 text-sm">
@@ -172,18 +195,25 @@ async function handleArchive(item: ReviewQueueItem) {
           </div>
 
           <!-- Mobile card -->
-          <router-link :to="detailLink(item)" class="block sm:hidden p-4 border-b last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-            <div class="flex items-center justify-between mb-1">
-              <span class="font-medium text-sky-600 truncate">{{ item.material_name }}</span>
-              <StatusBadge :variant="statusVariant(item.status)">{{ statusLabel(item.status) }}</StatusBadge>
+          <div class="block sm:hidden p-4 border-b last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+            <router-link :to="detailLink(item)" class="block">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-medium text-sky-600 truncate">{{ item.material_name }}</span>
+                <StatusBadge :variant="statusVariant(item.status)">{{ statusLabel(item.status) }}</StatusBadge>
+              </div>
+              <div class="flex gap-3 text-xs text-gray-500">
+                <span>{{ item.submitter_name }}</span>
+                <span>{{ item.industry }}</span>
+                <span>风险: {{ item.ai_risk_score }}</span>
+                <span>{{ item.waiting_hours ?? 0 }}h</span>
+              </div>
+            </router-link>
+            <div v-if="store.isAdmin" class="flex justify-end mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <button class="text-xs text-red-600 hover:underline disabled:opacity-50" :disabled="deleting[item.material_id]" @click="handleAdminDelete(item)">
+                {{ deleting[item.material_id] ? '删除中…' : '删除' }}
+              </button>
             </div>
-            <div class="flex gap-3 text-xs text-gray-500">
-              <span>{{ item.submitter_name }}</span>
-              <span>{{ item.industry }}</span>
-              <span>风险: {{ item.ai_risk_score }}</span>
-              <span>{{ item.waiting_hours ?? 0 }}h</span>
-            </div>
-          </router-link>
+          </div>
 
           <!-- Return info for mobile -->
           <div v-if="store.isMarketing && item.status === 'returned'" class="sm:hidden px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-100 dark:border-orange-800 text-xs">
