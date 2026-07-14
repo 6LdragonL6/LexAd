@@ -42,6 +42,28 @@ export interface MatchedRule {
   score?: number | null
   source_id?: string
   suggestion?: string
+  evidence_quote?: string
+  reasoning?: string
+  risk_level?: 'high' | 'medium' | 'low'
+  risk_level_label?: string
+  confidence?: number
+  adjudication_status?: 'confirmed'
+  basis_refs?: BasisReference[]
+}
+
+export interface BasisReference {
+  id: string
+  title: string
+  version?: string
+}
+
+export interface VerificationItem {
+  item_id: string
+  evidence_quote: string
+  verification_type: string
+  reason: string
+  required_materials: string[]
+  basis_refs?: BasisReference[]
 }
 
 export interface LayerResult {
@@ -50,6 +72,9 @@ export interface LayerResult {
   explanations: string[]
   status?: 'matched' | 'no_match' | 'unavailable' | 'failed'
   source_versions?: string[]
+  candidate_count?: number
+  verification_items?: VerificationItem[]
+  requires_manual_review?: boolean
 }
 
 export interface EngineResult {
@@ -66,6 +91,9 @@ export interface EngineResult {
   platform_version_labels?: Record<string, string>
   hit_count?: number
   risk_topics?: string[]
+  verification_items?: VerificationItem[]
+  requires_manual_review?: boolean
+  review_status?: 'completed' | 'confirmed_risk' | 'needs_verification' | 'manual_review' | 'no_clear_risk'
 }
 
 export interface Review {

@@ -48,8 +48,7 @@ def run_public_opinion_review(
         cases,
         trigger_word_hits,
     )
-    similar_events = _similar_events(deterministic_hits)
-    local = _local_assessment(deterministic_hits, similar_events, trigger_word_hits)
+    candidate_events = _similar_events(deterministic_hits)
 
     model_error: str | None = None
     try:
@@ -57,24 +56,24 @@ def run_public_opinion_review(
             db=db,
             material_text=material_text,
             deterministic_hits=deterministic_hits,
-            similar_events=similar_events,
+            similar_events=candidate_events,
             trigger_word_hits=trigger_word_hits,
         )
-        ai = _validated_ai_assessment(material_text, model_result, similar_events)
-        result = _fuse_assessments(local, ai)
+        ai = _validated_ai_assessment(material_text, model_result, candidate_events)
+        result = _ai_only_result(ai)
+        selected_events = _selected_similar_events(candidate_events, ai.get("matched_case_ids", []))
         model_available = True
     except model_service.ModelServiceError as exc:
         model_error = str(exc)[:200]
-        result = _local_only_result(local)
+        result = _manual_review_result("AI 舆情裁决暂不可用，候选词条和案例不能替代语义判断")
+        selected_events = []
         model_available = False
 
     result.update({
-        "status": "succeeded" if model_available else ("model_unavailable" if local["confidence"] > 0 else "uncertain"),
+        "status": "succeeded" if model_available and not result.get("requires_manual_review") else "manual_review",
         "model_available": model_available,
         "model_error": model_error,
-        "similar_events": similar_events,
-        "deterministic_hits": deterministic_hits,
-        "trigger_word_hits": trigger_word_hits,
+        "similar_events": selected_events,
         "library_version_id": library_version.id if library_version else None,
         "library_version": library_version.version if library_version else None,
         "knowledge_base_available": bool(cases),
@@ -239,62 +238,6 @@ def _similar_events(deterministic_hits: list[dict[str, Any]]) -> list[dict[str, 
     ]
 
 
-def _local_assessment(
-    deterministic_hits: list[dict[str, Any]],
-    similar_events: list[dict[str, Any]],
-    trigger_word_hits: list[dict[str, Any]],
-) -> dict[str, Any]:
-    trigger_topics = [str(hit["category"]) for hit in trigger_word_hits]
-    if not deterministic_hits:
-        if not trigger_word_hits:
-            return {
-                "risk_score": 0,
-                "risk_level": "uncertain",
-                "confidence": 0.0,
-                "risk_topics": [],
-                "evidence_quotes": [],
-                "suggestions": ["当前没有足够的本地舆情证据，需结合 AI 或人工复核"],
-                "explanation": "未命中可信相似案例或明确上下文证据。",
-                "similar_events": [],
-            }
-        return {
-            "risk_score": min(10 + len(trigger_word_hits) * 2, 20),
-            "risk_level": "low",
-            "confidence": min(0.25, 0.12 + len(trigger_word_hits) * 0.03),
-            "risk_topics": _dedupe(trigger_topics),
-            "evidence_quotes": [str(hit["matched_word"]) for hit in trigger_word_hits],
-            "suggestions": ["触发词仅构成弱线索，请结合完整语境复核"],
-            "explanation": "仅命中候选触发词，不能据此直接判定中高风险。",
-            "similar_events": [],
-        }
-
-    top = deterministic_hits[0]
-    score = int(top["score"])
-    severity = str(top.get("severity_level") or "").lower()
-    if severity == "high" and score >= 50:
-        score = max(65, min(score, 79))
-    elif severity == "medium" and score >= 25:
-        score = max(30, min(score, 59))
-    elif severity == "severe" and score >= 55:
-        score = max(score, 80)
-    elif severity == "low":
-        score = min(score, 29)
-    topics = _dedupe([
-        *_flatten(hit.get("risk_topics", []) for hit in deterministic_hits[:3]),
-        *trigger_topics,
-    ])
-    return {
-        "risk_score": min(score, 100),
-        "risk_level": _score_to_level(score),
-        "confidence": float(top["confidence"]),
-        "risk_topics": topics,
-        "evidence_quotes": [str(top.get("matched_text") or "")],
-        "suggestions": ["建议参考相似真实案例复核表达方式、价值观和传播风险"],
-        "explanation": f"本地检索命中相似事件“{top['event_title']}”，匹配依据：{top.get('matched_text') or '文本相似'}。",
-        "similar_events": similar_events,
-    }
-
-
 def _validated_ai_assessment(
     material_text: str,
     model_result: dict[str, Any],
@@ -302,8 +245,12 @@ def _validated_ai_assessment(
 ) -> dict[str, Any]:
     raw_quotes = _string_list(model_result.get("evidence_quotes", []))
     normalized_material = normalize_text(material_text)
-    valid_quotes = [quote for quote in raw_quotes if normalize_text(quote) in normalized_material]
-    quote_factor = (len(valid_quotes) / len(raw_quotes)) if raw_quotes else 0.35
+    valid_quotes = [
+        quote for quote in raw_quotes
+        if _is_meaningful_quote(material_text, quote) and normalize_text(quote) in normalized_material
+    ]
+    risk_level = str(model_result.get("risk_level") or "uncertain")
+    quote_factor = (len(valid_quotes) / len(raw_quotes)) if raw_quotes else (0.5 if risk_level == "low" else 0.0)
     allowed_case_ids = {str(item["event_id"]) for item in similar_events}
     matched_case_ids = [
         case_id for case_id in _string_list(model_result.get("matched_case_ids", []))
@@ -314,7 +261,6 @@ def _validated_ai_assessment(
     self_confidence = max(0, min(int(model_result.get("confidence") or 0), 100)) / 100
     structure_factor = 1.0 if str(model_result.get("explanation") or "").strip() else 0.6
     effective_confidence = self_confidence * quote_factor * case_factor * structure_factor
-    risk_level = str(model_result.get("risk_level") or "uncertain")
     risk_score = int(model_result.get("risk_score") or _RISK_SCORES.get(risk_level, 0))
     return {
         "risk_score": max(0, min(risk_score, 100)),
@@ -333,91 +279,73 @@ def _validated_ai_assessment(
     }
 
 
-def _fuse_assessments(local: dict[str, Any], ai: dict[str, Any]) -> dict[str, Any]:
-    local_confidence = float(local.get("confidence") or 0)
-    ai_confidence = float(ai.get("confidence") or 0)
-    local_weight = 0.60 * local_confidence
-    ai_weight = 0.40 * ai_confidence
-    if local_weight <= 0 and ai_weight <= 0:
-        return _uncertain_result(local, ai)
-    if local_weight <= 0:
-        final_score = int(ai["risk_score"])
-        source = "ai"
-    elif ai_weight <= 0:
-        final_score = int(local["risk_score"])
-        source = "local"
-    else:
-        final_score = round(
-            ((int(local["risk_score"]) * local_weight) + (int(ai["risk_score"]) * ai_weight))
-            / (local_weight + ai_weight)
-        )
-        source = "hybrid"
-
-    if local_confidence >= 0.70 and local["risk_score"] >= 30:
-        final_score = max(final_score, int(local["risk_score"]))
-    disagreement = (
-        local_confidence >= 0.65
-        and ai_confidence >= 0.65
-        and abs(int(local["risk_score"]) - int(ai["risk_score"])) >= 30
-    )
-    if disagreement:
-        final_score = max(int(local["risk_score"]), int(ai["risk_score"]))
-    final_confidence = (
-        ((local_confidence * local_weight) + (ai_confidence * ai_weight)) / (local_weight + ai_weight)
-        if local_weight + ai_weight > 0 else 0
-    )
-    suggestions = _dedupe([*_string_list(local.get("suggestions", [])), *_string_list(ai.get("suggestions", []))])
+def _ai_only_result(ai: dict[str, Any]) -> dict[str, Any]:
+    confidence = float(ai.get("confidence") or 0)
+    risk_level = str(ai.get("risk_level") or "uncertain")
+    if risk_level not in _RISK_SCORES or confidence <= 0:
+        return _manual_review_result("AI 输出缺少可验证的完整原文证据，需人工复核", ai)
+    requires_manual_review = confidence < 0.35 or risk_level == "uncertain"
     return {
-        "risk_score": final_score,
-        "risk_level": _score_to_level(final_score),
-        "confidence": round(final_confidence * 100),
-        "assessment_source": source,
-        "risk_topics": _dedupe([*_string_list(local.get("risk_topics", [])), *_string_list(ai.get("risk_topics", []))]),
-        "affected_groups": ai.get("affected_groups", []),
-        "propagation_drivers": ai.get("propagation_drivers", []),
-        "evidence_quotes": _dedupe([*_string_list(local.get("evidence_quotes", [])), *_string_list(ai.get("evidence_quotes", []))]),
-        "counter_signals": ai.get("counter_signals", []),
-        "suggestions": suggestions or ["建议人工复核文案语境"],
-        "explanation": " ".join(value for value in (local.get("explanation"), ai.get("explanation")) if value),
-        "requires_manual_review": disagreement,
-        "disagreement_reason": "本地案例证据与 AI 语义判断存在高可信分歧" if disagreement else None,
-        "local_assessment": local,
-        "ai_assessment": ai,
+        "risk_score": int(ai.get("risk_score") or 0),
+        "risk_level": risk_level,
+        "confidence": round(confidence * 100),
+        "assessment_source": "ai",
+        "risk_topics": _string_list(ai.get("risk_topics", [])),
+        "affected_groups": _string_list(ai.get("affected_groups", [])),
+        "propagation_drivers": _string_list(ai.get("propagation_drivers", [])),
+        "evidence_quotes": _string_list(ai.get("evidence_quotes", [])),
+        "counter_signals": _string_list(ai.get("counter_signals", [])),
+        "suggestions": _string_list(ai.get("suggestions", [])) or ["建议人工复核文案完整语境"],
+        "explanation": str(ai.get("explanation") or ""),
+        "requires_manual_review": requires_manual_review,
+        "disagreement_reason": "AI 有效证据或置信度不足" if requires_manual_review else None,
     }
 
 
-def _local_only_result(local: dict[str, Any]) -> dict[str, Any]:
-    if float(local.get("confidence") or 0) <= 0:
-        return _uncertain_result(local, None)
-    return {
-        **local,
-        "confidence": round(float(local["confidence"]) * 100),
-        "assessment_source": "local",
-        "requires_manual_review": False,
-        "disagreement_reason": None,
-        "local_assessment": local,
-        "ai_assessment": None,
-    }
-
-
-def _uncertain_result(local: dict[str, Any], ai: dict[str, Any] | None) -> dict[str, Any]:
+def _manual_review_result(reason: str, ai: dict[str, Any] | None = None) -> dict[str, Any]:
     return {
         "risk_score": 0,
         "risk_level": "uncertain",
         "confidence": 0,
-        "assessment_source": "ai" if ai and ai.get("confidence") else "local",
-        "risk_topics": _dedupe([*_string_list(local.get("risk_topics", [])), *_string_list((ai or {}).get("risk_topics", []))]),
+        "assessment_source": "ai",
+        "risk_topics": [],
         "affected_groups": [],
         "propagation_drivers": [],
         "evidence_quotes": [],
         "counter_signals": _string_list((ai or {}).get("counter_signals", [])),
-        "suggestions": ["当前没有足够可信证据，请人工复核"],
-        "explanation": "本地与 AI 均未提供足够可信证据，不能直接判断为低风险。",
+        "suggestions": ["当前不能形成可靠自动结论，请人工复核"],
+        "explanation": reason,
         "requires_manual_review": True,
-        "disagreement_reason": "有效证据不足",
-        "local_assessment": local,
-        "ai_assessment": ai,
+        "disagreement_reason": reason,
     }
+
+
+def _selected_similar_events(
+    candidate_events: list[dict[str, Any]],
+    matched_case_ids: list[str],
+) -> list[dict[str, Any]]:
+    selected = {str(case_id) for case_id in matched_case_ids}
+    return [
+        {
+            "event_id": event["event_id"],
+            "external_id": event.get("external_id"),
+            "title": event.get("title"),
+            "severity_level": event.get("severity_level"),
+            "verification_status": event.get("verification_status"),
+            "historical_consequence": event.get("historical_consequence", {}),
+            "sources": event.get("sources", []),
+        }
+        for event in candidate_events
+        if str(event.get("event_id")) in selected
+    ]
+
+
+def _is_meaningful_quote(material_text: str, quote: str) -> bool:
+    normalized = normalize_text(quote)
+    if len(normalized) < 3 or normalized not in normalize_text(material_text):
+        return False
+    semantic_count = sum(char.isalpha() or "\u4e00" <= char <= "\u9fff" for char in quote)
+    return semantic_count >= 2
 
 
 def _case_tokens(version: PublicOpinionEventVersion) -> list[str]:
@@ -458,27 +386,10 @@ def _trigger_word_hits(material_text: str) -> list[dict[str, Any]]:
     return hits
 
 
-def _score_to_level(score: int) -> str:
-    if score >= 80:
-        return "severe"
-    if score >= 60:
-        return "high"
-    if score >= 30:
-        return "medium"
-    return "low"
-
-
 def _string_list(value: Any) -> list[str]:
     if not isinstance(value, list):
         return []
     return [str(item).strip() for item in value if str(item).strip()]
-
-
-def _flatten(groups) -> list[str]:
-    result: list[str] = []
-    for group in groups:
-        result.extend(_string_list(group))
-    return result
 
 
 def _dedupe(values: list[str]) -> list[str]:

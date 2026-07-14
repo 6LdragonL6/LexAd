@@ -27,7 +27,7 @@ def test_material_update_uses_creation_constraints():
         MaterialUpdate(platforms=["a"] * 11)
 
 
-def test_semantic_model_failure_preserves_deterministic_pipeline(monkeypatch):
+def test_semantic_model_failure_requires_manual_review_without_promoting_candidates(monkeypatch):
     import app.engine.layer2_semantic as layer2_semantic
 
     monkeypatch.setattr(
@@ -40,5 +40,7 @@ def test_semantic_model_failure_preserves_deterministic_pipeline(monkeypatch):
     with Session(engine) as db:
         result = run_review_pipeline("这是普通广告文案", "食品", [], db)
     assert result.layer2.status == "unavailable"
-    assert result.layer1.status in {"matched", "no_match"}
+    assert result.layer1.matched_rules == []
+    assert result.requires_manual_review is True
+    assert result.review_status == "manual_review"
     assert result.layer3.status in {"matched", "no_match"}

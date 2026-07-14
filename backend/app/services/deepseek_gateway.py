@@ -67,16 +67,28 @@ class PublicOpinionRiskOutput(BaseModel):
     matched_case_ids: list[str] = Field(default_factory=list, max_length=10)
 
 
-class SemanticViolation(BaseModel):
-    text: str = Field(min_length=1, max_length=1000)
-    reason: str = Field(default="", max_length=2000)
-    law_ref: str = Field(default="", max_length=1000)
+class AdjudicatedFindingOutput(BaseModel):
+    evidence_quote: str = Field(min_length=1, max_length=1000)
+    risk_type: str = Field(min_length=1, max_length=100)
     risk_level: str = Field(default="medium", pattern="^(high|medium|low)$")
+    reason: str = Field(min_length=1, max_length=2000)
+    basis_ids: list[str] = Field(default_factory=list, max_length=10)
     suggestion: str = Field(default="", max_length=2000)
+    confidence: int = Field(default=0, ge=0, le=100)
 
 
-class SemanticReviewOutput(BaseModel):
-    violations: list[SemanticViolation] = Field(default_factory=list, max_length=50)
+class VerificationItemOutput(BaseModel):
+    evidence_quote: str = Field(min_length=1, max_length=1000)
+    verification_type: str = Field(min_length=1, max_length=100)
+    reason: str = Field(min_length=1, max_length=2000)
+    required_materials: list[str] = Field(default_factory=list, max_length=20)
+    basis_ids: list[str] = Field(default_factory=list, max_length=10)
+
+
+class AdjudicationReviewOutput(BaseModel):
+    findings: list[AdjudicatedFindingOutput] = Field(default_factory=list, max_length=50)
+    verification_items: list[VerificationItemOutput] = Field(default_factory=list, max_length=30)
+    excluded_candidate_ids: list[str] = Field(default_factory=list, max_length=100)
     overall_assessment: str = Field(default="", max_length=4000)
 
 
@@ -143,7 +155,10 @@ def explain_public_opinion_risk(
             "口味理解、身份资格或购买行为绑定，形成说教、消费苦难或情绪操纵，通常至少为 medium；"
             "只有原文存在明确的批判、反讽、公益倡导或非商业语境时，才能用 counter_signals 说明降级。"
             "本地触发词只是不确定线索，不得仅凭单个词直接判定中高风险。"
-            "相似历史事件只能引用输入中的 event_id，不得虚构事件。evidence_quotes 必须逐字来自物料原文。"
+            "优先使用输入中已核验的相似历史事件，但只有风险机制和完整语境确实相似时才能引用；"
+            "共同数字、单字、公共短语、matched_text、分词或相似度分数都不能作为用户可见依据。"
+            "相似历史事件只能引用输入中的 event_id，不得虚构事件。evidence_quotes 必须逐字来自物料原文，"
+            "应为语义完整片段，不得输出数字切片、关键词列表、内部匹配分或思维过程。"
             "必须只返回 JSON 对象，格式示例："
             '{"risk_level":"medium","risk_score":45,"risk_topics":["价值观争议"],'
             '"affected_groups":[],"propagation_drivers":[],"evidence_quotes":["原文片段"],'
@@ -170,27 +185,71 @@ def semantic_review(
     *,
     material_text: str,
     industry: str,
-    legal_basis: str,
+    legal_resources: list[dict[str, Any]],
+    candidate_rules: list[dict[str, Any]],
     similar_cases: list[dict[str, Any]],
-) -> SemanticReviewOutput:
+) -> AdjudicationReviewOutput:
     return _request_json(
         db=db,
         system_prompt=(
-            "你是广告合规审查助手。仅依据输入法规和案例识别语义违规。"
-            "每项必须引用输入中存在的依据；无法确认时不要编造。必须只返回 JSON 对象，格式示例："
-            '{"violations":[{"text":"违规原文","reason":"原因","law_ref":"输入中的依据",'
-            '"risk_level":"medium","suggestion":"修改建议"}],"overall_assessment":"整体评估"}'
+            "你是广告法律合规裁决助手。完整阅读物料，并优先依据输入的法规、行业资料和已核验案例裁决。"
+            "candidate_rules 只是召回线索，关键词、数字、字符片段或规则命中绝不等于违规。"
+            "对每个候选结合上下文选择确认、排除或需核验；也可发现候选未覆盖但输入资料能够支持的问题。"
+            "确认问题必须逐字引用物料中的完整证据片段，并且 basis_ids 只能引用 legal_resources 中存在的 id。"
+            "销量、数据、检测、认证、资质和来源声明在真实性尚未核实时应进入 verification_items，"
+            "不能仅因包含数字或‘累计’等词判为违规。无法找到可靠资料依据时不得编造法规或条款。"
+            "不得在面向用户的字段中输出分词、命中关键词、数字切片、内部相似度或思维过程。"
+            "必须只返回 JSON 对象，格式示例："
+            '{"findings":[{"evidence_quote":"完整违规原文","risk_type":"虚假或误导性宣传",'
+            '"risk_level":"medium","reason":"结合上下文的判断理由","basis_ids":["law:1"],'
+            '"suggestion":"修改建议","confidence":85}],'
+            '"verification_items":[{"evidence_quote":"完整待核验声明","verification_type":"销量数据核验",'
+            '"reason":"需核验统计来源和口径","required_materials":["第三方统计报告"],'
+            '"basis_ids":["law:1"]}],"excluded_candidate_ids":[],"overall_assessment":"整体评估"}'
         ),
         payload={
-            "task": "semantic_ad_review",
+            "task": "legal_adjudication_review",
             "industry": _normalize_text(industry, 100),
             "material_text": _normalize_text(material_text, 30000),
-            "legal_basis": _normalize_text(legal_basis, 24000),
+            "legal_resources": legal_resources[:20],
+            "candidate_rules": candidate_rules[:50],
             "similar_cases": similar_cases[:5],
             "risk_levels": ["high", "medium", "low"],
         },
-        output_model=SemanticReviewOutput,
-        max_tokens=2048,
+        output_model=AdjudicationReviewOutput,
+        max_tokens=3072,
+    )
+
+
+def platform_review(
+    db: Session,
+    *,
+    material_text: str,
+    platform: str,
+    rule_version: str,
+    candidate_rules: list[dict[str, Any]],
+) -> AdjudicationReviewOutput:
+    return _request_json(
+        db=db,
+        system_prompt=(
+            "你是平台广告规则裁决助手。完整阅读物料，只依据输入中当前平台的生效规则判断。"
+            "candidate_rules 是待审资料，不是已确认违规；关键词、数字、短片段和相似度不得直接决定结论。"
+            "只有规则确实适用于当前业务场景且原文存在语义完整的冲突表达时才能确认。"
+            "findings 的 evidence_quote 必须逐字来自物料，basis_ids 只能引用输入规则 id。"
+            "事实、资质或证明材料不足应进入 verification_items。没有明确问题时返回空 findings。"
+            "不得输出原始关键词、分词、数字切片、匹配分或内部推理。必须只返回 JSON 对象，格式与示例一致："
+            '{"findings":[],"verification_items":[],"excluded_candidate_ids":[],"overall_assessment":"未发现明确冲突"}'
+        ),
+        payload={
+            "task": "platform_adjudication_review",
+            "platform": _normalize_text(platform, 100),
+            "rule_version": _normalize_text(rule_version, 200),
+            "material_text": _normalize_text(material_text, 30000),
+            "candidate_rules": candidate_rules[:60],
+            "risk_levels": ["high", "medium", "low"],
+        },
+        output_model=AdjudicationReviewOutput,
+        max_tokens=2560,
     )
 
 

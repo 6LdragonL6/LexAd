@@ -1,6 +1,22 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, model_validator
 
+
+class BasisReference(BaseModel):
+    id: str
+    title: str
+    version: str = ""
+
+
+class VerificationItem(BaseModel):
+    item_id: str
+    evidence_quote: str
+    verification_type: str
+    reason: str
+    required_materials: list[str] = Field(default_factory=list)
+    basis_refs: list[BasisReference] = Field(default_factory=list)
+
+
 class MatchedRule(BaseModel):
     rule_id: str
     rule_text: str
@@ -12,6 +28,14 @@ class MatchedRule(BaseModel):
     score: float | None = None
     source_id: str = ""
     suggestion: str = ""
+    evidence_quote: str = ""
+    reasoning: str = ""
+    risk_level: str = "medium"
+    risk_level_label: str = "中风险"
+    confidence: int = 0
+    adjudication_status: str = "confirmed"
+    basis_refs: list[BasisReference] = Field(default_factory=list)
+
 
 class LayerResult(BaseModel):
     layer: str
@@ -19,6 +43,10 @@ class LayerResult(BaseModel):
     explanations: list[str] = Field(default_factory=list)
     status: str = "no_match"
     source_versions: list[str] = Field(default_factory=list)
+    candidate_count: int = 0
+    verification_items: list[VerificationItem] = Field(default_factory=list)
+    requires_manual_review: bool = False
+
 
 class EngineResult(BaseModel):
     risk_score: int = 100
@@ -34,6 +62,10 @@ class EngineResult(BaseModel):
     platform_version_labels: dict[str, str] = Field(default_factory=dict)
     hit_count: int = 0
     risk_topics: list[str] = Field(default_factory=list)
+    verification_items: list[VerificationItem] = Field(default_factory=list)
+    requires_manual_review: bool = False
+    review_status: str = "completed"
+
 
 class AIReviewRequest(BaseModel):
     material_id: str

@@ -25,6 +25,10 @@ const reviewLayers = computed<LayerResult[]>(() => {
   ].filter((layer): layer is LayerResult => Boolean(layer))
 })
 
+function riskTypeLabel(value?: string) {
+  return ({ high: '高风险问题', medium: '中风险问题', low: '低风险问题', severe: '严重风险问题' } as Record<string, string>)[value || ''] || value || '合规风险'
+}
+
 function close() { emit('close') }
 function formatDate(value?: string | null) { return value ? new Date(value).toLocaleString() : '-' }
 
@@ -78,7 +82,10 @@ onUnmounted(() => {
               <p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{{ review?.ai_result?.summary || '该历史记录未保存完整审查报告。' }}</p>
               <div v-for="layer in reviewLayers" :key="layer.layer" class="mt-3">
                 <p class="text-sm font-medium">{{ layer.layer }}</p>
-                <p v-for="rule in layer.matched_rules" :key="rule.rule_id" class="text-sm text-red-600 mt-1">{{ rule.rule_text }} <span class="text-xs text-gray-400">{{ rule.source_law }}</span></p>
+                <p v-for="rule in layer.matched_rules" :key="rule.rule_id" class="text-sm text-red-600 mt-1">
+                  {{ riskTypeLabel(rule.match_type) }}：{{ rule.evidence_quote || rule.rule_text }}
+                  <span class="text-xs text-gray-400">{{ rule.source_law }}</span>
+                </p>
               </div>
             </section>
             <section>

@@ -1,8 +1,11 @@
 from sqlalchemy.orm import Session
 
 from app.engine.layer1_hard_rules import engine_l1
-from app.engine.layer4_platform import run_platform_review
+from app.engine.layer4_platform import run_platform_adjudication
 from app.schemas.review import EngineResult, LayerResult, MatchedRule
+
+
+_DEDUCTION_BY_LEVEL = {"high": 30, "medium": 15, "low": 5}
 
 
 def run_review_pipeline(
@@ -11,101 +14,70 @@ def run_review_pipeline(
     platforms: list[str],
     db: Session | None = None,
 ) -> EngineResult:
-    # L1: hard rules
-    l1_result = engine_l1.scan(raw_text)
-    l1_result.status = "matched" if l1_result.matched_rules else "no_match"
+    # Deterministic rules are recall-only candidates in v0.7.0.
+    hard_candidates = engine_l1.scan(raw_text).matched_rules
+    l1_result = LayerResult(
+        layer="规则候选召回",
+        matched_rules=[],
+        explanations=["规则候选已提供给 AI 结合完整语境裁决，候选本身不代表违规"],
+        status="no_match",
+        candidate_count=len(hard_candidates),
+    )
 
-    # L2: semantic review with the shared DeepSeek-compatible model service
     from app.engine.layer2_semantic import SemanticReviewError, run_semantic_review
 
     try:
-        l2_result = run_semantic_review(raw_text, industry, db)
-        l2_result.status = "matched" if l2_result.matched_rules else "no_match"
+        l2_result = run_semantic_review(raw_text, industry, db, hard_candidates)
     except SemanticReviewError as exc:
         l2_result = LayerResult(
-            layer="第二层·语义推理",
+            layer="法律语义裁决",
             status="unavailable",
-            explanations=[str(exc)[:200] or "语义模型暂不可用，已继续执行确定性规则检查"],
+            explanations=[str(exc)[:200] or "AI 法律裁决暂不可用，当前结果需人工复核"],
+            candidate_count=len(hard_candidates),
+            requires_manual_review=True,
         )
 
-    # L3: evidence check
-    evidence_patterns = [
-        "经临床验证",
-        "实验表明",
-        "数据显示",
-        "调查显示",
-        "获认证",
-        "通过检测",
-        "经XX验证",
-        "临床证明",
-    ]
-    evidence_matched = []
-    for pattern in evidence_patterns:
-        if pattern in raw_text:
-            evidence_matched.append(
-                MatchedRule(
-                    rule_id=f"L3-{hash(pattern) & 0xFFFFFFFF:08x}",
-                    rule_text=pattern,
-                    source_law="《广告法》第28条",
-                    match_type="需证明材料",
-                )
-            )
+    l4_result = run_platform_adjudication(raw_text, platforms, db)
+    verification_items = [*l2_result.verification_items, *l4_result.verification_items]
     l3_result = LayerResult(
-        layer="第三层：证明材料检查",
-        matched_rules=evidence_matched,
-        explanations=[f"发现 {len(evidence_matched)} 处需证明材料支撑的表述"]
-        if evidence_matched
-        else ["无需要证明材料的表述"],
-        status="matched" if evidence_matched else "no_match",
+        layer="资料核验事项",
+        matched_rules=[],
+        verification_items=verification_items,
+        explanations=(
+            [f"发现 {len(verification_items)} 项事实、来源、资质或证明材料需要核验"]
+            if verification_items
+            else ["未发现需要补充核验的资料事项"]
+        ),
+        status="matched" if verification_items else "no_match",
     )
 
-    # L4: platform-specific rules
-    l4_result = run_platform_review(raw_text, platforms, db)
+    confirmed = _dedupe_findings([*l2_result.matched_rules, *l4_result.matched_rules])
+    total_deduction = sum(_DEDUCTION_BY_LEVEL.get(item.risk_level, 15) for item in confirmed)
+    risk_score = max(0, 100 - min(total_deduction, 100))
+    requires_manual_review = l2_result.requires_manual_review or l4_result.requires_manual_review
 
-    deduction_map = {
-        "绝对化用语": 30,
-        "涉医用语": 35,
-        "功效宣称": 25,
-        "效果保证": 20,
-        "价格欺诈": 20,
-        "权威背书": 15,
-        "虚假表述": 15,
-        "迷信内容": 25,
-        "high": 30,
-        "medium": 20,
-        "low": 10,
-        "需证明材料": 5,
-        "平台规则": 15,
-    }
-    total_deduction = 0
-    for result in [l1_result, l2_result, l3_result, l4_result]:
-        for rule in result.matched_rules:
-            total_deduction += deduction_map.get(rule.match_type, 15)
-
-    risk_score = max(0, 100 - total_deduction)
-
-    all_violations = []
-    for result in [l1_result, l2_result, l3_result, l4_result]:
-        for rule in result.matched_rules:
-            all_violations.append(f"- {rule.match_type}: {rule.rule_text}")
+    if requires_manual_review:
+        review_status = "manual_review"
+        recommendation = "部分审查依据不足或 AI 裁决不可用，需人工复核"
+    elif confirmed:
+        review_status = "confirmed_risk"
+        recommendation = "发现已确认风险，建议修改后提交法务审核"
+    elif verification_items:
+        review_status = "needs_verification"
+        recommendation = "未发现明确违规，建议补充或核验资料后通过"
+    else:
+        review_status = "no_clear_risk"
+        recommendation = "未发现明确风险，仍建议按实际投放场景复核"
 
     summary_lines = [
-        f"审查完成，风险评分 {risk_score}/100",
-        f"共发现 {len(all_violations)} 项问题",
+        f"法律合规评分 {risk_score}/100",
+        f"已确认 {len(confirmed)} 项风险，{len(verification_items)} 项资料待核验",
+        recommendation,
     ]
-    if risk_score >= 80:
-        summary_lines.append("评估：低风险，建议通过")
-    elif risk_score >= 50:
-        summary_lines.append("评估：中风险，建议修改后提交法务审核")
-    else:
-        summary_lines.append("评估：高风险，强烈建议修改后重新提交")
+    suggestions = [item.suggestion for item in confirmed if item.suggestion][:8]
+    if verification_items:
+        suggestions.append("请补充并核验相关数据来源、统计口径、资质或证明材料")
 
-    suggestions = [f"建议修改: {v.rule_text}" for v in l1_result.matched_rules[:3]]
-    suggestions.extend([f"语义问题: {v.rule_text}" for v in l2_result.matched_rules[:3]])
-    suggestions.extend([f"平台规则问题: {v.rule_text}" for v in l4_result.matched_rules[:3]])
-
-    all_results = [l1_result, l2_result, l3_result, l4_result]
-    risk_topics = list(dict.fromkeys(rule.match_type for result in all_results for rule in result.matched_rules))
     return EngineResult(
         risk_score=risk_score,
         layer1=l1_result,
@@ -118,6 +90,23 @@ def run_review_pipeline(
         platform_rule_version_ids=l4_result.platform_rule_version_ids,
         unavailable_platforms=l4_result.unavailable_platforms,
         platform_version_labels=l4_result.platform_version_labels,
-        hit_count=len(all_violations),
-        risk_topics=risk_topics,
+        hit_count=len(confirmed),
+        risk_topics=list(dict.fromkeys(item.match_type for item in confirmed)),
+        verification_items=verification_items,
+        requires_manual_review=requires_manual_review,
+        review_status=review_status,
     )
+
+
+def _dedupe_findings(findings: list[MatchedRule]) -> list[MatchedRule]:
+    seen: set[tuple[str, str]] = set()
+    result: list[MatchedRule] = []
+    for finding in findings:
+        evidence = "".join((finding.evidence_quote or finding.rule_text).lower().split())
+        risk_type = "".join(finding.match_type.lower().split())
+        key = (evidence, risk_type)
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(finding)
+    return result

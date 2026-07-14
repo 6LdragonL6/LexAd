@@ -43,6 +43,15 @@ function getAllIssues(): MatchedRule[] {
   ]
 }
 
+function riskLabel(issue: MatchedRule) {
+  if (issue.risk_level_label) return issue.risk_level_label
+  return ({ high: '高风险', medium: '中风险', low: '低风险', severe: '严重风险' } as Record<string, string>)[issue.risk_level || issue.match_type] || '已确认风险'
+}
+
+function riskTypeLabel(value?: string) {
+  return ({ high: '高风险问题', medium: '中风险问题', low: '低风险问题', severe: '严重风险问题' } as Record<string, string>)[value || ''] || value || '合规风险'
+}
+
 onMounted(async () => {
   const reviewId = route.params.id as string
   const rRes = await reviewsApi.get(reviewId)
@@ -126,19 +135,17 @@ async function openHistory(version: MaterialVersion) {
         <div v-for="issue in getAllIssues()" :key="issue.rule_id"
           class="p-2 rounded-lg text-sm cursor-pointer border transition-colors break-words"
           :class="{
-            'border-red-200 bg-red-50 dark:bg-red-900/20': issue.match_type === '绝对化用语' || issue.match_type === '涉医用语',
-            'border-orange-200 bg-orange-50 dark:bg-orange-900/20': issue.match_type === '效果保证' || issue.match_type === '功效宣称',
-            'border-sky-200 bg-sky-50 dark:bg-sky-900/20': issue.match_type === '需证明材料',
-            'border-gray-200 bg-gray-50 dark:bg-gray-800': !['绝对化用语', '涉医用语', '效果保证', '功效宣称', '需证明材料'].includes(issue.match_type),
+            'border-red-200 bg-red-50 dark:bg-red-900/20': issue.risk_level === 'high' || issue.match_type === 'high',
+            'border-orange-200 bg-orange-50 dark:bg-orange-900/20': issue.risk_level === 'medium' || issue.match_type === 'medium',
+            'border-sky-200 bg-sky-50 dark:bg-sky-900/20': issue.risk_level === 'low' || issue.match_type === 'low',
           }">
           <span class="text-xs px-1.5 py-0.5 rounded mr-1.5"
             :class="{
-              'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400': issue.match_type === '绝对化用语' || issue.match_type === '涉医用语',
-              'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400': issue.match_type === '效果保证' || issue.match_type === '功效宣称',
-              'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400': issue.match_type === '需证明材料',
-              'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300': !['绝对化用语', '涉医用语', '效果保证', '功效宣称', '需证明材料'].includes(issue.match_type),
-            }">{{ issue.match_type }}</span>
-          <span class="text-gray-700 dark:text-gray-300">{{ issue.rule_text }}</span>
+              'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400': issue.risk_level === 'high' || issue.match_type === 'high',
+              'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400': issue.risk_level === 'medium' || issue.match_type === 'medium',
+              'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-400': issue.risk_level === 'low' || issue.match_type === 'low',
+            }">{{ riskLabel(issue) }}</span>
+          <span class="text-gray-700 dark:text-gray-300">{{ riskTypeLabel(issue.match_type) }}：{{ issue.evidence_quote || issue.rule_text }}</span>
         </div>
         <p v-if="!getAllIssues().length" class="text-sm text-gray-400">未发现问题</p>
       </div>

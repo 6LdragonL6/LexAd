@@ -3,6 +3,15 @@ import type { MatchedRule } from '@/types'
 
 defineProps<{ issues: MatchedRule[] }>()
 const emit = defineEmits<{ select: [rule: MatchedRule] }>()
+
+function riskLabel(issue: MatchedRule) {
+  if (issue.risk_level_label) return issue.risk_level_label
+  return ({ high: '高风险', medium: '中风险', low: '低风险' } as Record<string, string>)[issue.risk_level || issue.match_type] || '已确认风险'
+}
+
+function riskType(value: string) {
+  return ({ high: '高风险问题', medium: '中风险问题', low: '低风险问题' } as Record<string, string>)[value] || value
+}
 </script>
 
 <template>
@@ -12,18 +21,17 @@ const emit = defineEmits<{ select: [rule: MatchedRule] }>()
       @click="emit('select', issue)"
       class="p-2 rounded-lg text-sm cursor-pointer hover:bg-gray-100 border border-transparent hover:border-gray-300"
       :class="{
-        'border-red-200 bg-red-50': issue.match_type === '绝对化用语' || issue.match_type === '涉医用语' || issue.match_type === 'high',
-        'border-orange-200 bg-orange-50': issue.match_type === '效果保证' || issue.match_type === '功效宣称' || issue.match_type === 'medium',
-        'border-sky-200 bg-sky-50': issue.match_type === '需证明材料',
+        'border-red-200 bg-red-50': issue.risk_level === 'high' || issue.match_type === 'high',
+        'border-orange-200 bg-orange-50': issue.risk_level === 'medium' || issue.match_type === 'medium',
+        'border-sky-200 bg-sky-50': issue.risk_level === 'low' || issue.match_type === 'low',
       }">
       <span class="text-xs px-1.5 py-0.5 rounded mr-1.5"
         :class="{
-          'bg-red-100 text-red-700': issue.match_type === '绝对化用语' || issue.match_type === '涉医用语' || issue.match_type === 'high',
-          'bg-orange-100 text-orange-700': issue.match_type === '效果保证' || issue.match_type === '功效宣称' || issue.match_type === 'medium',
-          'bg-sky-100 text-sky-700': issue.match_type === '需证明材料',
-          'bg-gray-100 text-gray-600': !['绝对化用语', '涉医用语', 'high', '效果保证', '功效宣称', 'medium', '需证明材料'].includes(issue.match_type),
-        }">{{ issue.match_type }}</span>
-      <span class="text-gray-700">{{ issue.rule_text }}</span>
+          'bg-red-100 text-red-700': issue.risk_level === 'high' || issue.match_type === 'high',
+          'bg-orange-100 text-orange-700': issue.risk_level === 'medium' || issue.match_type === 'medium',
+          'bg-sky-100 text-sky-700': issue.risk_level === 'low' || issue.match_type === 'low',
+        }">{{ riskLabel(issue) }}</span>
+      <span class="text-gray-700">{{ riskType(issue.match_type) }}：{{ issue.evidence_quote || issue.rule_text }}</span>
     </div>
     <p v-if="!issues.length" class="text-sm text-gray-400">未发现问题</p>
   </div>

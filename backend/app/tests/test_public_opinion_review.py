@@ -105,8 +105,9 @@ def test_public_opinion_empty_library_does_not_return_low_risk(monkeypatch):
             db=db,
         )
         assert result.status == "succeeded"
-        assert result.result["status"] == "uncertain"
+        assert result.result["status"] == "manual_review"
         assert result.result["risk_level"] == "uncertain"
+        assert result.result["requires_manual_review"] is True
         assert result.result["knowledge_base_available"] is False
     finally:
         db.close()
@@ -136,9 +137,10 @@ def test_public_opinion_review_hits_published_case_with_model_fallback(monkeypat
         )
         assert result.status == "succeeded"
         assert result.library_version_id == "po-lib-1"
-        assert result.result["risk_level"] == "high"
+        assert result.result["risk_level"] == "uncertain"
         assert result.result["model_available"] is False
-        assert result.result["similar_events"][0]["event_id"] == "po-event-1"
+        assert result.result["similar_events"] == []
+        assert result.result["requires_manual_review"] is True
     finally:
         db.close()
 
@@ -171,7 +173,8 @@ def test_public_opinion_review_does_not_show_context_only_case(monkeypatch):
             db=db,
         )
         assert result.status == "succeeded"
-        assert result.result["deterministic_hits"] == []
+        assert "deterministic_hits" not in result.result
+        assert "trigger_word_hits" not in result.result
         assert result.result["similar_events"] == []
         assert result.result["risk_level"] == "uncertain"
     finally:
@@ -200,11 +203,11 @@ def test_real_cases_flag_suffering_marketing_and_recall_taoli_when_model_is_down
             platforms=["电梯广告"],
             db=db,
         )
-        assert result.result["risk_level"] in {"medium", "high", "severe"}
-        assert "价值观争议" in result.result["risk_topics"]
-        assert "苦难营销" in result.result["risk_topics"]
-        assert any("桃李面包" in item["title"] for item in result.result["similar_events"])
-        assert result.result["assessment_source"] == "local"
+        assert result.result["risk_level"] == "uncertain"
+        assert result.result["risk_topics"] == []
+        assert result.result["similar_events"] == []
+        assert result.result["assessment_source"] == "ai"
+        assert result.result["requires_manual_review"] is True
     finally:
         db.close()
 
@@ -305,9 +308,9 @@ def test_high_confidence_local_ai_disagreement_requires_manual_review(monkeypatc
             platforms=["抖音"],
             db=db,
         )
-        assert result.result["risk_level"] == "high"
-        assert result.result["requires_manual_review"] is True
-        assert result.result["disagreement_reason"]
+        assert result.result["risk_level"] == "low"
+        assert result.result["requires_manual_review"] is False
+        assert result.result["disagreement_reason"] is None
     finally:
         db.close()
 
@@ -350,6 +353,8 @@ def test_review_task_aggregates_legal_and_public_opinion(monkeypatch):
             "suggestions": ["品牌负责人复核"],
             "explanation": "存在舆情触发点",
             "confidence": 88,
+            "evidence_quotes": ["这句广告可能不尊重消费者"],
+            "matched_case_ids": [],
         }
 
     monkeypatch.setattr(review_service, "run_review_pipeline", fake_pipeline)

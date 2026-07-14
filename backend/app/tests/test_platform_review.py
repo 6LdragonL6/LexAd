@@ -176,12 +176,31 @@ def test_review_task_snapshots_platform_rule_versions(monkeypatch):
     _seed_user_material_and_platform_rule(factory)
     monkeypatch.setattr(review_service, "SessionLocal", factory)
 
-    def fake_semantic_review(_text, _industry, _db):
+    def fake_semantic_review(_text, _industry, _db, _candidates=None):
         return LayerResult(layer="语义推理", matched_rules=[], explanations=[])
 
     import app.engine.layer2_semantic as layer2_semantic
 
     monkeypatch.setattr(layer2_semantic, "run_semantic_review", fake_semantic_review)
+    import app.engine.layer4_platform as layer4_platform
+
+    monkeypatch.setattr(
+        layer4_platform.model_service,
+        "adjudicate_platform_risk",
+        lambda *_args, **_kwargs: {
+            "findings": [{
+                "evidence_quote": "全网最低价",
+                "risk_type": "价格宣传风险",
+                "risk_level": "high",
+                "reason": "该表达与当前平台规则冲突",
+                "basis_ids": ["L4-platform-version-1-price-001"],
+                "suggestion": "改为可核验的价格说明",
+                "confidence": 90,
+            }],
+            "verification_items": [],
+            "overall_assessment": "发现一项平台风险",
+        },
+    )
 
     db = factory()
     review, _ = review_service.create_ai_review(db, "material-1")
@@ -198,7 +217,7 @@ def test_review_task_snapshots_platform_rule_versions(monkeypatch):
         assert stored.legal_module_status == ReviewModuleStatus.succeeded
         assert stored.public_opinion_module_status == ReviewModuleStatus.succeeded
         assert stored.public_opinion_result["risk_level"] == "uncertain"
-        assert stored.ai_result["layer4"]["matched_rules"][0]["rule_id"] == "L4-platform-version-1-price-001"
+        assert stored.ai_result["layer4"]["matched_rules"][0]["rule_id"] == "platform-platform-version-1-1"
         assert material.status == MaterialStatus.pending_legal
     finally:
         db.close()

@@ -45,3 +45,24 @@ def explain_public_opinion_risk(
         )
     except deepseek_gateway.DeepSeekGatewayError as exc:
         raise ModelServiceError(str(exc)) from exc
+
+
+def adjudicate_platform_risk(
+    db: Session,
+    *,
+    material_text: str,
+    platform: str,
+    rule_version: str,
+    candidate_rules: list[dict[str, Any]],
+) -> dict[str, Any]:
+    try:
+        result = deepseek_gateway.platform_review(
+            db,
+            material_text=material_text,
+            platform=platform,
+            rule_version=rule_version,
+            candidate_rules=candidate_rules,
+        )
+        return result.model_dump()
+    except deepseek_gateway.DeepSeekGatewayError as exc:
+        raise ModelServiceError(str(exc)) from exc

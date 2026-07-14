@@ -9,7 +9,7 @@ import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
 import HistoricalConsequencePanel from '@/components/review/HistoricalConsequencePanel.vue'
 import { brandsApi } from '@/api/brands'
-import type { Material, MatchedRule, Review, BrandProfile, MaterialVersion } from '@/types'
+import type { Material, MatchedRule, Review, BrandProfile, MaterialVersion, VerificationItem } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,8 +36,12 @@ const isProcessing = computed(() => review.value?.task_status === 'processing')
 const isFailed = computed(() => review.value?.task_status === 'failed')
 const longRunning = computed(() => isProcessing.value && Date.now() - pollStartedAt.value > 60_000)
 
-const legalStatus = computed(() => review.value?.legal_module_status || (review.value?.task_status === 'completed' ? 'succeeded' : 'pending'))
-const publicOpinionStatus = computed(() => review.value?.public_opinion_module_status || 'pending')
+const legalStatus = computed(() => review.value?.ai_result?.requires_manual_review
+  ? 'manual_review'
+  : review.value?.legal_module_status || (review.value?.task_status === 'completed' ? 'succeeded' : 'pending'))
+const publicOpinionStatus = computed(() => review.value?.public_opinion_result?.status === 'manual_review'
+  ? 'manual_review'
+  : review.value?.public_opinion_module_status || 'pending')
 const publicOpinion = computed(() => review.value?.public_opinion_result || {})
 
 const legalIssues = computed<MatchedRule[]>(() => {
@@ -50,6 +54,7 @@ const legalIssues = computed<MatchedRule[]>(() => {
     ...(result.layer4?.matched_rules ?? []),
   ]
 })
+const verificationItems = computed<VerificationItem[]>(() => review.value?.ai_result?.verification_items ?? [])
 
 const publicOpinionRiskLabel = computed(() => {
   const level = publicOpinion.value.risk_level || 'unavailable'
@@ -61,7 +66,7 @@ const publicOpinionRiskLabel = computed(() => {
     uncertain: '不确定',
     unavailable: '资料库待补充',
   }
-  return map[level] || level
+  return map[level] || '不确定'
 })
 
 const publicOpinionRiskClass = computed(() => {
@@ -73,7 +78,7 @@ const publicOpinionRiskClass = computed(() => {
 })
 
 const publicOpinionSourceLabel = computed(() => {
-  const map: Record<string, string> = { local: '本地证据', ai: 'AI 语义', hybrid: '本地 + AI' }
+  const map: Record<string, string> = { local: '资料候选', ai: 'AI 语义裁决', hybrid: 'AI 与资料库' }
   return map[publicOpinion.value.assessment_source] || '证据不足'
 })
 
@@ -86,8 +91,23 @@ function statusText(status?: string | null) {
     unavailable: '不可用',
     processing: '处理中',
     completed: '已完成',
+    manual_review: '待人工复核',
   }
   return map[status || ''] || status || '-'
+}
+
+function riskLevelLabel(issue: MatchedRule) {
+  if (issue.risk_level_label) return issue.risk_level_label
+  const level = issue.risk_level || issue.match_type
+  return ({ high: '高风险', medium: '中风险', low: '低风险', severe: '严重风险' } as Record<string, string>)[level] || '已确认风险'
+}
+
+function riskTypeLabel(value?: string) {
+  return ({ high: '高风险问题', medium: '中风险问题', low: '低风险问题', severe: '严重风险问题' } as Record<string, string>)[value || ''] || value || '合规风险'
+}
+
+function verificationLabel(value?: string) {
+  return ({ confirmed: '已核验', corrected: '已修正核验', pending: '待核验', rejected: '未通过核验' } as Record<string, string>)[value || ''] || '核验状态未标注'
 }
 
 function statusClass(status?: string | null) {
@@ -119,10 +139,8 @@ function highlightedHtml(): string {
   if (!material.value) return ''
   const fragments = new Map<string, string>()
   for (const issue of legalIssues.value) {
-    const color = issue.rule_id?.startsWith('L4-') ? '#0EA5E9' : '#f97316'
-    const candidates = issue.matched_text
-      ? issue.matched_text.split(/[,，、；;]/)
-      : [issue.rule_text]
+    const color = issue.rule_id?.startsWith('platform-') ? '#0EA5E9' : '#f97316'
+    const candidates = issue.evidence_quote ? [issue.evidence_quote] : []
     for (const candidate of candidates) {
       const fragment = candidate.trim()
       if (fragment.length >= 2 && material.value.raw_text.includes(fragment)) {
@@ -264,6 +282,9 @@ onUnmounted(() => {
                 </StatusBadge>
               </div>
               <p v-if="review.legal_module_error" class="mt-3 text-sm text-red-500">{{ review.legal_module_error }}</p>
+              <div v-if="review.ai_result?.requires_manual_review" class="mt-3 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 px-3 py-2 text-sm">
+                当前有审查分域依据不足或 AI 裁决不可用，候选规则未被直接判为违规，请人工复核。
+              </div>
               <div class="mt-4 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{{ review.ai_result?.summary }}</div>
             </div>
 
@@ -293,8 +314,8 @@ onUnmounted(() => {
 
           <section class="card">
             <div class="flex items-center justify-between gap-3 mb-4">
-              <h3 class="font-semibold text-gray-800 dark:text-gray-200">物料内容与命中标记</h3>
-              <span class="text-xs text-gray-400">{{ legalIssues.length }} 项命中</span>
+              <h3 class="font-semibold text-gray-800 dark:text-gray-200">物料内容与确认标记</h3>
+              <span class="text-xs text-gray-400">{{ legalIssues.length }} 项确认问题</span>
             </div>
             <div class="rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-4 text-sm leading-7 whitespace-pre-wrap" v-html="highlightedHtml()" />
           </section>
@@ -303,18 +324,36 @@ onUnmounted(() => {
             <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">法律与平台规则依据</h3>
             <div v-if="legalIssues.length" class="space-y-3">
               <div v-for="issue in legalIssues" :key="issue.rule_id" class="flex gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg">
-                <div class="w-1.5 rounded flex-shrink-0" :class="issue.rule_id?.startsWith('L4-') ? 'bg-sky-500' : 'bg-orange-500'"></div>
+                <div class="w-1.5 rounded flex-shrink-0" :class="issue.rule_id?.startsWith('platform-') ? 'bg-sky-500' : 'bg-orange-500'"></div>
                 <div class="flex-1">
                   <div class="flex justify-between items-center mb-1">
-                    <span class="font-semibold text-sm text-gray-800 dark:text-gray-200">{{ issue.match_type }}</span>
-                    <StatusBadge :variant="issue.rule_id?.startsWith('L4-') ? 'info' : 'danger'">规则命中</StatusBadge>
+                    <span class="font-semibold text-sm text-gray-800 dark:text-gray-200">{{ riskTypeLabel(issue.match_type) }}</span>
+                    <StatusBadge :variant="issue.rule_id?.startsWith('platform-') ? 'info' : 'danger'">{{ riskLevelLabel(issue) }} · AI 已确认</StatusBadge>
                   </div>
-                  <p class="text-sm text-gray-700 dark:text-gray-300">{{ issue.rule_text }}</p>
-                  <p class="text-xs text-gray-400 mt-1">依据：{{ issue.source_law || '未提供' }}</p>
+                  <p class="text-sm text-gray-700 dark:text-gray-300">原文证据：“{{ issue.evidence_quote || issue.rule_text }}”</p>
+                  <p v-if="issue.reasoning || issue.explanation" class="text-sm text-gray-500 dark:text-gray-400 mt-2">{{ issue.reasoning || issue.explanation }}</p>
+                  <p class="text-xs text-gray-400 mt-1">资料依据：{{ issue.basis_refs?.map(item => `${item.title}${item.version ? `（${item.version}）` : ''}`).join('；') || issue.source_law || '依据不足，需人工复核' }}</p>
+                  <p v-if="issue.suggestion" class="text-xs text-sky-600 mt-1">修改建议：{{ issue.suggestion }}</p>
                 </div>
               </div>
             </div>
-            <p v-else class="text-sm text-gray-400">未命中明确法律或平台规则。</p>
+            <p v-else class="text-sm text-gray-400">未发现经 AI 与资料引用校验确认的法律或平台问题。</p>
+          </section>
+
+          <section class="card">
+            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">资料核验事项</h3>
+            <div v-if="verificationItems.length" class="space-y-3">
+              <div v-for="item in verificationItems" :key="item.item_id" class="rounded-xl border border-amber-200 bg-amber-50/60 p-4">
+                <div class="flex items-center justify-between gap-3">
+                  <span class="font-semibold text-sm text-amber-800">{{ item.verification_type }}</span>
+                  <StatusBadge variant="warning">需补充或核验资料</StatusBadge>
+                </div>
+                <p class="mt-2 text-sm text-gray-700">原文声明：“{{ item.evidence_quote }}”</p>
+                <p class="mt-2 text-sm text-gray-600">{{ item.reason }}</p>
+                <p v-if="item.required_materials?.length" class="mt-2 text-xs text-amber-700">所需材料：{{ item.required_materials.join('、') }}</p>
+              </div>
+            </div>
+            <p v-else class="text-sm text-gray-400">当前没有需要补充核验的资料事项。</p>
           </section>
 
           <section class="card">
@@ -324,7 +363,7 @@ onUnmounted(() => {
               <p class="mt-1">{{ publicOpinion.disagreement_reason || '当前有效证据不足，不能直接作为低风险结论。' }}</p>
             </div>
             <div v-if="publicOpinion.model_available === false" class="rounded-xl bg-yellow-50 text-yellow-700 p-3 text-sm mb-4">
-              AI 语义判断暂不可用，当前结果来自本地规则与真实案例。
+              AI 语义裁决暂不可用。本地词条与案例仅作为内部候选，当前不据此判定风险。
             </div>
             <div v-if="publicOpinion.knowledge_base_available === false" class="rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 p-3 text-sm mb-4">
               当前没有可用本地舆情案例；系统仍会执行 AI 开放式语义判断。
@@ -359,9 +398,8 @@ onUnmounted(() => {
                 <div v-for="event in publicOpinion.similar_events" :key="event.event_id" class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <span class="font-medium text-gray-800 dark:text-gray-200">{{ event.title }}</span>
-                    <span class="text-xs text-gray-400">匹配分 {{ event.similarity }} · {{ event.verification_status || '待核验' }}</span>
+                    <span class="text-xs text-gray-400">AI 确认相似 · {{ verificationLabel(event.verification_status) }}</span>
                   </div>
-                  <p v-if="event.matched_text" class="mt-2 text-xs text-purple-600">匹配依据：{{ event.matched_text }}</p>
                   <HistoricalConsequencePanel :value="event.historical_consequence" />
                 </div>
               </div>
