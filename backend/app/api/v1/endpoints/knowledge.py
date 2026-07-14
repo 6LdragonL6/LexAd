@@ -11,6 +11,7 @@ from app.api.deps import get_current_user
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.knowledge import PlatformRuleSet, PlatformRuleStatus, PlatformRuleVersion
+from app.engine.industry import INDUSTRY_OPTIONS
 
 
 settings = get_settings()
@@ -39,6 +40,12 @@ IGNORED_FILE_PATTERNS = [
 ]
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
+
+
+@router.get("/industries")
+def list_industry_options():
+    items = [{"value": industry, "label": industry} for industry in INDUSTRY_OPTIONS]
+    return {"items": items, "total": len(items)}
 
 
 @router.get("/platforms")

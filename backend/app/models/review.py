@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import String, Text, Integer, DateTime, Enum as SAEnum, ForeignKey, JSON
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.models.knowledge import ReviewModuleStatus
 import enum
@@ -57,3 +57,8 @@ class Review(Base):
     reviewer_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("users.id"), nullable=True)
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    submission: Mapped["MaterialSubmissionSnapshot | None"] = relationship(
+        "MaterialSubmissionSnapshot",
+        foreign_keys=[submission_snapshot_id],
+        lazy="joined",
+    )

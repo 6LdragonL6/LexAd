@@ -70,7 +70,7 @@ watch(() => props.modelValue, (val) => {
     <!-- Selected brand chip -->
     <div v-if="modelValue" class="brand-chip">
       <span class="text-sm font-medium">{{ modelValue.name }}</span>
-      <span class="text-xs text-gray-400 ml-2">{{ modelValue.industry || '未分类' }}</span>
+      <span class="text-xs text-gray-400 ml-2">{{ modelValue.industries?.join('、') || modelValue.industry || '未分类' }}</span>
       <button type="button" class="ml-auto text-gray-400 hover:text-red-500 text-lg leading-none px-1" @click="clearBrand" aria-label="清除品牌">&times;</button>
     </div>
 
@@ -96,7 +96,7 @@ watch(() => props.modelValue, (val) => {
             @mousedown.prevent="selectBrand(brand)"
           >
             <span>{{ brand.name }}</span>
-            <span class="text-xs text-gray-400">{{ brand.industry || '未分类' }}</span>
+            <span class="text-xs text-gray-400">{{ brand.industries?.join('、') || brand.industry || '未分类' }}</span>
           </button>
           <template v-if="searchText.trim() && !exactMatch">
             <div class="border-t border-gray-100 dark:border-gray-700 pt-1 mt-1">

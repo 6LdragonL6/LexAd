@@ -14,7 +14,8 @@ const route = useRoute()
 const router = useRouter()
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 
-const industries = ['食品', '医疗', '教育', '汽车', '金融', '美妆', '直播电商']
+const defaultIndustries = ['食品', '医疗', '教育', '汽车', '金融', '美妆', '直播电商']
+const industries = ref([...defaultIndustries])
 const defaultPlatforms = ['抖音', '小红书', '微信', '微博', '京东', '淘宝', '拼多多']
 const platforms = ref([...defaultPlatforms])
 const materialTypes = ['文字', '图片', 'PDF文档', 'Word文档', 'PPT演示', 'Excel表格', '视频脚本', '直播话术']
@@ -62,6 +63,11 @@ const finalText = computed({
 
 const canSubmit = computed(() => {
   return finalText.value.trim() && form.value.industries.length > 0 && form.value.platforms.length > 0 && !submitting.value
+})
+
+const orderedIndustries = computed(() => {
+  const common = new Set(selectedBrand.value?.industries || [])
+  return [...industries.value].sort((a, b) => Number(common.has(b)) - Number(common.has(a)))
 })
 
 const qualityLabel = computed(() => {
@@ -149,6 +155,15 @@ async function loadPlatforms() {
     platforms.value = Array.from(new Set([...defaultPlatforms, ...activeLabels]))
   } catch {
     platforms.value = [...defaultPlatforms]
+  }
+}
+
+async function loadIndustries() {
+  try {
+    const response = await knowledgeApi.industries()
+    industries.value = response.data.items.map(item => item.label || item.value)
+  } catch {
+    industries.value = [...defaultIndustries]
   }
 }
 
@@ -251,6 +266,7 @@ async function loadBrandProfile(brandId: string) {
 
 onMounted(async () => {
   void loadPlatforms()
+  void loadIndustries()
   const editId = route.query.edit as string | undefined
   if (editId) {
     editMaterialId.value = editId
@@ -272,15 +288,20 @@ onMounted(async () => {
       form.value.material_type = m.material_type
       form.value.priority = m.priority as string
       form.value.deadline = m.deadline ? m.deadline.slice(0, 16) : null
+      if (m.brand_id) {
+        const profileRes = await brandsApi.profile(m.brand_id)
+        selectedBrand.value = profileRes.data.brand
+        brandProfile.value = profileRes.data
+      }
     } catch (e: any) {
       error.value = e.response?.data?.detail || '加载物料失败'
     } finally {
       loadingEdit.value = false
     }
   }
-  restoreBrand()
-  if (selectedBrand.value) {
-    loadBrandProfile(selectedBrand.value.id)
+  if (!isResubmit.value) {
+    restoreBrand()
+    if (selectedBrand.value) loadBrandProfile(selectedBrand.value.id)
   }
   searchBrands('')
 })
@@ -303,17 +324,15 @@ async function handleSubmit() {
   submitting.value = true
   try {
     if (isResubmit.value && editMaterialId.value) {
-      // Resubmit: update existing material then trigger AI review
-      await materialsApi.update(editMaterialId.value, {
+      const reviewResponse = await materialsApi.resubmit(editMaterialId.value, {
         name: autoMaterialName(),
         raw_text: finalText.value,
         industry: form.value.industries.join('、'),
         platforms: form.value.platforms,
+        material_type: form.value.material_type,
         priority: form.value.priority,
         deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
-        brand_id: selectedBrand.value?.id || null,
       })
-      const reviewResponse = await reviewsApi.aiReview(editMaterialId.value)
       router.push(`/result/${reviewResponse.data.id}`)
     } else {
       // New submission
@@ -408,7 +427,13 @@ async function handleSubmit() {
 
         <!-- Brand selection -->
         <section class="card">
+          <div v-if="isResubmit" class="rounded-xl border border-sky-200 dark:border-sky-800 bg-sky-50/70 dark:bg-sky-950/30 p-4">
+            <p class="text-xs font-semibold text-sky-700 dark:text-sky-300">本物料品牌已锁定</p>
+            <p class="mt-1 font-medium text-gray-800 dark:text-gray-100">{{ selectedBrand?.name || '未关联品牌' }}</p>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">重新提交会保持首次品牌归属，不能新增、清空或更换品牌。</p>
+          </div>
           <BrandSelector
+            v-else
             :model-value="selectedBrand"
             :brands="brands"
             :loading="brandSearchLoading"
@@ -428,14 +453,15 @@ async function handleSubmit() {
           <p class="text-xs text-gray-400 mt-1">可选择多个相关行业。系统会按多行业匹配法律规则、行业规则和舆情案例。</p>
           <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             <button
-              v-for="industry in industries"
+              v-for="industry in orderedIndustries"
               :key="industry"
               type="button"
               class="btn text-sm border break-words"
-              :class="form.industries.includes(industry) ? 'bg-sky-600 text-white border-sky-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-sky-50'"
+              :class="form.industries.includes(industry) ? 'bg-sky-600 text-white border-sky-600' : 'bg-white text-gray-600 border-gray-200 hover:bg-sky-50 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800'"
               @click="toggleIndustry(industry)"
             >
-              {{ industry }}
+              <span>{{ industry }}</span>
+              <span v-if="selectedBrand?.industries?.includes(industry)" class="ml-1 text-[10px] opacity-80">品牌常用</span>
             </button>
           </div>
         </section>

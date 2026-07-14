@@ -2,9 +2,14 @@
 
 本目录只保留各阶段能够解释重大架构和产品决策的主设计与实施计划。单点样式、脚本修补、重复发布收尾和已被主设计吸收的过程文档已从当前目录清理，仍可通过 Git 历史追溯。
 
-普通读者应从 [v0.7.0 文档中心](../README.md) 开始；项目演进摘要见 [主要版本演进](../archive/major-version-evolution.md)。
+普通读者应从 [v0.7.1 文档中心](../README.md) 开始；项目演进摘要见 [主要版本演进](../archive/major-version-evolution.md)。
 
-## 当前 v0.7.0
+## 当前 v0.7.1
+
+- [版本一致性、品牌行业与法务工作台设计](specs/2026-07-15-lexad-v0.7.1-review-version-brand-industry-design.md)
+- [v0.7.1 实施计划](plans/2026-07-15-lexad-v0.7.1-implementation.md)
+
+## v0.7.0 可信审查核心
 
 - [AI 裁决审查设计](specs/2026-07-15-lexad-v0.7.0-ai-adjudication-design.md)
 - [AI 裁决核心实施计划](plans/2026-07-15-lexad-v0.7.0-core-implementation.md)

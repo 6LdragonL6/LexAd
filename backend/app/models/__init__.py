@@ -1,5 +1,11 @@
 from app.models.user import User, UserRole
-from app.models.brand import Brand, BrandStatus
+from app.models.brand import (
+    Brand,
+    BrandIndustry,
+    BrandIndustrySuggestion,
+    BrandIndustrySuggestionStatus,
+    BrandStatus,
+)
 from app.models.material import Material, MaterialStatus, MaterialPriority, MaterialSubmissionSnapshot
 from app.models.review import Review, LegalDecision
 from app.models.admin import RecycleBinEntry, SecureSetting
@@ -22,6 +28,9 @@ __all__ = [
     "UserRole",
     "Brand",
     "BrandStatus",
+    "BrandIndustry",
+    "BrandIndustrySuggestion",
+    "BrandIndustrySuggestionStatus",
     "Material",
     "MaterialStatus",
     "MaterialPriority",

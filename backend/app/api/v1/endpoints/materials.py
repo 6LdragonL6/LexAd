@@ -2,7 +2,7 @@ import asyncio
 import json
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, File, Form, Response
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.deps import ensure_material_visible, get_current_user, require_marketing
@@ -10,8 +10,9 @@ from app.models.material import Material, MaterialStatus
 from app.models.brand import Brand, BrandStatus
 from app.models.review import Review
 from app.models.user import User
-from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialOut, MaterialListItem, PreviewTextResponse
-from app.services import material_service
+from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialResubmit, MaterialOut, MaterialListItem, PreviewTextResponse
+from app.schemas.review import ReviewOut
+from app.services import material_service, review_service
 from app.services.file_extraction import FileExtractionService, ExtractionError
 from app.storage import save_upload_temp, cleanup_temp
 from app.core.config import get_settings
@@ -130,6 +131,27 @@ def list_materials(db: Session = Depends(get_db), user: User = Depends(get_curre
     return material_service.list_materials(db, user)
 
 
+@router.post("/{material_id}/resubmit", response_model=ReviewOut, status_code=202)
+def resubmit_material(
+    material_id: str,
+    body: MaterialResubmit,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_marketing),
+):
+    material = material_service.get_material(db, material_id)
+    if not material:
+        raise HTTPException(status_code=404, detail="Material not found")
+    if user.role.value != "admin" and material.submitter_id != user.id:
+        raise HTTPException(status_code=403, detail="只能重新提交自己的物料")
+    try:
+        review = material_service.create_resubmission(db, material, body)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    background_tasks.add_task(review_service.execute_ai_review, review.id)
+    return review
+
+
 @router.get("/{material_id}", response_model=MaterialOut)
 def get_material(material_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     material = material_service.get_material(db, material_id)
@@ -148,6 +170,8 @@ def update_material(material_id: str, body: MaterialUpdate, db: Session = Depend
         raise HTTPException(status_code=403, detail="Not your material")
     if material.status.value not in ("draft", "returned"):
         raise HTTPException(status_code=400, detail="Can only edit draft or returned materials")
+    if material.status == MaterialStatus.returned:
+        raise HTTPException(status_code=409, detail="已退回物料请使用重新提交接口，以保留完整版本快照")
     if body.brand_id is not None:
         brand = db.query(Brand).filter(
             Brand.id == body.brand_id,

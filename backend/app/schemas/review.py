@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, Field, model_validator
+from app.schemas.material import SubmissionSnapshotOut
 
 
 class BasisReference(BaseModel):
@@ -99,6 +100,7 @@ class ReviewOut(BaseModel):
     reviewer_id: str | None
     reviewed_at: datetime | None
     created_at: datetime
+    submission: SubmissionSnapshotOut | None = None
 
     model_config = {"from_attributes": True}
 
@@ -106,6 +108,7 @@ class LegalDecisionRequest(BaseModel):
     decision: str = Field(..., pattern="^(approved|returned|conditional)$")
     notes: str = ""
     return_reasons: str = ""
+    public_opinion_manually_reviewed: bool = False
 
     @model_validator(mode="after")
     def conditional_requires_notes(self):

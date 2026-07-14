@@ -7,7 +7,7 @@ import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
-import HistoricalConsequencePanel from '@/components/review/HistoricalConsequencePanel.vue'
+import PublicOpinionReport from '@/components/review/PublicOpinionReport.vue'
 import { brandsApi } from '@/api/brands'
 import type { Material, MatchedRule, Review, BrandProfile, MaterialVersion, VerificationItem } from '@/types'
 
@@ -137,32 +137,34 @@ function escapeRegExp(value: string): string {
 
 function highlightedHtml(): string {
   if (!material.value) return ''
+  const reviewText = review.value?.submission?.raw_text || ''
+  if (!reviewText) return '<span class="text-amber-600">该审核未保存完整提交快照，无法安全展示版本文案。</span>'
   const fragments = new Map<string, string>()
   for (const issue of legalIssues.value) {
     const color = issue.rule_id?.startsWith('platform-') ? '#0EA5E9' : '#f97316'
     const candidates = issue.evidence_quote ? [issue.evidence_quote] : []
     for (const candidate of candidates) {
       const fragment = candidate.trim()
-      if (fragment.length >= 2 && material.value.raw_text.includes(fragment)) {
+      if (fragment.length >= 2 && reviewText.includes(fragment)) {
         fragments.set(fragment, color)
       }
     }
   }
-  if (!fragments.size) return escapeHtml(material.value.raw_text)
+  if (!fragments.size) return escapeHtml(reviewText)
 
   const ordered = [...fragments.keys()].sort((left, right) => right.length - left.length)
   const pattern = new RegExp(ordered.map(escapeRegExp).join('|'), 'gu')
   let output = ''
   let lastIndex = 0
-  for (const match of material.value.raw_text.matchAll(pattern)) {
+  for (const match of reviewText.matchAll(pattern)) {
     const index = match.index ?? 0
     const text = match[0]
     const color = fragments.get(text) || '#f97316'
-    output += escapeHtml(material.value.raw_text.slice(lastIndex, index))
+    output += escapeHtml(reviewText.slice(lastIndex, index))
     output += `<mark style="background:${color}20;border-bottom:2px solid ${color}" class="px-0.5 rounded">${escapeHtml(text)}</mark>`
     lastIndex = index + text.length
   }
-  return output + escapeHtml(material.value.raw_text.slice(lastIndex))
+  return output + escapeHtml(reviewText.slice(lastIndex))
 }
 
 async function loadReview() {
@@ -262,7 +264,7 @@ onUnmounted(() => {
             </StatusBadge>
             <span class="text-sm text-gray-400">{{ formatDate(review.completed_at) }}</span>
           </div>
-          <p class="text-sm text-gray-500 break-words">{{ material.name }} · {{ material.industry }} · {{ material.platforms.join('、') || '未指定平台' }}</p>
+          <p class="text-sm text-gray-500 break-words">{{ review.submission?.name || '历史快照缺失' }} · {{ review.submission?.industry || '-' }} · {{ review.submission?.platforms.join('、') || '未指定平台' }}</p>
         </div>
         <button class="btn-outline text-sm shrink-0" @click="router.push('/')">返回工作台</button>
       </div>
@@ -288,28 +290,7 @@ onUnmounted(() => {
               <div class="mt-4 text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{{ review.ai_result?.summary }}</div>
             </div>
 
-            <div class="card border-l-4 border-l-purple-500">
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <p class="text-sm text-gray-400">舆情风险</p>
-                  <p class="text-3xl font-bold mt-2" :class="publicOpinionRiskLabel === '低' ? 'text-green-600' : publicOpinionRiskLabel === '高' || publicOpinionRiskLabel === '严重' ? 'text-red-600' : 'text-amber-600'">
-                    {{ publicOpinionRiskLabel }}
-                  </p>
-                  <p class="text-xs text-gray-400 mt-1">
-                    {{ publicOpinion.risk_score ?? '-' }}/100 · {{ publicOpinionSourceLabel }} · 不计入法律合规分
-                  </p>
-                </div>
-                <StatusBadge :variant="publicOpinionStatus === 'succeeded' ? 'success' : publicOpinionStatus === 'unavailable' ? 'gray' : publicOpinionStatus === 'failed' ? 'danger' : 'warning'">
-                  {{ statusText(publicOpinionStatus) }}
-                </StatusBadge>
-              </div>
-              <div class="mt-4 rounded-lg border px-3 py-2 text-sm" :class="publicOpinionRiskClass">
-                {{ publicOpinion.explanation || publicOpinion.message || '暂无舆情分析说明' }}
-              </div>
-              <p v-if="review.public_opinion_module_error && publicOpinionStatus !== 'unavailable'" class="mt-3 text-sm text-red-500">
-                {{ review.public_opinion_module_error }}
-              </p>
-            </div>
+            <PublicOpinionReport :review="review" mode="summary" />
           </section>
 
           <section class="card">
@@ -356,61 +337,7 @@ onUnmounted(() => {
             <p v-else class="text-sm text-gray-400">当前没有需要补充核验的资料事项。</p>
           </section>
 
-          <section class="card">
-            <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">舆情风险详情</h3>
-            <div v-if="publicOpinion.requires_manual_review" class="rounded-xl bg-orange-50 text-orange-700 border border-orange-200 p-4 text-sm mb-4">
-              <p class="font-semibold">建议人工复核</p>
-              <p class="mt-1">{{ publicOpinion.disagreement_reason || '当前有效证据不足，不能直接作为低风险结论。' }}</p>
-            </div>
-            <div v-if="publicOpinion.model_available === false" class="rounded-xl bg-yellow-50 text-yellow-700 p-3 text-sm mb-4">
-              AI 语义裁决暂不可用。本地词条与案例仅作为内部候选，当前不据此判定风险。
-            </div>
-            <div v-if="publicOpinion.knowledge_base_available === false" class="rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 p-3 text-sm mb-4">
-              当前没有可用本地舆情案例；系统仍会执行 AI 开放式语义判断。
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                <p class="text-xs text-gray-400">风险议题</p>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.risk_topics?.join('、') || '暂无' }}</p>
-              </div>
-              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                <p class="text-xs text-gray-400">受影响群体</p>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.affected_groups?.join('、') || '暂无' }}</p>
-              </div>
-              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                <p class="text-xs text-gray-400">传播诱因</p>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.propagation_drivers?.join('、') || '暂无' }}</p>
-              </div>
-              <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                <p class="text-xs text-gray-400">置信度</p>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.confidence ?? '-' }}<span v-if="publicOpinion.confidence !== undefined">%</span></p>
-              </div>
-            </div>
-            <div v-if="publicOpinion.evidence_quotes?.length" class="mt-5">
-              <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">判断证据</h4>
-              <div class="flex flex-wrap gap-2">
-                <span v-for="quote in publicOpinion.evidence_quotes" :key="quote" class="rounded-lg bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 px-3 py-1.5 text-sm">“{{ quote }}”</span>
-              </div>
-            </div>
-            <div v-if="publicOpinion.similar_events?.length" class="mt-5">
-              <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">相似舆情事件</h4>
-              <div class="space-y-3">
-                <div v-for="event in publicOpinion.similar_events" :key="event.event_id" class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <span class="font-medium text-gray-800 dark:text-gray-200">{{ event.title }}</span>
-                    <span class="text-xs text-gray-400">AI 确认相似 · {{ verificationLabel(event.verification_status) }}</span>
-                  </div>
-                  <HistoricalConsequencePanel :value="event.historical_consequence" />
-                </div>
-              </div>
-            </div>
-            <div v-if="publicOpinion.suggestions?.length" class="mt-5">
-              <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">舆情修改建议</h4>
-              <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                <li v-for="suggestion in publicOpinion.suggestions" :key="suggestion" class="flex gap-2"><span class="text-purple-500">•</span><span>{{ suggestion }}</span></li>
-              </ul>
-            </div>
-          </section>
+          <PublicOpinionReport :review="review" />
 
           <!-- Brand profile (if associated) -->
           <div v-if="material.brand_id" class="card">
@@ -453,7 +380,7 @@ onUnmounted(() => {
               </div>
             </div>
             <div v-else class="flex flex-wrap gap-2">
-              <span v-for="p in material.platforms" :key="p" class="badge badge-success">{{ p }} &#x2713;</span>
+              <span v-for="p in review.submission?.platforms || []" :key="p" class="badge badge-success">{{ p }} &#x2713;</span>
             </div>
           </div>
 

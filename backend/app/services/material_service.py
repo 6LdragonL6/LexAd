@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
-from app.models.material import Material, MaterialStatus
+from app.models.material import Material, MaterialStatus, MaterialSubmissionSnapshot
 from app.models.user import User, UserRole
-from app.schemas.material import MaterialSubmit, MaterialUpdate
+from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialResubmit
 
 
 def create_material(
@@ -15,6 +15,7 @@ def create_material(
     final_text = _merge_texts(extracted_text, data.raw_text)
     material = Material(
         name=data.name,
+        display_name=data.name,
         industry=data.industry,
         platforms=data.platforms,
         material_type=data.material_type,
@@ -26,6 +27,9 @@ def create_material(
         brand_id=brand_id,
     )
     db.add(material)
+    db.flush()
+    from app.services import brand_service
+    brand_service.record_material_industries(db, material)
     db.commit()
     db.refresh(material)
     return material
@@ -68,17 +72,6 @@ def update_material(db: Session, material_id: str, data: MaterialUpdate) -> Mate
     if not material:
         return None
 
-    if material.status == MaterialStatus.returned:
-        changed = False
-        if data.raw_text is not None and data.raw_text != material.raw_text:
-            changed = True
-        if data.industry is not None and data.industry != material.industry:
-            changed = True
-        if data.platforms is not None and data.platforms != material.platforms:
-            changed = True
-        if changed:
-            material.current_version += 1
-
     update_data = data.model_dump(exclude_unset=True)
     for key, value in update_data.items():
         setattr(material, key, value)
@@ -88,13 +81,79 @@ def update_material(db: Session, material_id: str, data: MaterialUpdate) -> Mate
     return material
 
 
+def create_resubmission(db: Session, material: Material, data: MaterialResubmit):
+    from app.models.brand import Brand, BrandStatus
+    from app.models.knowledge import ReviewModuleStatus
+    from app.models.review import Review
+    from app.services import brand_service
+
+    locked_material = (
+        db.query(Material)
+        .filter(Material.id == material.id, Material.deleted_at.is_(None))
+        .with_for_update()
+        .first()
+    )
+    if locked_material is None:
+        raise ValueError("物料不存在")
+    material = locked_material
+    if material.status != MaterialStatus.returned:
+        raise ValueError("只有已退回的物料可以重新提交")
+    if material.brand_id:
+        brand = db.query(Brand).filter(
+            Brand.id == material.brand_id,
+            Brand.status == BrandStatus.active,
+            Brand.deleted_at.is_(None),
+        ).first()
+        if not brand:
+            raise ValueError("原品牌已归档或删除，请联系管理员恢复后再提交")
+
+    material.current_version += 1
+    material.name = data.name
+    material.raw_text = data.raw_text
+    material.industry = data.industry
+    material.platforms = data.platforms
+    material.material_type = data.material_type
+    material.priority = data.priority
+    material.deadline = data.deadline
+    material.status = MaterialStatus.ai_reviewing
+    material.updated_at = datetime.now(timezone.utc)
+
+    snapshot = MaterialSubmissionSnapshot(
+        material_id=material.id,
+        version=material.current_version,
+        name=material.name,
+        industry=material.industry,
+        platforms=material.platforms,
+        material_type=material.material_type,
+        raw_text=material.raw_text,
+        priority=material.priority.value if hasattr(material.priority, "value") else material.priority,
+        deadline=material.deadline,
+    )
+    db.add(snapshot)
+    db.flush()
+    review = Review(
+        material_id=material.id,
+        submission_snapshot_id=snapshot.id,
+        version=material.current_version,
+        ai_risk_score=0,
+        ai_result={},
+        task_status="processing",
+        legal_module_status=ReviewModuleStatus.pending,
+        public_opinion_module_status=ReviewModuleStatus.pending,
+    )
+    db.add(review)
+    brand_service.record_material_industries(db, material)
+    db.commit()
+    db.refresh(review)
+    return review
+
+
 def get_material_versions(db: Session, material_id: str) -> list[dict]:
     from app.models.review import Review
-    from app.models.material import MaterialSubmissionSnapshot
     reviews = db.query(Review).filter(Review.material_id == material_id).order_by(Review.version.desc()).all()
     versions = []
     for r in reviews:
-        snapshot = db.get(MaterialSubmissionSnapshot, r.submission_snapshot_id) if r.submission_snapshot_id else None
+        snapshot = r.submission or (db.get(MaterialSubmissionSnapshot, r.submission_snapshot_id) if r.submission_snapshot_id else None)
         versions.append({
             "review_id": r.id,
             "version": r.version,

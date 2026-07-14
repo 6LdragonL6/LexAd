@@ -81,7 +81,7 @@ async function handleArchive(material: Material) {
 }
 
 async function handleAdminDelete(material: Material) {
-  if (!confirm(`将物料「${material.name}」及其审核记录移入回收站？15 天内可恢复。`)) return
+  if (!confirm(`将物料「${material.display_name || material.name}」及其审核记录移入回收站？15 天内可恢复。`)) return
   archiving.value[material.id] = true
   try {
     await adminSettingsApi.moveToRecycleBin('material', material.id)
@@ -197,7 +197,7 @@ async function handleAdminDelete(material: Material) {
           <div v-for="m in materials.slice(0, 5)" :key="m.id"
                class="flex flex-col sm:flex-row sm:items-center sm:justify-between py-3 border-b border-gray-100 dark:border-gray-700 last:border-0 gap-2">
             <div class="min-w-0">
-              <button class="text-sky-600 hover:underline text-left font-medium break-words" @click="openMaterial(m)">{{ m.name }}</button>
+              <button class="text-sky-600 hover:underline text-left font-medium break-words" @click="openMaterial(m)">{{ m.display_name || m.name }}</button>
               <span class="text-xs text-gray-400 ml-2">{{ m.industry }}</span>
               <span v-if="m.current_version > 1" class="text-xs text-gray-400 ml-1">第{{ m.current_version }}次</span>
             </div>

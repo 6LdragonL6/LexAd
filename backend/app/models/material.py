@@ -28,6 +28,7 @@ class Material(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name: Mapped[str] = mapped_column(String(200), nullable=False)
+    display_name: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     industry: Mapped[str] = mapped_column(String(50), default="")
     platforms: Mapped[dict] = mapped_column(JSON, default=list)
     material_type: Mapped[str] = mapped_column(String(30), default="文字")

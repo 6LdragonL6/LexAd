@@ -36,6 +36,8 @@ def create_ai_review(db: Session, material_id: str) -> tuple[Review, bool]:
 
     if material.status not in (MaterialStatus.draft, MaterialStatus.returned):
         raise ValueError("当前物料状态不允许重新发起 AI 审查")
+    if not material.display_name:
+        material.display_name = material.name
 
     snapshot = (
         db.query(MaterialSubmissionSnapshot)
@@ -164,13 +166,20 @@ def _execute_legal_branch(db: Session, review_id: str, material_id: str) -> bool
     material = db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
     if not review or review.task_status != "processing" or material is None:
         return False
+    snapshot = db.get(MaterialSubmissionSnapshot, review.submission_snapshot_id) if review.submission_snapshot_id else None
+    if snapshot is None:
+        review.legal_module_status = ReviewModuleStatus.failed
+        review.legal_module_error = "本次审核缺少提交快照，无法安全执行法律审查"
+        review.legal_module_completed_at = datetime.now(timezone.utc)
+        db.commit()
+        return False
     review.legal_module_status = ReviewModuleStatus.running
     db.commit()
     try:
         engine_result = run_review_pipeline(
-            material.raw_text,
-            material.industry,
-            material.platforms,
+            snapshot.raw_text,
+            snapshot.industry,
+            snapshot.platforms,
             db,
         )
         review = db.query(Review).filter(Review.id == review_id).first()
@@ -204,13 +213,20 @@ def _execute_public_opinion_branch(db: Session, review_id: str, material_id: str
     material = db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
     if not review or review.task_status != "processing" or material is None:
         return False
+    snapshot = db.get(MaterialSubmissionSnapshot, review.submission_snapshot_id) if review.submission_snapshot_id else None
+    if snapshot is None:
+        review.public_opinion_module_status = ReviewModuleStatus.failed
+        review.public_opinion_module_error = "本次审核缺少提交快照，无法安全执行舆情审查"
+        review.public_opinion_module_completed_at = datetime.now(timezone.utc)
+        db.commit()
+        return False
     review.public_opinion_module_status = ReviewModuleStatus.running
     db.commit()
     try:
         public_opinion = run_public_opinion_review(
-            material_text=material.raw_text,
-            industry=material.industry,
-            platforms=material.platforms,
+            material_text=snapshot.raw_text,
+            industry=snapshot.industry,
+            platforms=snapshot.platforms,
             db=db,
         )
         review = db.query(Review).filter(Review.id == review_id).first()
@@ -278,6 +294,19 @@ def submit_legal_decision(db: Session, review_id: str, data: LegalDecisionReques
         raise ValueError("法律合规审查尚未完成")
     if review.legal_decision is not None:
         raise ValueError("该审查已经提交法务决定，不能重复覆盖")
+    public_opinion_status = review.public_opinion_module_status
+    public_opinion_result = review.public_opinion_result or {}
+    if public_opinion_status in (ReviewModuleStatus.pending, ReviewModuleStatus.running):
+        raise ValueError("舆情审查仍在处理中，暂不能提交法务决定")
+    requires_public_opinion_manual_review = (
+        public_opinion_status in (None, ReviewModuleStatus.failed, ReviewModuleStatus.unavailable)
+        or not public_opinion_result
+        or public_opinion_result.get("status") == "manual_review"
+        or bool(public_opinion_result.get("requires_manual_review"))
+    )
+    if requires_public_opinion_manual_review:
+        if not data.public_opinion_manually_reviewed:
+            raise ValueError("舆情审查不可用，请完成人工舆情复核并确认")
 
     material = db.query(Material).filter(Material.id == review.material_id, Material.deleted_at.is_(None)).first()
     if material is None:
@@ -333,16 +362,20 @@ def get_legal_queue(db: Session, user: User) -> list[dict]:
         ).first()
         if material is None:
             continue
+        snapshot = review.submission or (
+            db.get(MaterialSubmissionSnapshot, review.submission_snapshot_id)
+            if review.submission_snapshot_id else None
+        )
         submitter = db.query(User).filter(User.id == material.submitter_id).first()
         results.append(
             {
                 "id": review.id,
                 "material_id": material.id,
-                "material_name": material.name,
+                "material_name": material.display_name or material.name,
                 "submitter_name": submitter.display_name if submitter else "",
-                "industry": material.industry,
+                "industry": snapshot.industry if snapshot else material.industry,
                 "ai_risk_score": review.ai_risk_score,
-                "priority": material.priority.value,
+                "priority": snapshot.priority if snapshot else material.priority.value,
                 "status": material.status.value,
                 "created_at": review.created_at,
                 "waiting_hours": round(

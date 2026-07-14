@@ -6,6 +6,8 @@ from typing import Iterable
 
 INDUSTRY_SEPARATOR = "、"
 INDUSTRY_SPLIT_RE = re.compile(r"[、,，;；/|]+")
+INDUSTRY_OPTIONS = ("食品", "医疗", "教育", "汽车", "金融", "美妆", "直播电商")
+INDUSTRY_OPTION_SET = frozenset(INDUSTRY_OPTIONS)
 
 
 def split_industries(value: str | Iterable[str] | None) -> list[str]:
@@ -37,3 +39,11 @@ def split_industries(value: str | Iterable[str] | None) -> list[str]:
 
 def format_industries(value: str | Iterable[str] | None) -> str:
     return INDUSTRY_SEPARATOR.join(split_industries(value))
+
+
+def validate_industries(value: str | Iterable[str] | None) -> list[str]:
+    industries = split_industries(value)
+    invalid = [item for item in industries if item not in INDUSTRY_OPTION_SET]
+    if invalid:
+        raise ValueError(f"不支持的行业：{'、'.join(invalid)}")
+    return industries

@@ -15,7 +15,7 @@ defineProps<{ profile: BrandProfile | null; loading: boolean }>()
         <div class="space-y-2 text-sm">
           <div class="flex justify-between">
             <span class="text-gray-500">行业</span>
-            <span class="text-gray-800 dark:text-gray-200">{{ profile.brand.industry || '未设定' }}</span>
+            <span class="text-right text-gray-800 dark:text-gray-200">{{ profile.brand.industries?.join('、') || '未设定' }}</span>
           </div>
           <div class="flex justify-between">
             <span class="text-gray-500">状态</span>

@@ -23,7 +23,7 @@ function riskTypeLabel(value?: string) {
 <template>
   <div class="space-y-4">
     <div class="flex items-center justify-between gap-3">
-      <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">审查引擎·执行报告</h3>
+      <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200">法律与平台审核</h3>
       <span class="text-xs rounded-full bg-red-50 text-red-600 px-2 py-1">{{ hitCount }} 项确认问题</span>
     </div>
     <details v-for="layer in layers" :key="layer.layer" :open="layer.status === 'matched' || layer.matched_rules.length > 0" class="text-sm rounded-lg border border-gray-200 dark:border-gray-700 px-3">

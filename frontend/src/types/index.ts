@@ -11,6 +11,7 @@ export interface User {
 export interface Material {
   id: string
   name: string
+  display_name: string
   industry: string
   platforms: string[]
   material_type: string
@@ -125,6 +126,7 @@ export interface Review {
   reviewer_id: string | null
   reviewed_at: string | null
   created_at: string
+  submission?: SubmissionSnapshot | null
 }
 
 export interface ReviewQueueItem {
@@ -145,6 +147,16 @@ export interface ReviewQueueItem {
   material_version?: number
 }
 
+export interface SubmissionSnapshot {
+  name: string
+  raw_text: string
+  industry: string
+  platforms: string[]
+  material_type: string
+  priority: string
+  deadline: string | null
+}
+
 export interface MaterialVersion {
   review_id: string
   version: number
@@ -158,15 +170,7 @@ export interface MaterialVersion {
   version_label: string
   legal_review_label: string
   snapshot_complete: boolean
-  submission: {
-    name: string
-    raw_text: string
-    industry: string
-    platforms: string[]
-    material_type: string
-    priority: string
-    deadline: string | null
-  } | null
+  submission: SubmissionSnapshot | null
 }
 
 export interface LawItem {
@@ -206,6 +210,7 @@ export interface Brand {
   name: string
   aliases: string[]
   industry: string
+  industries: string[]
   description: string
   status: 'active' | 'archived'
   created_at: string
@@ -222,6 +227,20 @@ export interface BrandProfile {
   top_violations: { rule_id: string; rule_text: string; count: number }[]
   recent_reviews: { id: string; version: number; ai_risk_score: number; legal_decision: string | null; created_at: string }[]
   approved_materials: { id: string; name: string; raw_text_preview: string }[]
+  industry_suggestions: BrandIndustrySuggestion[]
+}
+
+export interface BrandIndustrySuggestion {
+  id: string
+  industry: string
+  status: 'pending' | 'accepted' | 'ignored'
+  first_material_id: string | null
+  latest_material_id: string | null
+  latest_material_name: string
+  occurrence_count: number
+  first_seen_at: string
+  last_seen_at: string
+  reviewed_at: string | null
 }
 
 export interface AiConfigStatus {

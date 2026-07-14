@@ -1,5 +1,5 @@
 from app.schemas.user import LoginRequest, TokenResponse, UserOut
-from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialOut, MaterialListItem
+from app.schemas.material import MaterialSubmit, MaterialUpdate, MaterialResubmit, MaterialOut, MaterialListItem, SubmissionSnapshotOut
 from app.schemas.review import (
     AIReviewRequest, ReviewOut, LegalDecisionRequest, ReviewQueueItem,
     EngineResult, MatchedRule, LayerResult,

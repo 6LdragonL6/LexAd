@@ -52,11 +52,18 @@ def test_background_review_completes_and_prevents_duplicate(monkeypatch):
     factory = _session_factory()
     _seed(factory)
     monkeypatch.setattr(review_service, "SessionLocal", factory)
-    monkeypatch.setattr(
-        review_service,
-        "run_review_pipeline",
-        lambda *_args: EngineResult(risk_score=95, summary="测试完成"),
-    )
+    seen: dict[str, str] = {}
+
+    def fake_pipeline(text, industry, platforms, _db):
+        seen["legal_text"] = text
+        return EngineResult(risk_score=95, summary="测试完成")
+
+    def fake_public_opinion(**kwargs):
+        seen["public_opinion_text"] = kwargs["material_text"]
+        return PublicOpinionReview(status="completed", result={"risk_level": "low"})
+
+    monkeypatch.setattr(review_service, "run_review_pipeline", fake_pipeline)
+    monkeypatch.setattr(review_service, "run_public_opinion_review", fake_public_opinion)
 
     db = factory()
     review, created = review_service.create_ai_review(db, "material-1")
@@ -80,6 +87,7 @@ def test_background_review_completes_and_prevents_duplicate(monkeypatch):
     material = db.query(Material).filter(Material.id == "material-1").one()
     assert stored.task_status == "completed"
     assert stored.ai_risk_score == 95
+    assert seen == {"legal_text": "普通广告文案", "public_opinion_text": "普通广告文案"}
     assert material.status == MaterialStatus.pending_legal
     legal = User(
         id="legal-1",

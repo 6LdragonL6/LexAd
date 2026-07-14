@@ -20,6 +20,10 @@ defineProps<{
     </div>
 
     <div v-else-if="profile" class="space-y-2 text-sm">
+      <div v-if="profile.brand.industries?.length" class="flex justify-between gap-3">
+        <span class="text-gray-500">常用行业</span>
+        <span class="text-right text-gray-800 dark:text-gray-200">{{ profile.brand.industries.join('、') }}</span>
+      </div>
       <div class="flex justify-between">
         <span class="text-gray-500">审核次数</span>
         <span class="font-medium text-gray-800 dark:text-gray-200">{{ profile.total_reviews }}</span>

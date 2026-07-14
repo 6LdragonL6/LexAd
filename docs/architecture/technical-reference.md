@@ -1,6 +1,6 @@
-# LexAd v0.7.0 技术参考
+# LexAd v0.7.1 技术参考
 
-本文记录 v0.7.0 当前实现、接口与运行约束。审查判断原则见 [审查方法论](review-methodology.md)，本地安装与排错见 [本地开发指南](../guides/local-development.md)。
+本文记录 v0.7.1 当前实现、接口与运行约束。审查判断原则见 [审查方法论](review-methodology.md)，本地安装与排错见 [本地开发指南](../guides/local-development.md)。
 
 ## 1. 系统架构
 
@@ -77,16 +77,16 @@ LexAd/
 
 ## 5. 审查任务生命周期
 
-1. 市场人员保存物料，状态为 `draft`；退回物料状态为 `returned`。
-2. `POST /api/v1/reviews/ai-review` 创建审查记录和物料版本快照，返回 HTTP 202。
+1. 市场人员首次保存物料，状态为 `draft`；退回物料状态为 `returned`。
+2. 首次提交通过 `POST /api/v1/reviews/ai-review` 创建审查记录和物料版本快照；退回后的修改通过 `POST /api/v1/materials/{id}/resubmit` 原子创建新版本、快照与审查任务，均返回 HTTP 202。
 3. 后台任务依次执行法律与平台分支、舆情分支，并分别保存模块状态。
 4. 法律分支成功后，审查任务进入 `completed`，物料进入 `pending_legal`。
 5. 法务提交 `approved`、`conditional` 或 `returned` 决定，物料状态同步更新。
-6. 被退回的物料修改后增加版本，再次提交时保存新的输入快照与审查记录。
+6. 被退回的物料重新提交时增加版本并保留首次品牌；列表稳定标题不变，详情使用本次提交快照。
 
 后台任务当前使用 FastAPI 进程内任务，不是持久化消息队列。启动时会把超过 15 分钟仍处于处理中的中断任务标记为失败并允许重新提交。
 
-## 6. v0.7.0 审查模块
+## 6. v0.7.1 审查模块
 
 | 模块 | 输入 | 用户可见输出 | 失败行为 |
 | --- | --- | --- | --- |
@@ -101,17 +101,18 @@ LexAd/
 
 核心持久化对象包括：
 
-- `materials`：当前物料、行业、平台、优先级、品牌和状态；
+- `materials`：当前工作副本、稳定展示名、行业、平台、优先级、品牌和状态；
 - `material_submission_snapshots`：每次提交时的不可变输入快照；
 - `reviews`：AI 结果、分模块状态、资料版本标识和法务决定；
-- `brands`：品牌档案与物料关联；
+- `brands` / `brand_industries`：品牌档案、正式多行业与物料关联；
+- `brand_industry_suggestions`：物料产生、由管理员接受或忽略的品牌行业候选；
 - `public_opinion_events` / `public_opinion_event_versions`：舆情事件及结构化版本；
 - `public_opinion_library_versions`：已发布事件集合的版本快照；
 - `platform_rule_sets` / `platform_rule_versions`：平台规则集、有效期和结构化规则；
 - `knowledge_import_jobs` / `knowledge_audit_logs`：导入与管理操作记录；
 - `secure_settings`：加密保存的管理员 AI 配置。
 
-审查记录保存提交版本、平台规则版本和舆情资料库版本，使历史结果不会被后续资料更新静默覆盖。
+审查记录保存不可变提交快照、平台规则版本和舆情资料库版本；法律、平台、舆情引擎及结果页均读取同一快照，使历史结果不会被工作副本或后续资料更新静默覆盖。
 
 ## 8. API 概览
 
@@ -123,13 +124,15 @@ LexAd/
 | --- | --- | --- |
 | 认证 | `POST /auth/login`、`GET /auth/me` | 登录和当前用户 |
 | 品牌 | `GET/POST /brands`、`GET /brands/{id}/profile`、`PATCH /brands/{id}` | 品牌列表、创建、档案和状态维护 |
+| 品牌行业 | `PUT /brands/{id}/industries`、`POST /brands/{id}/industry-suggestions/{suggestion_id}` | 管理正式行业及接受、忽略或恢复候选 |
 | 物料 | `POST /materials/submit`、`POST /materials/preview-text` | 提交物料和预览文件文本 |
 | 物料 | `GET /materials/list`、`GET/PUT /materials/{id}` | 列表、详情和修改 |
+| 物料 | `POST /materials/{id}/resubmit` | 原子重新提交退回物料，锁定原品牌 |
 | 物料 | `GET /materials/{id}/versions`、`POST /materials/{id}/archive`、`DELETE /materials/{id}` | 历史、归档和移入回收站 |
 | 审查 | `POST /reviews/ai-review` | 创建异步 AI 审查 |
 | 审查 | `GET /reviews/queue`、`GET /reviews/{id}`、`GET /reviews/by-material/{id}` | 队列和结果查询 |
 | 审查 | `POST /reviews/{id}/decision` | 法务决定 |
-| 知识浏览 | `GET /knowledge/platforms`、`GET /knowledge/catalog/{layer}`、`GET /knowledge/content` | 可用平台和 L1–L5 资料浏览 |
+| 知识浏览 | `GET /knowledge/platforms`、`GET /knowledge/industries`、`GET /knowledge/catalog/{layer}`、`GET /knowledge/content` | 标准平台、行业和 L1–L5 资料浏览 |
 
 ### 8.2 管理端
 
@@ -182,6 +185,7 @@ f3a8c2d9e714  v0.5.1 有条件通过
 a4b7d1c6e825  v0.5.1 提交快照
 294f05fbf95c  v0.6.0 品牌库
 7c2d9a4e6f81  v0.6.2 管理配置与回收站
+b8d4e1f7a203  v0.7.1 版本稳定标题与品牌多行业
 ```
 
 `local` 与 `neon` 是独立数据源，切换模式不会复制或同步数据。
@@ -212,7 +216,7 @@ cd frontend
 npm run build
 ```
 
-v0.7.0 发布验证应同时覆盖：候选规则不直接展示、数字切片过滤、资料引用校验、核验事项分流、平台规则缺失降级、舆情 AI 失败转人工复核、角色权限和历史版本追溯。
+v0.7.1 发布验证应同时覆盖：候选规则不直接展示、数字切片过滤、资料引用校验、核验事项分流、平台规则缺失降级、三引擎同快照、原子重提、品牌行业候选、舆情法务门禁、角色权限和历史版本追溯。
 
 ## 13. 部署注意事项
 

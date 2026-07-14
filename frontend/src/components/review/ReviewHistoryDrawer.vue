@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import type { LayerResult, MaterialVersion, Review } from '@/types'
+import PublicOpinionReport from '@/components/review/PublicOpinionReport.vue'
 
 const props = defineProps<{
   open: boolean
@@ -88,6 +89,7 @@ onUnmounted(() => {
                 </p>
               </div>
             </section>
+            <PublicOpinionReport v-if="review" :review="review" />
             <section>
               <h4>法务审核</h4>
               <p class="text-sm text-gray-700 dark:text-gray-300">{{ version?.legal_review_label }}</p>

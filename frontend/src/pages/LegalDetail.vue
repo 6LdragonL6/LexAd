@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
@@ -9,6 +9,7 @@ import StatusBadge from '@/components/common/StatusBadge.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
 import EngineReport from '@/components/review/EngineReport.vue'
+import PublicOpinionReport from '@/components/review/PublicOpinionReport.vue'
 import { brandsApi } from '@/api/brands'
 import type { Material, Review, MatchedRule, BrandProfile, MaterialVersion } from '@/types'
 
@@ -19,7 +20,7 @@ const material = ref<Material | null>(null)
 const review = ref<Review | null>(null)
 const loading = ref(true)
 const versions = ref<MaterialVersion[]>([])
-const showVersions = ref(false)
+const showVersions = ref(true)
 const selectedVersion = ref<MaterialVersion | null>(null)
 const selectedReview = ref<Review | null>(null)
 const historyLoading = ref(false)
@@ -31,6 +32,19 @@ const submitting = ref(false)
 const decisionError = ref('')
 const brandProfile = ref<BrandProfile | null>(null)
 const brandProfileLoading = ref(false)
+const publicOpinionManuallyReviewed = ref(false)
+
+const publicOpinionPending = computed(() => ['pending', 'running'].includes(review.value?.public_opinion_module_status || ''))
+const publicOpinionNeedsManualReview = computed(() => {
+  const status = review.value?.public_opinion_module_status
+  const result = review.value?.public_opinion_result || {}
+  return !status
+    || ['failed', 'unavailable'].includes(status)
+    || !Object.keys(result).length
+    || result.status === 'manual_review'
+    || Boolean(result.requires_manual_review)
+})
+const canSubmitDecision = computed(() => !publicOpinionPending.value && (!publicOpinionNeedsManualReview.value || publicOpinionManuallyReviewed.value))
 
 function getAllIssues(): MatchedRule[] {
   if (!review.value) return []
@@ -88,6 +102,7 @@ async function handleDecision() {
       decision: decision.value,
       notes: notes.value,
       return_reasons: returnReasons.value,
+      public_opinion_manually_reviewed: publicOpinionManuallyReviewed.value,
     })
     router.push('/legal')
   } catch (error: any) {
@@ -154,44 +169,42 @@ async function openHistory(version: MaterialVersion) {
     <template #center>
       <div class="card mb-4">
         <div class="flex items-center justify-between mb-2">
-          <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ material.name }}</h3>
-          <StatusBadge variant="info">第 {{ material.current_version }} 次提交</StatusBadge>
+          <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ review.submission?.name || '历史快照缺失' }}</h3>
+          <StatusBadge variant="info">第 {{ review.version }} 次提交</StatusBadge>
         </div>
-        <p class="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{{ material.raw_text }}</p>
+        <p v-if="review.submission" class="text-sm leading-7 text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{{ review.submission.raw_text }}</p>
+        <p v-else class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">该审核未保存完整提交快照，系统不会使用当前物料内容代替历史版本。</p>
         <div class="flex gap-2 mt-2 text-xs text-gray-400">
-          <span>{{ material.industry }}</span>
-          <span>{{ material.platforms.join('、') }}</span>
+          <span>{{ review.submission?.industry || '-' }}</span>
+          <span>{{ review.submission?.platforms.join('、') || '未指定平台' }}</span>
         </div>
       </div>
 
-      <div v-if="versions.length > 1" class="card">
-        <button @click="showVersions = !showVersions" class="flex items-center justify-between w-full text-left">
-          <h4 class="font-medium text-sm text-gray-700 dark:text-gray-300">历史版本 ({{ versions.length }})</h4>
-          <span class="text-xs text-sky-600">{{ showVersions ? '收起' : '展开' }}</span>
-        </button>
-        <div v-if="showVersions" class="mt-3 space-y-2">
-          <button v-for="v in versions" :key="v.review_id" type="button" @click="openHistory(v)"
-            class="flex items-center justify-between text-sm py-2 border-b border-gray-100 dark:border-gray-700 last:border-0"
-            :class="{ 'bg-sky-50 dark:bg-sky-900/20 -mx-2 px-2 rounded': v.version === review?.version }">
-            <div>
-              <span class="font-medium text-gray-700 dark:text-gray-300">{{ v.version_label }}</span>
-              <span v-if="v.version === review?.version" class="text-xs text-sky-600 ml-2">当前</span>
-            </div>
-            <div class="flex gap-3 text-xs text-gray-500">
-              <span>风险分: {{ v.risk_score }}</span>
-              <span v-if="v.legal_decision" :class="{ 'text-green-600': v.legal_decision === 'approved', 'text-red-600': v.legal_decision === 'returned' }">
-                {{ v.legal_decision === 'approved' ? '通过' : v.legal_decision === 'returned' ? '退回' : v.legal_decision }}
-              </span>
-              <span>{{ v.legal_review_label }}</span>
-            </div>
-          </button>
-        </div>
+      <div class="mb-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-sky-500 dark:text-sky-300">Review engine</p>
+        <h2 class="mt-1 text-lg font-semibold text-gray-800 dark:text-gray-100">审查引擎·执行报告</h2>
       </div>
+      <div class="card mb-4"><EngineReport :result="review.ai_result" /></div>
+      <PublicOpinionReport :review="review" />
     </template>
 
     <template #right>
-      <div class="space-y-4">
-        <EngineReport :result="review.ai_result" />
+      <div v-if="versions.length > 1" class="card mb-4">
+        <button @click="showVersions = !showVersions" class="flex items-center justify-between w-full text-left">
+          <h4 class="font-medium text-sm text-gray-700 dark:text-gray-200">历史版本 ({{ versions.length }})</h4>
+          <span class="text-xs text-sky-600 dark:text-sky-400">{{ showVersions ? '收起' : '展开' }}</span>
+        </button>
+        <div v-if="showVersions" class="mt-3 space-y-1">
+          <button v-for="v in versions" :key="v.review_id" type="button" @click="openHistory(v)"
+            class="w-full rounded-lg px-2 py-2 text-left text-sm transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+            :class="{ 'bg-sky-50 dark:bg-sky-950/30': v.version === review?.version }">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-medium text-gray-700 dark:text-gray-200">{{ v.version_label }}</span>
+              <span v-if="v.version === review?.version" class="text-xs text-sky-600 dark:text-sky-400">当前</span>
+            </div>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ v.legal_review_label }} · 风险分 {{ v.risk_score }}</p>
+          </button>
+        </div>
       </div>
 
       <!-- Brand memory card -->
@@ -218,8 +231,15 @@ async function openHistory(version: MaterialVersion) {
             <label class="label">法务备注</label>
             <textarea v-model="notes" class="input h-20" placeholder="内部备注..."></textarea>
           </div>
+          <div v-if="publicOpinionPending" class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+            舆情审查仍在处理，完成前不能提交法务决定。
+          </div>
+          <label v-if="publicOpinionNeedsManualReview" class="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+            <input v-model="publicOpinionManuallyReviewed" type="checkbox" class="mt-0.5" />
+            <span>舆情引擎不可用，我已完成人工舆情复核并愿意提交决定。</span>
+          </label>
           <p v-if="decisionError" class="text-sm text-red-500">{{ decisionError }}</p>
-          <button @click="handleDecision" :disabled="submitting" class="btn-primary w-full">
+          <button @click="handleDecision" :disabled="submitting || !canSubmitDecision" class="btn-primary w-full">
             {{ submitting ? '提交中...' : '提交决定' }}
           </button>
         </div>

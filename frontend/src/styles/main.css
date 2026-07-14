@@ -990,39 +990,59 @@ textarea.input {
   overflow: visible;
 }
 
-/* ── Wide row layout: >=1280px ─────────────────────────────────────────── */
-@media (min-width: 1280px) {
-  .three-col {
-    flex-direction: row;
-    height: calc(100dvh - var(--topbar-height));
-  }
+.three-col-center { order: 1; background: var(--color-surface); }
+.three-col-left { order: 2; background: var(--color-surface-muted); }
+.three-col-right { order: 3; background: var(--color-surface-muted); }
 
-  .three-col-left {
-    width: clamp(220px, 20vw, 280px);
-    flex-shrink: 0;
-    border-right: 1px solid var(--color-border);
-    background: var(--color-surface-muted);
-    overflow-y: auto;
+/* ── Medium review layout: primary report + auxiliary rail ─────────────── */
+@media (min-width: 1024px) and (max-width: 1535px) {
+  .three-col {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    align-items: start;
   }
 
   .three-col-center {
-    flex: 1;
+    grid-column: 1;
+    grid-row: 1 / span 2;
     min-width: 0;
-    overflow-y: auto;
+    padding: 24px;
   }
 
   .three-col-right {
-    width: clamp(300px, 27vw, 380px);
-    flex-shrink: 0;
+    grid-column: 2;
+    grid-row: 1;
     border-left: 1px solid var(--color-border);
-    background: var(--color-surface-muted);
-    overflow-y: auto;
   }
+
+  .three-col-left {
+    grid-column: 2;
+    grid-row: 2;
+    border-left: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+/* ── Full review layout: >=1536px ──────────────────────────────────────── */
+@media (min-width: 1536px) {
+  .three-col {
+    display: grid;
+    grid-template-columns: clamp(220px, 16vw, 240px) minmax(640px, 1fr) clamp(300px, 21vw, 320px);
+    height: calc(100dvh - var(--topbar-height));
+  }
+
+  .three-col-left,
+  .three-col-center,
+  .three-col-right { order: initial; overflow-y: auto; }
+
+  .three-col-left { border-right: 1px solid var(--color-border); }
+  .three-col-center { min-width: 0; padding: 24px 28px; }
+  .three-col-right { border-left: 1px solid var(--color-border); }
 }
 
 /* Below 1280px: clear any inherited fixed height / independent scroll
    so the page scrolls naturally */
-@media (max-width: 1279px) {
+@media (max-width: 1023px) {
   .three-col {
     height: auto;
   }

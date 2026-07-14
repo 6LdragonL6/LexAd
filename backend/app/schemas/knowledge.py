@@ -26,3 +26,8 @@ class TemplateItem(BaseModel):
     category: str
     original: str
     replacement: str
+
+
+class IndustryOption(BaseModel):
+    value: str
+    label: str

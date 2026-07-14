@@ -1,5 +1,5 @@
 import client from './client'
-import type { Material, MaterialVersion, PreviewTextResponse } from '@/types'
+import type { Material, MaterialVersion, PreviewTextResponse, Review } from '@/types'
 
 export const materialsApi = {
   submit: (formData: FormData) =>
@@ -19,6 +19,8 @@ export const materialsApi = {
   get: (id: string) => client.get<Material>(`/materials/${id}`),
   update: (id: string, data: Record<string, any>) =>
     client.put<Material>(`/materials/${id}`, data),
+  resubmit: (id: string, data: Record<string, any>) =>
+    client.post<Review>(`/materials/${id}/resubmit`, data),
   versions: (id: string) =>
     client.get<{ versions: MaterialVersion[] }>(`/materials/${id}/versions`),
   archive: (id: string) =>
