@@ -33,7 +33,7 @@ def explain_public_opinion_risk(
     material_text: str,
     deterministic_hits: list[dict[str, Any]],
     similar_events: list[dict[str, Any]],
-    trigger_word_hits: list[dict[str, Any]],
+    trigger_word_hits: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     try:
         return deepseek_gateway.explain_public_opinion_risk(

@@ -131,7 +131,7 @@ def explain_public_opinion_risk(
     material_text: str,
     deterministic_hits: list[dict[str, Any]],
     similar_events: list[dict[str, Any]],
-    trigger_word_hits: list[dict[str, Any]],
+    trigger_word_hits: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     result = _request_json(
         db=db,
@@ -155,7 +155,7 @@ def explain_public_opinion_risk(
             "material_text": _normalize_text(material_text, 20000),
             "deterministic_hits": deterministic_hits[:20],
             "similar_events": similar_events[:10],
-            "trigger_word_hits": trigger_word_hits[:30],
+            "trigger_word_hits": (trigger_word_hits or [])[:30],
             "required_risk_levels": ["low", "medium", "high", "severe", "uncertain"],
             "risk_score_range": [0, 100],
         },

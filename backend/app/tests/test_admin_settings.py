@@ -193,6 +193,43 @@ def test_public_opinion_business_request_contains_json_contract_and_trigger_evid
     assert request_payload["trigger_word_hits"][0]["matched_word"] == "毒打"
 
 
+def test_public_opinion_business_request_accepts_legacy_call_without_trigger_evidence(monkeypatch):
+    captured = {}
+
+    class FakeCompletions:
+        def create(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(
+                    finish_reason="stop",
+                    message=SimpleNamespace(content=(
+                        '{"risk_level":"low","risk_score":10,"risk_topics":[],'
+                        '"affected_groups":[],"propagation_drivers":[],"evidence_quotes":[],'
+                        '"counter_signals":[],"suggestions":[],"explanation":"低风险",'
+                        '"confidence":70,"matched_case_ids":[]}'
+                    )),
+                )]
+            )
+
+    class FakeClient:
+        def __init__(self, **_kwargs):
+            self.chat = SimpleNamespace(completions=FakeCompletions())
+
+    monkeypatch.setattr(deepseek_gateway, "OpenAI", FakeClient)
+    monkeypatch.setattr(deepseek_gateway, "get_api_key", lambda _db: "unit-test-key")
+
+    result = deepseek_gateway.explain_public_opinion_risk(
+        object(),
+        material_text="普通商品文案",
+        deterministic_hits=[],
+        similar_events=[],
+    )
+
+    assert result["risk_level"] == "low"
+    request_payload = __import__("json").loads(captured["messages"][1]["content"])
+    assert request_payload["trigger_word_hits"] == []
+
+
 def test_test_endpoint_prefers_candidate_key_without_saving(monkeypatch):
     factory = _session_factory()
     db = factory()

@@ -13,6 +13,7 @@ from app.services.public_opinion_case_service import (
     normalize_public_opinion_payload,
     sync_case_file,
 )
+from app.scripts import import_sentiment_cases as import_script
 
 
 def _session_factory():
@@ -72,3 +73,15 @@ def test_builtin_case_sync_is_idempotent_and_creates_one_taoli_event():
         assert db.query(PublicOpinionLibraryVersion).count() == 1
     finally:
         db.close()
+
+
+def test_cli_import_function_preserves_legacy_signature_and_return_shape(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    admin = _admin(db)
+    db.close()
+    monkeypatch.setattr(import_script, "SessionLocal", factory)
+
+    result = import_script.import_sentiment_cases(str(BUILTIN_CASES_PATH), admin.id)
+
+    assert result == {"created": 33, "updated": 0, "skipped": 0}

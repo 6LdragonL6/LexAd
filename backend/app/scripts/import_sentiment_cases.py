@@ -26,7 +26,9 @@ def import_sentiment_cases(input_path: str, admin_id: str) -> dict:
             raise ValueError(f"Admin user not found: {admin_id}")
         result = sync_case_file(db, actor, path, import_source="cli_sentiment_cases")
         db.commit()
-        return result
+        # Preserve the pre-v0.6.3 programmatic return contract. The shared
+        # synchronizer keeps its richer internal result for application code.
+        return {key: int(result.get(key, 0)) for key in ("created", "updated", "skipped")}
     except Exception:
         db.rollback()
         raise
@@ -40,22 +42,25 @@ def main() -> None:
     parser.add_argument("--admin-id", default=None, help="Admin user ID (defaults to first admin)")
     args = parser.parse_args()
 
-    if not args.admin_id:
-        db = SessionLocal()
-        try:
-            admin = db.query(User).filter(User.role == UserRole.admin).order_by(User.created_at.asc()).first()
-            if not admin:
-                raise ValueError("No admin user found")
-            args.admin_id = admin.id
-        finally:
-            db.close()
+    try:
+        if not args.admin_id:
+            db = SessionLocal()
+            try:
+                admin = db.query(User).filter(User.role == UserRole.admin).order_by(User.created_at.asc()).first()
+                if not admin:
+                    raise ValueError("No admin user found")
+                args.admin_id = admin.id
+            finally:
+                db.close()
 
-    result = import_sentiment_cases(args.input, args.admin_id)
-    print(
-        "Import complete: "
-        f"{result['created']} created, {result['updated']} updated, {result['skipped']} skipped; "
-        f"canonical cases={result['canonical_count']}."
-    )
+        result = import_sentiment_cases(args.input, args.admin_id)
+        print(
+            "Import complete: "
+            f"{result['created']} created, {result['updated']} updated, {result['skipped']} skipped."
+        )
+    except (FileNotFoundError, ValueError) as exc:
+        print(f"ERROR: {exc}")
+        raise SystemExit(1) from None
 
 
 if __name__ == "__main__":
