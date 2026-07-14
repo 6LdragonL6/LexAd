@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, require_legal_or_admin
 from app.db.session import get_db
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.schemas.brand import BrandCreate, BrandUpdate, BrandCreateResponse, BrandProfile, BrandOut
 from app.services import brand_service
 
@@ -16,7 +16,7 @@ def list_brands(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    return brand_service.search_brands(db, search)
+    return brand_service.search_brands(db, search, include_archived=user.role == UserRole.admin)
 
 
 @router.post("", response_model=BrandCreateResponse, status_code=201)
@@ -26,7 +26,12 @@ def create_brand(
     user: User = Depends(get_current_user),
 ):
     try:
-        existing = brand_service.find_by_normalized_name(db, body.name)
+        existing = brand_service.find_by_normalized_name(db, body.name, include_deleted=True)
+        if existing and existing.deleted_at is not None:
+            raise HTTPException(
+                status_code=409,
+                detail="同名品牌位于回收站，请先恢复或永久删除",
+            )
         if existing and existing.status.value == "archived":
             raise HTTPException(
                 status_code=409,

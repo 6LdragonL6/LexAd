@@ -1,6 +1,6 @@
 [project]
 name = "lexad-backend"
-version = "0.6.1"
+version = "0.6.2"
 description = "LexAd advertising compliance review platform — backend"
 requires-python = ">=3.10"
 dependencies = [
@@ -12,6 +12,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
     "python-jose[cryptography]>=3.3.0",
+    "cryptography>=42.0.0",
     "python-multipart>=0.0.9",
     "aiofiles>=23.0.0",
     "pytesseract>=0.3.10",

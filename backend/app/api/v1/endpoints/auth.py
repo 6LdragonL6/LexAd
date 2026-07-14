@@ -12,9 +12,9 @@ router = APIRouter()
 def login(body: LoginRequest, db: Session = Depends(get_db)):
     user = authenticate_user(db, body.username, body.password)
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="账户或密码错误")
     token = create_user_token(user)
-    return TokenResponse(access_token=token)
+    return TokenResponse(access_token=token, user=UserOut.model_validate(user))
 
 @router.get("/me", response_model=UserOut)
 def me(current_user: User = Depends(get_current_user)):

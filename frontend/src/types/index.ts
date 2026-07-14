@@ -195,3 +195,37 @@ export interface BrandProfile {
   recent_reviews: { id: string; version: number; ai_risk_score: number; legal_decision: string | null; created_at: string }[]
   approved_materials: { id: string; name: string; raw_text_preview: string }[]
 }
+
+export interface AiConfigStatus {
+  configured: boolean
+  provider: string
+  base_url: string
+  model: string
+  masked_key: string
+  source: 'database' | 'environment' | 'none'
+  validation_status: string
+  last_error: string
+  updated_at: string | null
+  validated_at: string | null
+  updated_by_id: string | null
+}
+
+export type RecycleTargetType = 'material' | 'brand' | 'public_opinion_event' | 'platform_rule_set'
+
+export interface RecycleBinEntry {
+  id: string
+  target_type: RecycleTargetType
+  target_id: string
+  display_name: string
+  deleted_by_id: string
+  deleted_at: string
+  purge_after: string
+  remaining_days: number
+}
+
+export interface RecycleBinList {
+  items: RecycleBinEntry[]
+  total: number
+  page: number
+  page_size: number
+}

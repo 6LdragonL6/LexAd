@@ -176,7 +176,7 @@ def test_review_task_snapshots_platform_rule_versions(monkeypatch):
     _seed_user_material_and_platform_rule(factory)
     monkeypatch.setattr(review_service, "SessionLocal", factory)
 
-    def fake_semantic_review(_text, _industry):
+    def fake_semantic_review(_text, _industry, _db):
         return LayerResult(layer="语义推理", matched_rules=[], explanations=[])
 
     import app.engine.layer2_semantic as layer2_semantic

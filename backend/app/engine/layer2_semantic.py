@@ -1,9 +1,13 @@
 import json
 from pathlib import Path
-from openai import OpenAI
+
+from sqlalchemy.orm import Session
+
 from app.core.config import get_settings
 from app.engine.industry import format_industries, split_industries
-from app.schemas.review import MatchedRule, LayerResult
+from app.schemas.review import LayerResult, MatchedRule
+from app.services.deepseek_gateway import DeepSeekGatewayError, semantic_review
+
 
 settings = get_settings()
 KNOWLEDGE_DIR = Path(settings.KNOWLEDGE_DIR)
@@ -22,8 +26,7 @@ def _load_law_provisions(industry: str) -> str:
         for law in laws[:3]:
             law_path = KNOWLEDGE_DIR / law["path"]
             if law_path.exists():
-                text = law_path.read_text(encoding="utf-8")[:3000]
-                parts.append(f"【{law['title']}】\n{text}")
+                parts.append(f"【{law['title']}】\n{law_path.read_text(encoding='utf-8')[:3000]}")
 
     for industry_name in split_industries(industry):
         industry_dir = KNOWLEDGE_DIR / "L2_industry" / industry_name
@@ -31,94 +34,53 @@ def _load_law_provisions(industry: str) -> str:
             for rule_file in sorted(industry_dir.glob("*.txt"))[:3]:
                 text = rule_file.read_text(encoding="utf-8")[:2000]
                 parts.append(f"【行业规则·{industry_name}·{rule_file.stem}】\n{text}")
-
     return "\n\n".join(parts)
 
 
 def _search_similar_cases(text: str) -> list[dict]:
     try:
         import chromadb
+
         client = chromadb.PersistentClient(path=settings.CHROMA_PERSIST_DIR)
         collection = client.get_collection("ad_cases")
         results = collection.query(query_texts=[text], n_results=5)
-        cases = []
-        for i, doc_id in enumerate(results["ids"][0]):
-            cases.append({
+        return [
+            {
                 "id": doc_id,
-                "title": results["metadatas"][0][i].get("title", ""),
-                "text": results["documents"][0][i][:500],
-            })
-        return cases
+                "title": results["metadatas"][0][index].get("title", ""),
+                "text": results["documents"][0][index][:500],
+            }
+            for index, doc_id in enumerate(results["ids"][0])
+        ]
     except Exception:
         return []
 
 
-def run_semantic_review(text: str, industry: str) -> LayerResult:
+def run_semantic_review(text: str, industry: str, db: Session) -> LayerResult:
     industry_label = format_industries(industry) or "通用"
-    legal_basis = _load_law_provisions(industry)
-    similar_cases = _search_similar_cases(text)
-
-    cases_text = "\n".join(
-        f"案例{i+1}: {c['title']}\n{c['text']}" for i, c in enumerate(similar_cases)
-    )
-
-    system_prompt = f"""你是广告合规审查专家，依据以下法律法规审查广告文案。
-LEGAL_BASIS:
-{legal_basis}
-
-SIMILAR_CASES:
-{cases_text}
-
-审查要求：
-1. 识别广告文案中违反上述法律法规的表述
-2. 即使没有明确违禁词，也需判断是否存在语义上的违规（如暗示、误导、夸大）
-3. 对每项违规给出法律依据和案例参考
-
-输出严格JSON格式：
-{{"violations": [{{"text": "违规原文", "reason": "违规原因", "law_ref": "法律依据", "risk_level": "high/medium/low", "suggestion": "修改建议"}}], "overall_assessment": "整体评估"}}"""
-
     try:
-        if not settings.DEEPSEEK_API_KEY.strip():
-            raise SemanticReviewError("DeepSeek API key is not configured")
-        client = OpenAI(
-            api_key=settings.DEEPSEEK_API_KEY,
-            base_url=settings.DEEPSEEK_BASE_URL,
+        result = semantic_review(
+            db,
+            material_text=text,
+            industry=industry_label,
+            legal_basis=_load_law_provisions(industry),
+            similar_cases=_search_similar_cases(text),
         )
-        response = client.chat.completions.create(
-            model=settings.DEEPSEEK_MODEL,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"请审查以下{industry_label}行业广告文案:\n\n{text}"},
-            ],
-            temperature=0.1,
-            max_tokens=2048,
+    except DeepSeekGatewayError as exc:
+        raise SemanticReviewError(str(exc)) from exc
+
+    matched = [
+        MatchedRule(
+            rule_id=f"L2-{hash(violation.text) & 0xFFFFFFFF:08x}",
+            rule_text=violation.text,
+            source_law=violation.law_ref,
+            match_type=violation.risk_level,
+            suggestion=violation.suggestion,
         )
-        content = response.choices[0].message.content
-        if not content:
-            raise SemanticReviewError("DeepSeek returned an empty response")
-        normalized = content.strip()
-        if normalized.startswith("```"):
-            normalized = normalized.removeprefix("```json").removeprefix("```")
-            normalized = normalized.removesuffix("```").strip()
-        result = json.loads(normalized)
-        if not isinstance(result, dict):
-            raise SemanticReviewError("DeepSeek returned an invalid result")
-    except SemanticReviewError:
-        raise
-    except Exception as e:
-        raise SemanticReviewError(f"DeepSeek semantic review failed: {str(e)[:200]}") from e
-
-    matched = []
-    for v in result.get("violations", []):
-        matched.append(MatchedRule(
-            rule_id=f"L2-{hash(v['text']) & 0xFFFFFFFF:08x}",
-            rule_text=v["text"],
-            source_law=v.get("law_ref", ""),
-            match_type=v.get("risk_level", "medium"),
-        ))
-
+        for violation in result.violations
+    ]
     return LayerResult(
         layer="第二层·语义推理",
         matched_rules=matched,
-        explanations=[result.get("overall_assessment", "")] if result.get("overall_assessment") else [],
+        explanations=[result.overall_assessment] if result.overall_assessment else [],
     )

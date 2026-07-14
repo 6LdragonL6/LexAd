@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     # ── 应用基础 ────────────────────────────────────────────────────────────
     APP_ENV: Literal["development", "staging", "production"] = "development"  # 运行环境
     APP_NAME: str = "LexAd"  # 应用名称
-    APP_VERSION: str = "0.6.1"  # 应用版本
+    APP_VERSION: str = "0.6.2"  # 应用版本
     DEBUG: bool = False  # 调试模式开关
 
     # ── 服务器 ─────────────────────────────────────────────────────────────
@@ -48,8 +48,6 @@ class Settings(BaseSettings):
 
     # ── DeepSeek AI ───────────────────────────────────────────────────────
     DEEPSEEK_API_KEY: str = ""  # DeepSeek API 密钥
-    DEEPSEEK_BASE_URL: str = "https://api.deepseek.com"  # DeepSeek 接口地址
-    DEEPSEEK_MODEL: str = "deepseek-chat"  # 默认模型
 
     # ── 文件上传 ──────────────────────────────────────────────────────────
     MAX_UPLOAD_SIZE_MB: int = 10  # 上传文件大小上限

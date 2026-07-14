@@ -38,13 +38,16 @@ def _merge_texts(extracted: str, form_text: str) -> str:
 
 
 def get_material(db: Session, material_id: str) -> Material | None:
-    return db.query(Material).filter(Material.id == material_id).first()
+    return db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
 
 
 def list_materials(db: Session, user: User) -> list[Material]:
-    query = db.query(Material).filter(Material.status != MaterialStatus.archived)
+    query = db.query(Material).filter(Material.deleted_at.is_(None))
     if user.role == UserRole.marketing:
-        query = query.filter(Material.submitter_id == user.id)
+        query = query.filter(
+            Material.submitter_id == user.id,
+            Material.status != MaterialStatus.archived,
+        )
     elif user.role == UserRole.legal:
         query = query.filter(
             Material.status.in_(
@@ -61,7 +64,7 @@ def list_materials(db: Session, user: User) -> list[Material]:
 
 
 def update_material(db: Session, material_id: str, data: MaterialUpdate) -> Material | None:
-    material = db.query(Material).filter(Material.id == material_id).first()
+    material = db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
     if not material:
         return None
 

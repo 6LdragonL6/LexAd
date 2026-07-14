@@ -24,20 +24,21 @@ def _normalize(name: str) -> str:
     return re.sub(r"\s+", "", name.strip()).lower()
 
 
-def search_brands(db: Session, query: str = "") -> list[Brand]:
+def search_brands(db: Session, query: str = "", *, include_archived: bool = False) -> list[Brand]:
     q = query.strip()
+    base_query = db.query(Brand).filter(Brand.deleted_at.is_(None))
+    if not include_archived:
+        base_query = base_query.filter(Brand.status == BrandStatus.active)
     if not q:
         return (
-            db.query(Brand)
-            .filter(Brand.status == BrandStatus.active)
+            base_query
             .order_by(Brand.name)
             .limit(50)
             .all()
         )
     normalized = _normalize(q)
     results = (
-        db.query(Brand)
-        .filter(Brand.status == BrandStatus.active)
+        base_query
         .order_by(Brand.name)
         .all()
     )
@@ -54,12 +55,12 @@ def search_brands(db: Session, query: str = "") -> list[Brand]:
     return matched[:50]
 
 
-def find_by_normalized_name(db: Session, name: str) -> Brand | None:
+def find_by_normalized_name(db: Session, name: str, *, include_deleted: bool = False) -> Brand | None:
     normalized = _normalize(name)
-    candidates = (
-        db.query(Brand)
-        .all()
-    )
+    query = db.query(Brand)
+    if not include_deleted:
+        query = query.filter(Brand.deleted_at.is_(None))
+    candidates = query.all()
     for brand in candidates:
         if _normalize(brand.name) == normalized:
             return brand
@@ -102,11 +103,11 @@ def create_brand(db: Session, data: BrandCreate, user_id: str) -> BrandCreateRes
 
 
 def get_brand(db: Session, brand_id: str) -> Brand | None:
-    return db.query(Brand).filter(Brand.id == brand_id).first()
+    return db.query(Brand).filter(Brand.id == brand_id, Brand.deleted_at.is_(None)).first()
 
 
 def update_brand(db: Session, brand_id: str, data: BrandUpdate) -> Brand:
-    brand = db.query(Brand).filter(Brand.id == brand_id).first()
+    brand = db.query(Brand).filter(Brand.id == brand_id, Brand.deleted_at.is_(None)).first()
     if not brand:
         raise ValueError("Brand not found")
 
@@ -143,11 +144,11 @@ def _raw_text_preview(text: str, max_len: int = 100) -> str:
 
 
 def get_brand_profile(db: Session, brand_id: str) -> BrandProfile:
-    brand = db.query(Brand).filter(Brand.id == brand_id).first()
+    brand = db.query(Brand).filter(Brand.id == brand_id, Brand.deleted_at.is_(None)).first()
     if not brand:
         raise ValueError("Brand not found")
 
-    materials = db.query(Material).filter(Material.brand_id == brand_id).all()
+    materials = db.query(Material).filter(Material.brand_id == brand_id, Material.deleted_at.is_(None)).all()
     material_ids = [m.id for m in materials]
     total_materials = len(materials)
 

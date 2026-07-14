@@ -1,6 +1,6 @@
 # LexAd 本地开发指南
 
-本文说明如何在 Windows 和 macOS 上运行 LexAd。当前版本为 `v0.6.1`。
+本文说明如何在 Windows 和 macOS 上运行 LexAd。当前版本为 `v0.6.2`。
 
 ## 环境要求
 

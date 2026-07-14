@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { brandsApi } from '@/api/brands'
+import { adminSettingsApi } from '@/api/adminSettings'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import BrandProfilePanel from '@/components/brand/BrandProfilePanel.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
@@ -192,6 +193,25 @@ async function handleReactivate() {
     saving.value = false
   }
 }
+
+async function handleAdminDelete() {
+  if (!selectedBrand.value) return
+  if (!confirm(`将品牌「${selectedBrand.value.name}」移入回收站？历史物料不会被删除。`)) return
+  saving.value = true
+  saveError.value = ''
+  try {
+    const brandId = selectedBrand.value.id
+    await adminSettingsApi.moveToRecycleBin('brand', brandId)
+    brands.value = brands.value.filter(brand => brand.id !== brandId)
+    selectedBrand.value = null
+    profile.value = null
+    if (!brands.value.length) listState.value = 'empty'
+  } catch (e: any) {
+    saveError.value = e.response?.data?.detail || '删除失败'
+  } finally {
+    saving.value = false
+  }
+}
 </script>
 
 <template>
@@ -255,6 +275,7 @@ async function handleReactivate() {
               <h3 class="font-semibold text-gray-800 dark:text-gray-200">管理操作</h3>
               <div class="flex gap-2">
                 <button class="btn-outline text-sm min-h-[36px] px-3" @click="openEdit" :disabled="saving">编辑</button>
+                <button v-if="store.isAdmin" class="btn-ghost text-sm min-h-[36px] px-3 text-red-600 hover:bg-red-50" @click="handleAdminDelete" :disabled="saving">删除</button>
                 <button
                   v-if="selectedBrand.status === 'active'"
                   class="btn-ghost text-sm min-h-[36px] px-3 text-red-600 hover:bg-red-50"

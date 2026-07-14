@@ -11,13 +11,16 @@ const error = ref('')
 const loading = ref(false)
 
 async function handleLogin() {
+  if (loading.value) return
   error.value = ''
   loading.value = true
   try {
     await store.login(username.value, password.value)
-    router.push('/')
+    await router.replace('/')
   } catch (e: any) {
-    error.value = e.response?.data?.detail || '登录失败'
+    if (e.code === 'ECONNABORTED') error.value = '登录请求超时，请检查网络后重试'
+    else if (!e.response) error.value = '暂时无法连接服务器，请稍后重试'
+    else error.value = e.response?.data?.detail || '登录失败，请稍后重试'
   } finally {
     loading.value = false
   }

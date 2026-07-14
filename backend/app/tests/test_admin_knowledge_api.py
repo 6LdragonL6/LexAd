@@ -67,6 +67,8 @@ def test_admin_required_for_knowledge_center():
     try:
         response = client.get("/api/v1/admin/knowledge/public-opinion/events")
         assert response.status_code == 403
+        assert client.get("/api/v1/admin/settings/ai").status_code == 403
+        assert client.get("/api/v1/admin/settings/recycle-bin").status_code == 403
     finally:
         _clear_overrides()
 
@@ -96,9 +98,6 @@ def test_public_opinion_event_lifecycle_and_audit_logs():
         assert published.status_code == 200
         assert published.json()["status"] == "published"
 
-        cannot_delete = client.delete(f"/api/v1/admin/knowledge/public-opinion/events/{event_id}")
-        assert cannot_delete.status_code == 400
-
         archived = client.post(f"/api/v1/admin/knowledge/public-opinion/events/{event_id}/archive")
         assert archived.status_code == 200
         assert archived.json()["status"] == "archived"
@@ -111,12 +110,21 @@ def test_public_opinion_event_lifecycle_and_audit_logs():
         assert detail.status_code == 200
         assert len(detail.json()["versions"]) == 1
 
+        deleted = client.delete(f"/api/v1/admin/knowledge/public-opinion/events/{event_id}")
+        assert deleted.status_code == 204
+        assert client.get(f"/api/v1/admin/knowledge/public-opinion/events/{event_id}").status_code == 404
+
+        recycle_bin = client.get("/api/v1/admin/settings/recycle-bin?target_type=public_opinion_event")
+        assert recycle_bin.status_code == 200
+        assert recycle_bin.json()["items"][0]["target_id"] == event_id
+
         logs = client.get("/api/v1/admin/knowledge/audit-logs?target_type=public_opinion_event")
         assert logs.status_code == 200
         actions = [item["action"] for item in logs.json()]
         assert "public_opinion.publish" in actions
         assert "public_opinion.archive" in actions
         assert "public_opinion.restore" in actions
+        assert "recycle_bin.delete" in actions
     finally:
         _clear_overrides()
 

@@ -16,10 +16,17 @@ def run_review_pipeline(
     l1_result.status = "matched" if l1_result.matched_rules else "no_match"
 
     # L2: semantic review with the shared DeepSeek-compatible model service
-    from app.engine.layer2_semantic import run_semantic_review
+    from app.engine.layer2_semantic import SemanticReviewError, run_semantic_review
 
-    l2_result = run_semantic_review(raw_text, industry)
-    l2_result.status = "matched" if l2_result.matched_rules else "no_match"
+    try:
+        l2_result = run_semantic_review(raw_text, industry, db)
+        l2_result.status = "matched" if l2_result.matched_rules else "no_match"
+    except SemanticReviewError as exc:
+        l2_result = LayerResult(
+            layer="第二层·语义推理",
+            status="unavailable",
+            explanations=[str(exc)[:200] or "语义模型暂不可用，已继续执行确定性规则检查"],
+        )
 
     # L3: evidence check
     evidence_patterns = [

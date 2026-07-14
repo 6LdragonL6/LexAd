@@ -18,7 +18,7 @@ def trigger_ai_review(
     user: User = Depends(require_marketing),
 ):
     try:
-        material = db.query(Material).filter(Material.id == body.material_id).first()
+        material = db.query(Material).filter(Material.id == body.material_id, Material.deleted_at.is_(None)).first()
         if not material:
             raise ValueError("Material not found")
         if user.role.value != "admin" and material.submitter_id != user.id:
@@ -38,7 +38,7 @@ def get_queue(db: Session = Depends(get_db), user: User = Depends(get_current_us
 
 @router.get("/by-material/{material_id}", response_model=ReviewOut)
 def get_review_by_material(material_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    material = db.query(Material).filter(Material.id == material_id).first()
+    material = db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
     ensure_material_visible(user, material)
@@ -53,7 +53,7 @@ def get_review(review_id: str, db: Session = Depends(get_db), user: User = Depen
     review = review_service.get_review(db, review_id)
     if not review:
         raise HTTPException(status_code=404, detail="Review not found")
-    material = db.query(Material).filter(Material.id == review.material_id).first()
+    material = db.query(Material).filter(Material.id == review.material_id, Material.deleted_at.is_(None)).first()
     if not material:
         raise HTTPException(status_code=404, detail="Material not found")
     ensure_material_visible(user, material)

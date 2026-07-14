@@ -33,7 +33,7 @@ def list_public_opinion_events(
     status: str | None = None,
     keyword: str | None = None,
 ) -> tuple[list[PublicOpinionEvent], int]:
-    query = db.query(PublicOpinionEvent)
+    query = db.query(PublicOpinionEvent).filter(PublicOpinionEvent.deleted_at.is_(None))
     if status:
         query = query.filter(PublicOpinionEvent.status == PublicOpinionEventStatus(status))
     if keyword:
@@ -74,7 +74,10 @@ def create_public_opinion_event(
 
 
 def get_public_opinion_event(db: Session, event_id: str) -> PublicOpinionEvent | None:
-    return db.query(PublicOpinionEvent).filter(PublicOpinionEvent.id == event_id).first()
+    return db.query(PublicOpinionEvent).filter(
+        PublicOpinionEvent.id == event_id,
+        PublicOpinionEvent.deleted_at.is_(None),
+    ).first()
 
 
 def get_public_opinion_event_versions(db: Session, event_id: str) -> list[PublicOpinionEventVersion]:
@@ -125,7 +128,7 @@ def structure_public_opinion_event(
     event.transition_to(PublicOpinionEventStatus.pending_review)
     event.updated_by_id = actor.id
     version_number = _next_event_version(db, event.id)
-    structured, model_name, model_version, confidence, edit_notes = _structure_case_with_model_fallback(event)
+    structured, model_name, model_version, confidence, edit_notes = _structure_case_with_model_fallback(db, event)
     version = PublicOpinionEventVersion(
         event_id=event.id,
         version=version_number,
@@ -228,16 +231,15 @@ def restore_public_opinion_event(
 
 
 def delete_public_opinion_draft(db: Session, event: PublicOpinionEvent, actor: User) -> None:
-    if not event.can_delete():
-        raise ValueError("已发布或待复核事件不能物理删除，请使用归档")
-    before = _event_state(event)
-    db.delete(event)
-    _audit(db, actor, "public_opinion.delete_draft", "public_opinion_event", event.id, before=before)
-    db.commit()
+    from app.services.recycle_bin_service import move_to_recycle_bin
+
+    move_to_recycle_bin(db, "public_opinion_event", event.id, actor)
 
 
 def list_platform_rule_sets(db: Session) -> list[dict[str, Any]]:
-    rule_sets = db.query(PlatformRuleSet).order_by(PlatformRuleSet.platform_name.asc()).all()
+    rule_sets = db.query(PlatformRuleSet).filter(
+        PlatformRuleSet.deleted_at.is_(None)
+    ).order_by(PlatformRuleSet.platform_name.asc()).all()
     results = []
     for rule_set in rule_sets:
         versions = get_platform_rule_versions(db, rule_set.id)
@@ -249,6 +251,8 @@ def list_platform_rule_sets(db: Session) -> list[dict[str, Any]]:
 def create_platform_rule_set(db: Session, data: PlatformRuleSetCreate, actor: User) -> PlatformRuleSet:
     existing = db.query(PlatformRuleSet).filter(PlatformRuleSet.platform_name == data.platform_name).first()
     if existing:
+        if existing.deleted_at is not None:
+            raise ValueError("同名平台规则集位于回收站，请先恢复或永久删除")
         raise ValueError("平台规则集已存在")
     rule_set = PlatformRuleSet(
         platform_name=data.platform_name,
@@ -281,7 +285,10 @@ def update_platform_rule_set(
 
 
 def get_platform_rule_set(db: Session, rule_set_id: str) -> PlatformRuleSet | None:
-    return db.query(PlatformRuleSet).filter(PlatformRuleSet.id == rule_set_id).first()
+    return db.query(PlatformRuleSet).filter(
+        PlatformRuleSet.id == rule_set_id,
+        PlatformRuleSet.deleted_at.is_(None),
+    ).first()
 
 
 def get_platform_rule_versions(db: Session, rule_set_id: str) -> list[PlatformRuleVersion]:
@@ -445,6 +452,9 @@ def confirm_public_opinion_import(
             else None
         )
         if existing:
+            if existing.deleted_at is not None:
+                skipped_external_ids.append(external_id)
+                continue
             action = data.duplicate_actions.get(external_id, "skip")
             if action == "skip":
                 skipped_external_ids.append(external_id)
@@ -562,7 +572,10 @@ def _ensure_external_id_available(db: Session, external_id: str, exclude_event_i
     query = db.query(PublicOpinionEvent).filter(PublicOpinionEvent.external_id == external_id)
     if exclude_event_id:
         query = query.filter(PublicOpinionEvent.id != exclude_event_id)
-    if query.first():
+    existing = query.first()
+    if existing and existing.deleted_at is not None:
+        raise ValueError("external_id 对应案例位于回收站，请先恢复或永久删除")
+    if existing:
         raise ValueError("external_id 已存在，请选择更新或跳过该事件")
 
 
@@ -581,7 +594,10 @@ def _create_public_opinion_library_version(db: Session, actor: User) -> PublicOp
         row[0]
         for row in (
             db.query(PublicOpinionEvent.id)
-            .filter(PublicOpinionEvent.status == PublicOpinionEventStatus.published)
+            .filter(
+                PublicOpinionEvent.status == PublicOpinionEventStatus.published,
+                PublicOpinionEvent.deleted_at.is_(None),
+            )
             .order_by(PublicOpinionEvent.updated_at.asc())
             .all()
         )
@@ -633,9 +649,13 @@ def _summarize_title(text: str) -> str:
     return compact[:60] if compact else "未命名舆情事件"
 
 
-def _structure_case_with_model_fallback(event: PublicOpinionEvent) -> tuple[dict[str, Any], str, str, int, str]:
+def _structure_case_with_model_fallback(
+    db: Session,
+    event: PublicOpinionEvent,
+) -> tuple[dict[str, Any], str, str, int, str]:
     try:
         structured = model_service.structure_public_opinion_case(
+            db=db,
             title=event.title,
             source_text=event.source_text,
             consequence_text=event.consequence_text,
@@ -644,7 +664,7 @@ def _structure_case_with_model_fallback(event: PublicOpinionEvent) -> tuple[dict
         return (
             structured,
             "deepseek",
-            "shared-model-service",
+            "deepseek-v4-flash",
             confidence if isinstance(confidence, int) else 0,
             "由统一模型服务整理，管理员仍需人工复核。",
         )

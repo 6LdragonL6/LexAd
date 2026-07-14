@@ -46,7 +46,9 @@ def list_platform_options(db: Session = Depends(get_db)):
     """Return platform choices backed by a rule version effective right now."""
     now = datetime.now(timezone.utc)
     items = []
-    for rule_set in db.query(PlatformRuleSet).order_by(PlatformRuleSet.display_name.asc()).all():
+    for rule_set in db.query(PlatformRuleSet).filter(
+        PlatformRuleSet.deleted_at.is_(None)
+    ).order_by(PlatformRuleSet.display_name.asc()).all():
         versions = (
             db.query(PlatformRuleVersion)
             .filter(

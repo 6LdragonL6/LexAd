@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
+import { adminSettingsApi } from '@/api/adminSettings'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import { selectComplianceTip, type ComplianceTip } from '@/data/complianceTips'
@@ -74,6 +75,20 @@ async function handleArchive(material: Material) {
     materials.value = materials.value.filter(m => m.id !== material.id)
   } catch (e: any) {
     alert(e.response?.data?.detail || '归档失败')
+  } finally {
+    archiving.value[material.id] = false
+  }
+}
+
+async function handleAdminDelete(material: Material) {
+  if (!confirm(`将物料「${material.name}」及其审核记录移入回收站？15 天内可恢复。`)) return
+  archiving.value[material.id] = true
+  try {
+    await adminSettingsApi.moveToRecycleBin('material', material.id)
+    materials.value = materials.value.filter(item => item.id !== material.id)
+    queue.value = queue.value.filter(item => item.material_id !== material.id)
+  } catch (e: any) {
+    alert(e.response?.data?.detail || '删除失败')
   } finally {
     archiving.value[material.id] = false
   }
@@ -188,6 +203,7 @@ async function handleArchive(material: Material) {
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <StatusBadge :variant="statusVariant(m.status)">{{ statusLabel(m.status) }}</StatusBadge>
+              <button v-if="store.isAdmin" class="text-xs text-red-600 hover:underline" :disabled="archiving[m.id]" @click="handleAdminDelete(m)">删除</button>
             </div>
             <div v-if="store.isMarketing && m.status === 'returned'" class="flex flex-wrap gap-2 items-center text-xs w-full sm:w-auto">
               <span class="text-orange-600 break-words">

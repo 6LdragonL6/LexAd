@@ -1,6 +1,6 @@
 # LexAd 技术参考
 
-本文承接首页 README 中不适合展开的技术细节。当前版本为 `v0.6.1`。
+本文承接首页 README 中不适合展开的技术细节。当前版本为 `v0.6.2`。
 
 ## 目录结构
 
@@ -8,7 +8,7 @@
 LexAd/
 ├── backend/                         FastAPI 应用
 │   ├── app/
-│   │   ├── api/v1/endpoints/         auth, materials, reviews, brands, knowledge, admin_knowledge
+│   │   ├── api/v1/endpoints/         auth, materials, reviews, brands, knowledge, admin endpoints
 │   │   ├── core/                     配置、安全、日志、异常
 │   │   ├── db/                       数据库会话、模型基类、种子数据
 │   │   ├── engine/                   L1/L2/L4 审查、舆情审查、行业兼容解析
@@ -23,7 +23,7 @@ LexAd/
 │   ├── src/
 │   │   ├── api/                      API 请求封装
 │   │   ├── components/layout/         TopBar 等布局组件
-│   │   ├── pages/                    Home, Submit, Result, Legal, Knowledge, AdminKnowledge
+│   │   ├── pages/                    Home, Submit, Result, Legal, Knowledge, Admin pages
 │   │   ├── router/                   路由与角色守卫
 │   │   ├── stores/                   Pinia 用户状态
 │   │   └── types/                    TypeScript 类型
@@ -84,9 +84,7 @@ a4b7d1c6e825  v0.5.1 审查提交快照
 | `APP_ENV` | 运行环境 |
 | `FRONTEND_ORIGIN` | 前端域名 |
 | `CORS_ORIGINS` | 额外 CORS 域名，逗号分隔 |
-| `DEEPSEEK_API_KEY` | DeepSeek API Key |
-| `DEEPSEEK_BASE_URL` | DeepSeek API 地址 |
-| `DEEPSEEK_MODEL` | 模型名称，默认 `deepseek-chat` |
+| `DEEPSEEK_API_KEY` | 兼容旧部署的 DeepSeek API Key；管理员数据库配置优先 |
 | `KNOWLEDGE_DIR` | L1-L5 知识库目录 |
 | `CHROMA_PERSIST_DIR` | ChromaDB 持久化目录 |
 

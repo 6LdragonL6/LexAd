@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1',
+  timeout: 20_000,
 })
 
 client.interceptors.request.use((config) => {
@@ -15,9 +16,13 @@ client.interceptors.request.use((config) => {
 client.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const requestUrl = String(err.config?.url || '')
+    const hadSession = Boolean(err.config?.headers?.Authorization)
+    if (err.response?.status === 401 && hadSession && !requestUrl.includes('/auth/login')) {
       localStorage.removeItem('access_token')
-      window.location.href = '/login'
+      if (window.location.pathname !== '/login') {
+        window.location.replace('/login')
+      }
     }
     return Promise.reject(err)
   },

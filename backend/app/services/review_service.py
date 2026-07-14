@@ -14,7 +14,7 @@ from app.schemas.review import LegalDecisionRequest
 
 
 def create_ai_review(db: Session, material_id: str) -> tuple[Review, bool]:
-    material = db.query(Material).filter(Material.id == material_id).first()
+    material = db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
     if not material:
         raise ValueError("Material not found")
 
@@ -90,7 +90,9 @@ def recover_interrupted_reviews() -> int:
             review.task_status = "failed"
             review.error_message = "审查任务因服务重启中断，请重新审查"
             review.completed_at = datetime.now(timezone.utc)
-            material = db.query(Material).filter(Material.id == review.material_id).first()
+            material = db.query(Material).filter(
+                Material.id == review.material_id, Material.deleted_at.is_(None)
+            ).first()
             if material and material.status == MaterialStatus.ai_reviewing:
                 material.status = MaterialStatus.draft
             recovered += 1
@@ -108,7 +110,7 @@ def execute_ai_review(review_id: str) -> None:
         review = db.query(Review).filter(Review.id == review_id).first()
         if not review or review.task_status != "processing":
             return
-        material = db.query(Material).filter(Material.id == review.material_id).first()
+        material = db.query(Material).filter(Material.id == review.material_id, Material.deleted_at.is_(None)).first()
         if not material:
             raise ValueError("物料不存在")
 
@@ -119,7 +121,13 @@ def execute_ai_review(review_id: str) -> None:
         public_opinion_succeeded = _execute_public_opinion_branch(db, review.id, material.id)
 
         review = db.query(Review).filter(Review.id == review_id).first()
-        material = db.query(Material).filter(Material.id == review.material_id).first()
+        if not review or review.task_status != "processing":
+            return
+        material = db.query(Material).filter(
+            Material.id == review.material_id, Material.deleted_at.is_(None)
+        ).first()
+        if material is None:
+            return
         review.completed_at = datetime.now(timezone.utc)
         if legal_succeeded:
             review.task_status = "completed"
@@ -135,7 +143,9 @@ def execute_ai_review(review_id: str) -> None:
         db.rollback()
         review = db.query(Review).filter(Review.id == review_id).first()
         if review:
-            material = db.query(Material).filter(Material.id == review.material_id).first()
+            material = db.query(Material).filter(
+                Material.id == review.material_id, Material.deleted_at.is_(None)
+            ).first()
             review.task_status = "failed"
             review.error_message = _safe_error_message(exc)
             review.legal_module_status = ReviewModuleStatus.failed
@@ -151,7 +161,9 @@ def execute_ai_review(review_id: str) -> None:
 
 def _execute_legal_branch(db: Session, review_id: str, material_id: str) -> bool:
     review = db.query(Review).filter(Review.id == review_id).first()
-    material = db.query(Material).filter(Material.id == material_id).first()
+    material = db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
+    if not review or review.task_status != "processing" or material is None:
+        return False
     review.legal_module_status = ReviewModuleStatus.running
     db.commit()
     try:
@@ -162,6 +174,11 @@ def _execute_legal_branch(db: Session, review_id: str, material_id: str) -> bool
             db,
         )
         review = db.query(Review).filter(Review.id == review_id).first()
+        material = db.query(Material).filter(
+            Material.id == material_id, Material.deleted_at.is_(None)
+        ).first()
+        if not review or review.task_status != "processing" or material is None:
+            return False
         review.ai_risk_score = engine_result.risk_score
         review.ai_result = engine_result.model_dump()
         review.platform_rule_version_ids = engine_result.platform_rule_version_ids
@@ -173,6 +190,8 @@ def _execute_legal_branch(db: Session, review_id: str, material_id: str) -> bool
     except Exception as exc:
         db.rollback()
         review = db.query(Review).filter(Review.id == review_id).first()
+        if not review or review.task_status != "processing":
+            return False
         review.legal_module_status = ReviewModuleStatus.failed
         review.legal_module_error = _safe_error_message(exc)
         review.legal_module_completed_at = datetime.now(timezone.utc)
@@ -182,7 +201,9 @@ def _execute_legal_branch(db: Session, review_id: str, material_id: str) -> bool
 
 def _execute_public_opinion_branch(db: Session, review_id: str, material_id: str) -> bool:
     review = db.query(Review).filter(Review.id == review_id).first()
-    material = db.query(Material).filter(Material.id == material_id).first()
+    material = db.query(Material).filter(Material.id == material_id, Material.deleted_at.is_(None)).first()
+    if not review or review.task_status != "processing" or material is None:
+        return False
     review.public_opinion_module_status = ReviewModuleStatus.running
     db.commit()
     try:
@@ -193,6 +214,11 @@ def _execute_public_opinion_branch(db: Session, review_id: str, material_id: str
             db=db,
         )
         review = db.query(Review).filter(Review.id == review_id).first()
+        material = db.query(Material).filter(
+            Material.id == material_id, Material.deleted_at.is_(None)
+        ).first()
+        if not review or review.task_status != "processing" or material is None:
+            return False
         review.public_opinion_result = public_opinion.result
         review.public_opinion_library_version_id = public_opinion.library_version_id
         if public_opinion.status == "unavailable":
@@ -209,6 +235,8 @@ def _execute_public_opinion_branch(db: Session, review_id: str, material_id: str
     except Exception as exc:
         db.rollback()
         review = db.query(Review).filter(Review.id == review_id).first()
+        if not review or review.task_status != "processing":
+            return False
         review.public_opinion_module_status = ReviewModuleStatus.failed
         review.public_opinion_module_error = _safe_error_message(exc)
         review.public_opinion_module_completed_at = datetime.now(timezone.utc)
@@ -251,7 +279,9 @@ def submit_legal_decision(db: Session, review_id: str, data: LegalDecisionReques
     if review.legal_decision is not None:
         raise ValueError("该审查已经提交法务决定，不能重复覆盖")
 
-    material = db.query(Material).filter(Material.id == review.material_id).first()
+    material = db.query(Material).filter(Material.id == review.material_id, Material.deleted_at.is_(None)).first()
+    if material is None:
+        raise ValueError("物料不存在")
     review.legal_decision = LegalDecision(data.decision)
     review.legal_notes = data.notes
     review.return_reasons = data.return_reasons
@@ -277,7 +307,7 @@ def get_legal_queue(db: Session, user: User) -> list[dict]:
         .correlate(Material)
         .scalar_subquery()
     )
-    query = query.filter(Review.created_at == latest_review_created_at)
+    query = query.filter(Review.created_at == latest_review_created_at, Material.deleted_at.is_(None))
 
     if user.role == UserRole.marketing:
         query = query.filter(Material.submitter_id == user.id)
@@ -298,7 +328,11 @@ def get_legal_queue(db: Session, user: User) -> list[dict]:
 
     results = []
     for review in query.all():
-        material = db.query(Material).filter(Material.id == review.material_id).first()
+        material = db.query(Material).filter(
+            Material.id == review.material_id, Material.deleted_at.is_(None)
+        ).first()
+        if material is None:
+            continue
         submitter = db.query(User).filter(User.id == material.submitter_id).first()
         results.append(
             {

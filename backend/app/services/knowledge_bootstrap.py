@@ -181,7 +181,10 @@ def _bootstrap_public_opinion_cases(db: Session, admin: User) -> int:
         created += 1
 
     db.flush()
-    events = db.query(PublicOpinionEvent).filter(PublicOpinionEvent.status == PublicOpinionEventStatus.published).all()
+    events = db.query(PublicOpinionEvent).filter(
+        PublicOpinionEvent.status == PublicOpinionEventStatus.published,
+        PublicOpinionEvent.deleted_at.is_(None),
+    ).all()
     if events:
         next_version = (db.query(func.max(PublicOpinionLibraryVersion.version)).scalar() or 0) + 1
         db.add(PublicOpinionLibraryVersion(

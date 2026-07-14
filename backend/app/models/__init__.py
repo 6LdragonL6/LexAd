@@ -2,6 +2,7 @@ from app.models.user import User, UserRole
 from app.models.brand import Brand, BrandStatus
 from app.models.material import Material, MaterialStatus, MaterialPriority, MaterialSubmissionSnapshot
 from app.models.review import Review, LegalDecision
+from app.models.admin import RecycleBinEntry, SecureSetting
 from app.models.knowledge import (
     KnowledgeAuditLog,
     KnowledgeImportJob,
@@ -27,6 +28,8 @@ __all__ = [
     "MaterialSubmissionSnapshot",
     "Review",
     "LegalDecision",
+    "RecycleBinEntry",
+    "SecureSetting",
     "KnowledgeAuditLog",
     "KnowledgeImportJob",
     "KnowledgeImportJobStatus",

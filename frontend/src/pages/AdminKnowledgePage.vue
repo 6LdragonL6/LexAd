@@ -9,6 +9,7 @@ import {
   type PublicOpinionEvent,
   type PublicOpinionEventDetail,
 } from '@/api/adminKnowledge'
+import { adminSettingsApi } from '@/api/adminSettings'
 
 type TabKey = 'public-opinion' | 'platform-rules' | 'imports' | 'audit'
 
@@ -204,17 +205,34 @@ async function restoreEvent(id: string) {
 }
 
 async function deleteDraft(id: string) {
-  if (!window.confirm('确认删除该草稿？已发布案例不能物理删除。')) return
+  if (!window.confirm('将该舆情案例移入回收站？15 天内可恢复。')) return
   clearMessage()
   loading.value = true
   try {
     await adminKnowledgeApi.deletePublicOpinionEvent(id)
-    notice.value = '草稿已删除。'
+    notice.value = '舆情案例已移入回收站，15 天内可恢复。'
     selectedEventId.value = ''
     selectedEvent.value = null
     await loadEvents()
   } catch (requestError: any) {
     showError(requestError, '删除失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+async function deleteRuleSet() {
+  if (!selectedRuleSet.value) return
+  if (!window.confirm(`将平台规则「${selectedRuleSet.value.rule_set.display_name}」及其版本移入回收站？`)) return
+  clearMessage()
+  loading.value = true
+  try {
+    await adminSettingsApi.moveToRecycleBin('platform_rule_set', selectedRuleSet.value.rule_set.id)
+    selectedRuleSetId.value = ''
+    notice.value = '平台规则已移入回收站，15 天内可恢复。'
+    await loadPlatformRules()
+  } catch (requestError: any) {
+    showError(requestError, '删除平台规则失败')
   } finally {
     loading.value = false
   }
@@ -473,7 +491,7 @@ onMounted(loadAll)
                     <button v-if="selectedEvent.event.status !== 'published'" class="btn-primary text-sm" :disabled="loading" @click="publishEvent(selectedEvent.event.id)">发布</button>
                     <button v-if="selectedEvent.event.status === 'published'" class="btn-outline text-sm" :disabled="loading" @click="archiveEvent(selectedEvent.event.id)">归档</button>
                     <button v-if="selectedEvent.event.status === 'archived'" class="btn-outline text-sm" :disabled="loading" @click="restoreEvent(selectedEvent.event.id)">恢复</button>
-                    <button v-if="selectedEvent.event.status === 'draft'" class="btn-danger text-sm" :disabled="loading" @click="deleteDraft(selectedEvent.event.id)">删除草稿</button>
+                    <button class="btn-danger text-sm" :disabled="loading" @click="deleteDraft(selectedEvent.event.id)">删除</button>
                   </div>
                 </div>
 
@@ -580,7 +598,10 @@ onMounted(loadAll)
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ selectedRuleSet.rule_set.display_name }}</h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ selectedRuleSet.rule_set.description || '暂无说明' }}</p>
                   </div>
-                  <span class="text-xs text-gray-400 dark:text-gray-500">版本数：{{ selectedRuleSet.versions.length }}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs text-gray-400 dark:text-gray-500">版本数：{{ selectedRuleSet.versions.length }}</span>
+                    <button class="btn-danger text-sm" :disabled="loading" @click="deleteRuleSet">删除规则集</button>
+                  </div>
                 </div>
 
                 <div class="mt-5 rounded-xl border border-sky-100 dark:border-sky-900 bg-sky-50 dark:bg-sky-900/20 p-4">

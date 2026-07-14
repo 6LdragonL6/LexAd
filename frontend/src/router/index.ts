@@ -19,6 +19,7 @@ const router = createRouter({
     { path: '/legal/:id', name: 'legal-detail', component: () => import('@/pages/LegalDetail.vue'), props: true, meta: { roles: ['legal', 'admin'] } },
     { path: '/knowledge', name: 'knowledge', component: () => import('@/pages/KnowledgePage.vue') },
     { path: '/admin/knowledge', name: 'admin-knowledge', component: () => import('@/pages/AdminKnowledgePage.vue'), meta: { roles: ['admin'] } },
+    { path: '/admin/settings', name: 'admin-settings', component: () => import('@/pages/AdminSettingsPage.vue'), meta: { roles: ['admin'] } },
     { path: '/brands', name: 'brands', component: () => import('@/pages/BrandArchivePage.vue'), meta: { roles: ['marketing', 'legal', 'admin'] } },
   ],
 })

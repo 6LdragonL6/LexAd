@@ -1,6 +1,6 @@
 # LexAd 文档总览
 
-当前项目版本：`v0.6.1`。
+当前项目版本：`v0.6.2`。
 
 本文档是 `docs/` 的统一入口。README 负责项目概览；使用方法、技术细节、发布记录和历史设计分别维护在下列文档中。
 
@@ -9,9 +9,11 @@
 - [本地开发指南](local-development.md)：安装、启动、关闭、数据库模式和常见问题。
 - [技术参考](technical-reference.md)：目录结构、迁移、环境变量、API 和审查引擎。
 - [v0.4.2 管理员资料中心指南](v0.4.2-admin-knowledge-center-guide.md)：舆情案例和平台规则维护流程。
+- [v0.6.2 管理员系统管理指南](v0.6.2-admin-system-guide.md)：API 配置、回收站、恢复和永久清理。
 
 ## 发布说明
 
+- [v0.6.2](v0.6.2-release-notes.md)：管理员 API 配置、15 天回收站、统一模型网关和登录稳定性修复。
 - [v0.6.1](v0.6.1-release-notes.md)：三级侧栏、知识基线与拼多多接入、命中优先报告、历史版本和轮换提醒。
 - [v0.6.0](v0.6.0-release-notes.md)：响应式 UI、品牌库、主题层级、数据库模式和启动可靠性。
 - [v0.5.1](v0.5.1-release-notes.md)：明暗主题与结构打磨。
@@ -21,6 +23,7 @@
 
 ## 当前版本设计
 
+- [v0.6.2 管理能力设计](superpowers/specs/2026-07-14-lexad-v0.6.2-design.md) / [实施计划](superpowers/plans/2026-07-14-lexad-v0.6.2-implementation.md)
 - [v0.6 品牌库主设计](superpowers/specs/2026-07-11-lexad-v0.6-ui-brand-library-design.md)：品牌库的数据、接口、权限和页面结构。
 - [v0.6 发布收尾设计](superpowers/specs/2026-07-12-lexad-v0.6-release-polish-design.md)：登录页、响应式布局、深色主题、品牌加载、数据库模式和启动脚本。
 - [v0.6 发布收尾实施计划](superpowers/plans/2026-07-12-lexad-v0.6-release-polish-implementation.md)：上述收尾工作的实施和验收顺序。

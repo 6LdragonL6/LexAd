@@ -14,9 +14,15 @@ export const useUserStore = defineStore('user', () => {
   const canSubmit = computed(() => user.value?.role === 'marketing' || user.value?.role === 'admin')
 
   async function login(username: string, password: string) {
-    const res = await authApi.login(username, password)
-    localStorage.setItem('access_token', res.data.access_token)
-    await fetchUser()
+    try {
+      const res = await authApi.login(username, password)
+      localStorage.setItem('access_token', res.data.access_token)
+      user.value = res.data.user
+    } catch (error) {
+      user.value = null
+      localStorage.removeItem('access_token')
+      throw error
+    }
   }
 
   async function fetchUser() {

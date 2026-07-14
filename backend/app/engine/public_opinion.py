@@ -82,6 +82,7 @@ def run_public_opinion_review(
 
     try:
         model_result = model_service.explain_public_opinion_risk(
+            db=db,
             material_text=material_text,
             deterministic_hits=deterministic_hits,
             similar_events=similar_events,
@@ -135,6 +136,7 @@ def _load_published_cases(
         .filter(
             PublicOpinionEvent.id.in_(event_ids),
             PublicOpinionEvent.status == PublicOpinionEventStatus.published,
+            PublicOpinionEvent.deleted_at.is_(None),
         )
         .all()
     )

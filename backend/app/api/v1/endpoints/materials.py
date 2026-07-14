@@ -36,7 +36,11 @@ async def submit_material(
     extracted_text = ""
 
     if data.brand_id:
-        brand = db.query(Brand).filter(Brand.id == data.brand_id, Brand.status == BrandStatus.active).first()
+        brand = db.query(Brand).filter(
+            Brand.id == data.brand_id,
+            Brand.status == BrandStatus.active,
+            Brand.deleted_at.is_(None),
+        ).first()
         if not brand:
             raise HTTPException(status_code=422, detail="引用的品牌不存在或已归档")
 
@@ -145,7 +149,11 @@ def update_material(material_id: str, body: MaterialUpdate, db: Session = Depend
     if material.status.value not in ("draft", "returned"):
         raise HTTPException(status_code=400, detail="Can only edit draft or returned materials")
     if body.brand_id is not None:
-        brand = db.query(Brand).filter(Brand.id == body.brand_id, Brand.status == BrandStatus.active).first()
+        brand = db.query(Brand).filter(
+            Brand.id == body.brand_id,
+            Brand.status == BrandStatus.active,
+            Brand.deleted_at.is_(None),
+        ).first()
         if not brand:
             raise HTTPException(status_code=422, detail="引用的品牌不存在或已归档")
     return material_service.update_material(db, material_id, body)

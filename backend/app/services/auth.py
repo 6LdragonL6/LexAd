@@ -9,6 +9,7 @@ from app.models.user import User
 
 settings = get_settings()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+_DUMMY_HASH = pwd_context.hash("lexad-dummy-password")
 
 
 def hash_password(password: str) -> str:
@@ -23,7 +24,11 @@ def authenticate_user(db: Session, username: str, password: str) -> User | None:
     user = db.query(User).filter(
         User.username == username, User.is_active == True
     ).first()
-    if not user or not verify_password(password, user.password):
+    try:
+        password_ok = verify_password(password, user.password if user else _DUMMY_HASH)
+    except (TypeError, ValueError):
+        password_ok = False
+    if not user or not password_ok:
         return None
     return user
 

@@ -366,6 +366,32 @@ img {
   background: var(--color-surface-muted);
 }
 
+.btn-outline:disabled,
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-height-sm);
+  padding: 8px 16px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger-text);
+  border: 1px solid color-mix(in srgb, var(--color-danger-text) 24%, transparent);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.btn-danger:hover {
+  filter: brightness(0.96);
+}
+
 .btn-ghost {
   display: inline-flex;
   align-items: center;

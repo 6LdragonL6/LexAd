@@ -103,7 +103,7 @@ def run_platform_review(text: str, platforms: list[str], db: Session | None) -> 
 
 def _find_rule_set(db: Session, platform: str) -> PlatformRuleSet | None:
     user_aliases = _resolve_aliases(platform)
-    candidates = db.query(PlatformRuleSet).all()
+    candidates = db.query(PlatformRuleSet).filter(PlatformRuleSet.deleted_at.is_(None)).all()
     for candidate in candidates:
         candidate_aliases = _resolve_aliases(candidate.platform_name) | _resolve_aliases(candidate.display_name)
         if user_aliases & candidate_aliases:
