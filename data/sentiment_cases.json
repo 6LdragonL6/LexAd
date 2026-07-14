@@ -1,0 +1,3970 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-07-07",
+  "description": "LexAd 广告舆情风险预警案例库 — 34条经过联网调研+交叉验证的真实翻车案例",
+  "events": [
+    {
+      "external_id": "sent-case-001",
+      "title": "奥迪二手车广告娶媳妇像挑二手车性别歧视争议",
+      "brand": "奥迪（一汽-大众奥迪）",
+      "occurred_at": "2017-07-17",
+      "industry": [
+        "汽车"
+      ],
+      "platforms": [
+        "微博",
+        "影院广告"
+      ],
+      "ad_copy_original": "婆婆在婚礼上检查新娘鼻子耳朵牙口后做OK手势，奥迪二手车界面出现文案：重要决定必须谨慎、奥迪二手车在线4S店官方认证才放心。",
+      "trigger_short": "婆婆验货新娘身体将女性比作二手车",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2017-07-17",
+          "stage": "发生",
+          "description": "网友发微博指责奥迪二手车影院广告严重物化女性"
+        },
+        {
+          "at": "2017-07-19",
+          "stage": "发酵",
+          "description": "微信近50万人提及关键词，奥迪总部声明广告不符合其价值观"
+        },
+        {
+          "at": "2017-07-20",
+          "stage": "回应",
+          "description": "一汽大众奥迪二手车业务部正式致歉并下架广告"
+        }
+      ],
+      "brand_response": "道歉加下架，7月19日奥迪总部声明，7月20日正式致歉。",
+      "outcome": "奥迪正式道歉下架广告，承诺全面调查。",
+      "consequences": {
+        "reputation": "微信近50万人提及，路透社BBC等国际媒体报道",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 4,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_1738080",
+          "published_at": "2017-07-20"
+        },
+        {
+          "name": "Reuters",
+          "url": "https://reut.rs/2uLHCxi",
+          "published_at": "2017-07-19"
+        }
+      ],
+      "credibility_notes": "三家权威来源互相印证，证据充分。",
+      "verification": {
+        "verdict": "confirmed",
+        "corrections": "1. sources 中 Reuters 短链接 https://reut.rs/2uLHCxi 返回 404 不可访问，应替换为可访问的转载 URL（如 Investing.com UK 转载：https://uk.investing.com/news/stock-market-news/audi-under-fire-in-china-for-ad-comparing-used-cars-with-brides-502807，该页面完整转载了 Reuters 原文）。2. ad_copy_original 中标点与广告实际文案有轻微出入——广告原文为\"重要决定必须谨慎，奥迪二手车在线4S店，官方认证才放心\"，案例中使用了顿号替代逗号且省略了\"在线4S店\"后的逗号。语义无实质差异，建议修正标点。3. consequences 中\"微信近50万人提及\"源自 Reuters 报道中\"nearly half a million people mentioned Audi second hand car on WeChat on Tuesday\"（仅指7月18日单日数据），建议注明为单日快照数据以免误导为总传播量。",
+        "confirmed_facts": [
+          "事件真实存在：2017年7月奥迪二手车广告《整容篇》因婆婆婚礼现场检查新娘身体、将女性类比二手车而引发大规模性别歧视争议。Reuters、BBC、澎湃新闻、人民网、中国妇女报、环球网等多方独立信源一致印证。",
+          "occurred_at 日期准确：争议于2017年7月17日由微博用户@脸侠首发曝光后爆发，澎湃新闻、人民网、环球网、中国青年网等多家媒体以7月17-18日为事件起点进行报道。",
+          "广告内容核心描述准确：婆婆在婚礼上捏新娘鼻子、揪耳朵、掰嘴检查牙口、做OK手势，随后出现奥迪二手车画面及相关广告语。Reuters、BBC、澎湃新闻、人民网等多个独立信源描述一致。",
+          "奥迪回应时间线与内容准确：7月19日奥迪总部通过声明向 Reuters 等媒体表示广告不符合其价值观；7月20日一汽-大众奥迪二手车业务部通过微信公众号发布正式致歉信并下架广告。Reuters、BBC、人民网、澎湃新闻等多个信源互相印证。",
+          "国际媒体报道属实：BBC、Reuters、CNN、Washington Post、Elle 等国际主流媒体均对此事进行了报道。",
+          "行业和平台分类准确：汽车行业、微博和影院广告（万达院线）为主要传播渠道，与所有报道一致。",
+          "监管后果判断准确：所有公开报道中均未见中国政府监管部门的约谈、罚款或立案信息。",
+          "risk_dimension 性别争议分类准确：所有媒体的批评焦点均为物化女性与性别歧视，学界亦以此定性。",
+          "severity_hint 定级为 high 合理：该事件引发国际主流媒体报道、微博热搜、奥迪官方多次致歉下架广告、学术论文引用分析，符合 high 级标准。"
+        ],
+        "unverified_claims": [
+          "ad_copy_original 中婆婆身份的认定：虽然绝大多数报道称该角色为婆婆（新郎母亲），但严格而言广告片未明确交代其身份，所有来源均基于场景推断。该推断合理且广泛使用，但严格说属于推断而非广告原文确认。",
+          "consequences.duration_days 为4（7月17日至7月20日）：事件核心周期从曝光到下架道歉确为3-4天，但争议在后续数日内仍有媒体跟进（如7月21日人民日报、经济参考报等继续发表评论文章），实际舆论余波超过4天。4天的定义可以接受但属于主观截断。"
+        ],
+        "extra_sources": [
+          {
+            "name": "BBC News - Audi advert criticised in China for being sexist",
+            "url": "https://www.bbc.com/news/business-40652112",
+            "published_at": "2017-07-19"
+          },
+          {
+            "name": "People's Daily Online - Audi China apologizes for controversial ad that likens women to used cars",
+            "url": "http://en.people.cn/n3/2017/0720/c90882-9244209.html",
+            "published_at": "2017-07-20"
+          },
+          {
+            "name": "Investing.com UK (Reuters syndication) - Audi under fire in China for ad comparing used cars with brides",
+            "url": "https://uk.investing.com/news/stock-market-news/audi-under-fire-in-china-for-ad-comparing-used-cars-with-brides-502807",
+            "published_at": "2017-07-19"
+          },
+          {
+            "name": "中国青年网 - 婆婆捏儿媳口鼻查验 学者称奥迪二手车广告物化女性",
+            "url": "http://news.youth.cn/sh/201707/t20170718_10319914.htm",
+            "published_at": "2017-07-18"
+          },
+          {
+            "name": "人民网 - 奥迪二手车广告引发众怒 车企对女性歧视由来已久",
+            "url": "http://media.people.com.cn/n1/2017/0721/c40606-29419001.html",
+            "published_at": "2017-07-21"
+          }
+        ],
+        "severity_check": "severity_hint 定级为 high 合理。该事件具备以下 high 级特征：(1) 国际主流媒体（Reuters、BBC、CNN 等）大规模报道；(2) 微博热搜级公众舆论；(3) 品牌方多次正式回应（总部声明+业务部致歉信+全面下架广告+内部调查）；(4) 学术界引用为负面案例；(5) 涉及跨国企业价值观错位的结构性问题。若以 medium/high/critical 三级划分，high 准确反映了其严重性（重大品牌危机但无政府处罚或直接商业损失证据）。"
+      }
+    },
+    {
+      "external_id": "sent-case-002",
+      "title": "宜家电视广告再不带男朋友回来就别叫我妈性别歧视争议",
+      "brand": "宜家（IKEA）",
+      "occurred_at": "2017-10-24",
+      "industry": [
+        "家居"
+      ],
+      "platforms": [
+        "微博",
+        "电视"
+      ],
+      "ad_copy_original": "母亲摔筷子对女儿说：再不带男朋友回来就别叫我妈！后女儿带男友回家，父母转怒为喜用宜家产品布置餐桌。",
+      "trigger_short": "再不带男朋友回来就别叫我妈被批歧视单身女性",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2017-10-24",
+          "stage": "发生",
+          "description": "网友批评宜家电视广告歧视单身女性，同日宜家道歉"
+        },
+        {
+          "at": "2017-10-25",
+          "stage": "发酵",
+          "description": "BBC路透社等国际媒体报道"
+        },
+        {
+          "at": "2017-10-26",
+          "stage": "收尾",
+          "description": "宜家确认广告从各平台撤下"
+        }
+      ],
+      "brand_response": "道歉加下架，10月24日宜家声明对错误印象诚挚道歉。",
+      "outcome": "宜家当日道歉撤广告。",
+      "consequences": {
+        "reputation": "BBC路透社南华早报等国际媒体报道",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_1837072",
+          "published_at": "2017-10-25"
+        },
+        {
+          "name": "BBC",
+          "url": "https://www.bbc.co.uk/news/world-asia-china-41757971",
+          "published_at": "2017-10-26"
+        }
+      ],
+      "credibility_notes": "BBC路透社北京青年报互相印证。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. **timeline[1].at 日期错误**：案例记载 BBC 和路透社于 2017-10-25 报道，但 BBC 实际发布于 2017-10-26（UTC 05:48），路透社发布于 2017-10-26（UTC 10:29）。10月25日只有中央社（CNA）、中国日报网、香港商报等中文媒体以及 Global News 报道。国际英文主流媒体（BBC/Reuters/Fortune/Telegraph）集中在 10月26日。timeline[1] 应修正为 2017-10-26，或拆分为两条：10-25（中文/亚洲媒体密集报道）、10-26（BBC/路透社等国际英文媒体跟进）。\n\n2. **outcome 表述不精确**：\"宜家当日道歉撤广告\" —— 道歉是 10月24日当天，但广告并未当日全部撤下。根据北京青年报报道，宜家官方回复称\"已经与各播放平台进行了积极沟通，将广告撤下。个别播出平台可能需要一些时间调整，但会尽快撤下所有广告\"。路透社 10月26日确认\"广告已从所有渠道撤下\"（\"The TV ad has been withdrawn from all channels by IKEA China\"）。应修正为\"宜家10月24日道歉并宣布撤广告，10月26日确认全部撤下\"。\n\n3. **occurred_at 的选择有歧义**：案例将 2017-10-24 定为 occurred_at，但这一天是品牌道歉日，而非广告争议爆发日。根据多家报道，广告\"于2017年10月开始投放\"（北京青年报），争议在道歉前已经\"近日\"在微博发酵（北京青年报、BBC）。建议将 occurred_at 标注为争议爆发与道歉日期，或额外添加 ad_first_aired 字段（2017-10-XX，确切首播日所有来源均无精确日期）。\n\n4. **brand_response 中公关负责人姓名需微调**：案例提到的公关负责人为\"江玲\"，但路透社和 BBC 引述的发言人为\"Linda Xu\"（许丽德/江玲？）。根据新浪财经 2017-11-04 报道，宜家中国公关总监为\"许丽德\"（Linda Xu）。北京青年报引述的是\"宜家中国区公共关系负责人江玲\"。可能有两个不同的公关人员或同一人的中英文名。此点不构成硬伤，但注意两个名字出现在不同来源中。",
+        "confirmed_facts": [
+          "事件真实存在：宜家于 2017 年 10 月在中国投放了一支名为「轻松庆祝每一天」的电视广告，因台词「再不带男朋友回来就别叫我妈」引发性别歧视争议（北京青年报/澎湃新闻/BBC/路透社/中央社/SCMP 等 10+ 独立来源交叉印证）",
+          "广告原句属实：北京青年报记者观看广告原文描述「母亲突然摔下筷子，扭头对女儿不满地说：再不带男朋友回来就别叫我妈！」；BBC 引述为 'If you don't bring home a boyfriend next time, then don't call me Mum!'；中央社 CNA 引述为「再不帶男朋友回來，就別叫我媽」；路透社引述为 'If you cannot bring back a boyfriend, don't call me Mum' —— 四源印证，核心台词一致",
+          "宜家于 2017-10-24 下午通过微博发布中英文道歉声明，称「对该广告传递的错误印象表示诚挚道歉」（北京青年报/澎湃新闻/BBC/SCMP）",
+          "广告从各播放平台撤下：路透社 10-26 确认 'The TV ad has been withdrawn from all channels'，北京青年报报道宜家已与各播放平台积极沟通撤下",
+          "无监管处罚：以「宜家+处罚」「宜家+罚款」「宜家+约谈」等关键词检索，未发现任何工商/市场监管部门的正式行政处罚、罚款或约谈记录",
+          "无量化业务损失：所有查阅的报道（含新浪财经 2017-11-04 深度分析）均未提供该事件对宜家中国销售额/客流的具体量化影响数据",
+          "BBC、路透社、SCMP（南华早报）均真实报道了此事件，URL 均可访问且内容与记载一致",
+          "澎湃新闻 URL https://www.thepaper.cn/newsDetail_forward_1837072 真实可访问，内容为转载北京青年报 2017-10-25 报道，与事件描述完全吻合",
+          "广告为中国区原创，非瑞典版翻拍：北京青年报、新浪财经等多源引述宜家公关负责人确认"
+        ],
+        "unverified_claims": [
+          "timeline 中「2017-10-25 BBC路透社等国际媒体报道」—— BBC 和路透社实际发布于 10月26日，非 10月25日。10月25日仅有中央社、中国日报网、香港商报、Global News 等报道，未见 BBC/路透社当日发稿",
+          "occurred_at 精确到 2017-10-24 虽可理解为危机爆发日（道歉日），但广告首播日期所有公开报道均仅称「2017年10月开始投放」，无精确到日的首播日期可查",
+          "consequences.duration_days: 3 —— 此数字逻辑上成立（10/24争议-10/26撤完），但没有任何来源直接给出「3天」这一数字，系推算得出，非引用",
+          "severity_hint: high —— 未查到热搜具体排名/在榜时长/阅读量等量化数据。路透社引用道歉微博下「1500+ 评论」，但无热搜排行榜数据支撑。缺少中国社交媒体影响力量化指标（微博话题阅读量、热搜最高位次、持续时间）。定级 high 有一定主观性，该事件实际上无监管介入、无罚款、无量化业绩影响，定性为 medium 也有合理依据"
+        ],
+        "extra_sources": [
+          {
+            "name": "路透社 (Thomson Reuters Foundation)",
+            "url": "https://www.reuters.com/article/world/no-boyfriend-dont-call-me-mum-ikea-pulls-sexist-ad-in-china-idUSKBN1CV1E0/",
+            "published_at": "2017-10-26"
+          },
+          {
+            "name": "南华早报 (South China Morning Post)",
+            "url": "https://www.scmp.com/business/china-business/article/2116716/ikea-says-it-will-replace-sexist-china-tv-advert-after",
+            "published_at": "2017-10-24"
+          },
+          {
+            "name": "中央通讯社 (CNA)",
+            "url": "https://www.cna.com.tw/news/acn/201710250134.aspx",
+            "published_at": "2017-10-25"
+          },
+          {
+            "name": "中国日报网 (China Daily)",
+            "url": "http://cnews.chinadaily.com.cn/2017-10/25/content_33680704.htm",
+            "published_at": "2017-10-25"
+          },
+          {
+            "name": "Fortune",
+            "url": "https://fortune.com/2017/10/26/ikea-ad-china-women/",
+            "published_at": "2017-10-26"
+          },
+          {
+            "name": "The Telegraph",
+            "url": "https://www.telegraph.co.uk/news/2017/10/26/ikea-apologises-advert-provokes-complaints-china-insensitive/",
+            "published_at": "2017-10-26"
+          },
+          {
+            "name": "Global News (Canada)",
+            "url": "https://globalnews.ca/news/3823895/ikea-pulls-sexist-commercial-in-china-after-backlash-online/",
+            "published_at": "2017-10-25"
+          },
+          {
+            "name": "香港经济日报 (HKET)",
+            "url": "https://paper.hket.com/article/1932838/廣告針對單身女%20宜家急撤並致歉",
+            "published_at": "2017-10-25"
+          },
+          {
+            "name": "东方日报 (Oriental Daily)",
+            "url": "https://orientaldaily.on.cc/cnt/china_world/20171026/00178_009.html",
+            "published_at": "2017-10-26"
+          },
+          {
+            "name": "新浪财经 (深度分析)",
+            "url": "http://finance.sina.com.cn/roll/2017-11-04/doc-ifynnnsc5073977.shtml",
+            "published_at": "2017-11-04"
+          },
+          {
+            "name": "界面新闻 (Jiemian)",
+            "url": "https://www.jiemian.com/article/1705059.html",
+            "published_at": "2017-10-27"
+          },
+          {
+            "name": "台北时报 (Taipei Times)",
+            "url": "https://www.taipeitimes.com/News/biz/archives/2017/10/30/2003681293",
+            "published_at": "2017-10-30"
+          },
+          {
+            "name": "香港01 (HK01)",
+            "url": "https://www.hk01.com/知性女生/128922/剩女不配有-五星級的家-ikea最新廣告被轟歧視單身-發聲明道歉",
+            "published_at": "2017-10-27"
+          }
+        ],
+        "severity_check": "定为「high」有一定合理成分（国际头部媒体 BBC/路透社/SCMP/Fortune/Telegraph 密集报道，涉及性别歧视敏感议题，品牌同日道歉撤广告），但作以下保留：\n\n1. 整个事件中无任何监管机构介入（无行政处罚、无约谈、无罚款），consequences.regulatory 确认为「无公开监管动作」无误；\n2. 无量化商业损失数据（consequences.business 确认为「公开报道未见量化数据」属实）；\n3. 品牌反应迅速（同日道歉），危机生命周期仅约 2-3 天，未出现二次发酵或持续负面；\n4. 未查到微博热搜排名/话题阅读量等量化影响力数据，路透社仅提到道歉微博下「1500+ 评论」——这一量级在微博环境下不算特别巨大。\n\n综上，该事件介于 medium 与 high 之间：国际媒体覆盖面和议题敏感性支持 high，但缺少监管后果和量化影响力指标又偏向 medium。建议保留 high 但标记为 borderline，或降为 medium 并注明「虽获国际媒体密集报道但无监管后果」。如果分类体系更看重监管介入/经济惩罚，应降为 medium。"
+      }
+    },
+    {
+      "external_id": "sent-case-003",
+      "title": "李诞为Ubras带货躺赢职场文案性别歧视争议",
+      "brand": "Ubras（李诞）",
+      "occurred_at": "2021-02-24",
+      "industry": [
+        "服饰"
+      ],
+      "platforms": [
+        "微博",
+        "电商详情页"
+      ],
+      "ad_copy_original": "李诞微博发布Ubras内衣广告：一个让女性轻松躺赢职场的装备，我说没有我带不了的货，你就说信不信吧。",
+      "trigger_short": "让女性轻松躺赢职场将内衣关联职场存性暗示",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2021-02-24",
+          "stage": "发生",
+          "description": "李诞发布Ubras带货微博引争议同日删除"
+        },
+        {
+          "at": "2021-02-27",
+          "stage": "发酵",
+          "description": "中央政法委长安剑发文《玩梗必须有边界》点名批评"
+        },
+        {
+          "at": "2021-08-24",
+          "stage": "收尾",
+          "description": "李诞被罚没876721.31元，笑果文化罚没23.3万元"
+        }
+      ],
+      "brand_response": "道歉加下架。2月24日Ubras道歉，2月25日李诞道歉。后续受行政处罚。",
+      "outcome": "中央政法委点名批评，李诞被罚没87.7万元，笑果文化被罚没23.3万元。",
+      "consequences": {
+        "reputation": "中央政法委长安剑点名批评",
+        "business": "公开报道未见量化数据",
+        "regulatory": "北京海淀区市监局罚没李诞876721.31元；上海奉贤区市监局罚没笑果文化23.3万元",
+        "duration_days": 181,
+        "severity_hint": "severe"
+      },
+      "sources": [
+        {
+          "name": "中央政法委长安剑",
+          "url": "https://www.thepaper.cn/newsDetail_forward_11489081",
+          "published_at": "2021-02-27"
+        },
+        {
+          "name": "中国网财经",
+          "url": "http://finance.china.com.cn/industry/renwu/20210824/5638590.shtml",
+          "published_at": "2021-08-24"
+        }
+      ],
+      "credibility_notes": "中央政法委原文可查证，行政处罚金额精确。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. ad_copy_original 缺少关键元素：原始微博完整文案为「#我的职场救身衣#，一个让女性轻松躺赢职场的装备，@Ubras品牌官方，我说没有我带不了的货，你就说信不信吧。」，案例记载遗漏了 \"#我的职场救身衣#\" 话题标签和 \"@Ubras品牌官方\" 提及。\n2. timeline[1].at（中央政法委长安剑发文）：应为「2021-02-26」而非「2021-02-27」。中国长安网(chinapeace.gov.cn)原文发布日期为2021年2月26日21:47，澎湃新闻等媒体转载也标注2月26日。\n3. timeline[2] 将两个不同处罚合并于同一日期「2021-08-24」不准确：李诞个人处罚于2021年6月作出决定、2021-08-24公布；笑果文化处罚决定日期为2021-07-26（沪市监奉处〔2021〕262021000283号）、首次公布日期为2021-08-04，与李诞处罚非同一天。\n4. consequences.regulatory 中笑果文化罚没精确金额应为 233,003.01 元（没收广告费33,003.01元+罚款200,000元），而非笼统表述「23.3万元」。李诞罚没876,721.31元（没收225,573.77元+罚款651,147.54元）金额核实无误。\n5. 案例遗漏了海峡西岸（北京）文化传媒集团有限公司因代理制作该广告于2021年9月被海淀区市监局没收广告费40万元并罚款40万元、合计80万元的关联处罚。",
+        "confirmed_facts": [
+          "事件真实存在：李诞于2021年2月24日10:50在微博发布Ubras内衣广告，同日删除，该基本事实经联合早报、澎湃新闻、南方都市报等多源独立印证",
+          "ad_copy_original核心争议句「一个让女性轻松躺赢职场的装备」「我说没有我带不了的货，你就说信不信吧」属实，多源报道引用一致",
+          "Ubras于2021年2月24日18:07道歉下架、李诞于2021年2月25日14:50转发道歉属实",
+          "中央政法委长安剑发表《李诞带货女性内衣翻车：玩梗必须有边界！》批评属实，原文发表于中国长安网",
+          "李诞被北京市海淀区市监局罚没876,721.31元属实（没收违法所得225,573.77元+罚款651,147.54元），2021年8月24日作为典型案例公布",
+          "上海笑果文化被上海市奉贤区市监局罚没233,003.01元属实（没收广告费33,003.01元+罚款200,000元），案由为未尽审核义务"
+        ],
+        "unverified_claims": [
+          "sources[1] URL（http://finance.china.com.cn/industry/renwu/20210824/5638590.shtml）：中国网财经报道存在且搜索结果摘要印证内容匹配，但自动工具因服务器证书验证错误无法直接访问，未能逐字比对全文内容",
+          "sources[0] URL（https://www.thepaper.cn/newsDetail_forward_11489081）：澎湃新闻转载长安剑文章存在且搜索结果印证内容匹配，但自动工具因证书验证错误无法直接访问，未能逐字比对全文",
+          "duration_days=181：从2021-02-24到2021-08-24的数学计算正确，但无明确公开来源定义该事件的起止节点，属案例自行推算"
+        ],
+        "extra_sources": [
+          {
+            "name": "中国长安网（中央政法委官网）",
+            "url": "http://www.chinapeace.gov.cn/chinapeace/c100007/2021-02/26/content_12455691.shtml",
+            "published_at": "2021-02-26"
+          },
+          {
+            "name": "联合早报",
+            "url": "https://www.zaobao.com.sg/realtime/china/story20210226-1127079",
+            "published_at": "2021-02-26"
+          },
+          {
+            "name": "澎湃新闻（李诞处罚报道）",
+            "url": "https://www.thepaper.cn/newsDetail_forward_14221057",
+            "published_at": "2021-08-24"
+          },
+          {
+            "name": "中国新闻网（笑果文化处罚报道）",
+            "url": "https://www.chinanews.com.cn/cj/2021/08-14/9543561.shtml",
+            "published_at": "2021-08-14"
+          },
+          {
+            "name": "中国市场监管报（笑果文化低俗广告案全文）",
+            "url": "http://www.cmrnn.com.cn/content/2021-12/16/content_209130.html",
+            "published_at": "2021-12-16"
+          },
+          {
+            "name": "南方都市报（李诞被罚细节报道）",
+            "url": "https://m.mp.oeeee.com/a/BAAFRD000020210824589805.html",
+            "published_at": "2021-08-24"
+          }
+        ],
+        "severity_check": "「severe」定级恰当。理由：(1)中央政法委官方账号公开点名批评，级别高；(2)李诞个人罚没近88万元+笑果文化罚没23.3万元+海峡西岸罚没80万元，累计处罚超190万元；(3)被列为2021年海淀区违法广告典型案例之首；(4)引发全社会对性别歧视营销的广泛讨论，微博热搜第一，舆论影响面大。不降级理由充分。"
+      }
+    },
+    {
+      "external_id": "sent-case-004",
+      "title": "全棉时代卸妆巾广告卸妆吓退尾随者侮辱女性争议",
+      "brand": "全棉时代（Purcotton）",
+      "occurred_at": "2021-01-07",
+      "industry": [
+        "日化"
+      ],
+      "platforms": [
+        "微博",
+        "抖音",
+        "电商详情页"
+      ],
+      "ad_copy_original": "短视频标题全棉小剧场防身术。女孩深夜被尾随，用卸妆巾卸妆后露出男性面孔变丑，吓跑歹徒。",
+      "trigger_short": "女性卸妆后变丑吓跑尾随者被指丑化女性",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2021-01-07",
+          "stage": "发生",
+          "description": "全棉时代发布防身术短视频暗示卸妆变丑可吓退性侵者引众怒"
+        },
+        {
+          "at": "2021-01-08",
+          "stage": "回应",
+          "description": "先回复视频为广告创意后删除并正式致歉，话题上热搜第20位"
+        },
+        {
+          "at": "2021-01-10",
+          "stage": "发酵",
+          "description": "歉意表白长文道歉仅8行80%为品牌回顾被嘲道歉8行广告两页，中国妇女报批评"
+        }
+      ],
+      "brand_response": "三次回应：1月8日评论回复后删除致歉，1月10日歉意表白再道歉引二次舆情。",
+      "outcome": "三次道歉未平息舆论，母公司股价短期下跌。",
+      "consequences": {
+        "reputation": "热搜第20位，话题阅读量1.2亿，中国妇女报批评",
+        "business": "母公司稳健医疗300888股价1月7日收盘跌3.94%",
+        "regulatory": "无公开监管动作",
+        "duration_days": 7,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "界面新闻",
+          "url": "https://www.jiemian.com/article/5526135.html",
+          "published_at": "2021-01-11"
+        },
+        {
+          "name": "21财经",
+          "url": "https://m.21jingji.com/article/20210112/herald/d2f8dd4c655cc9df75007f22c00358f7.html",
+          "published_at": "2021-01-12"
+        }
+      ],
+      "credibility_notes": "三家独立媒体互相印证，股价变动有明确报道。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "\n1. timeline[1] 日期错误：案例写\"1月8日 先回复视频为广告创意后删除并正式致歉\"。根据界面新闻等多家来源确认，第一次评论回复（\"视频为广告创意\"）实际发生在1月7日当天（广告发布同日），1月8日是首次正式致歉声明。应拆分为两步或纠正日期。\n\n2. 热搜排名\"第20位\"无法查证：用\"全棉时代+热搜+第20位\"\"全棉时代+热搜榜+排名\"\"TOP20+排名\"等多组独立关键词检索，未找到任何来源确认\"第20位\"这一具体排名。可查到的记录是话题#全棉时代的道歉#一度占热搜第1名或第6名（不同来源/不同时间点），持续约8小时。原案例的\"第20位\"应视为未经验证的孤立数据，建议降级为\"冲上微博热搜（具体排名待确认）\"。\n\n3. 话题阅读量\"1.2亿\"无法查证：独立检索未找到任何来源给出\"1.2亿\"这一精确数字。可查到的数字有：南方+和搜狐等来源称话题#全棉时代的道歉#阅读量约1.1亿，另有来源称相关话题阅读量3.5亿或4.4亿（对应不同话题词条/不同时间点）。建议改用可查证的表述或注明来源。\n\n4. credibility_notes称\"三家独立媒体互相印证\"：实际sources数组仅列2个来源（界面新闻、21财经），与\"三家\"存在数字矛盾。应修正为\"两家\"或补充第三来源。\n\n5. 21财经来源URL不可验证：https://m.21jingji.com/article/20210112/herald/d2f8dd4c655cc9df75007f22c00358f7.html 在本次核查环境中因安全策略拦截无法访问，未能获取文章原文以交叉比对内容引用是否一致。\n\n6. ad_copy_original为剧情摘要而非原句引用：建议明确标注为\"广告剧情概要\"。广告实际包含关键台词\"有事吗？哥。\"和跟踪者呕吐音效\"呕……\"，原始广告语为\"京都玉露卸妆湿巾，一布到位\"，这些关键元素在案例引用中未体现。\n",
+        "confirmed_facts": [
+          "事件真实存在：全棉时代2021年1月发布卸妆巾广告《全棉小剧场·防身术》，因内容被指侮辱女性引发全国性舆论（界面新闻、澎湃新闻、南方都市报、中国新闻周刊、搜狐、网易等多家独立媒体互相印证）",
+          "发生日期2021-01-07准确：多家来源均确认广告于2021年1月7日首发于抖音等社交媒体平台",
+          "广告剧情核心要素属实：女孩深夜被尾随→用卸妆巾卸妆→容貌变化呈男性面孔→吓退尾随者，附带呕吐音效，剧情反转标签",
+          "品牌三次回应属实：1月7日评论回复→1月8日正式致歉→1月10日发布《来自全棉时代的歉意表白》引发道歉8行广告两页二次舆情",
+          "中国妇女报批评属实：全国妇联机关报以美化犯罪者、丑化受害者，充满偏见、恶意、无知等措辞严厉抨击该广告",
+          "母公司稳健医疗（300888）1月7日收盘跌3.94%属实：多家财经媒体均确认当日收盘价177.15元/股、跌幅3.94%",
+          "界面新闻来源URL可访问且内容匹配：https://www.jiemian.com/article/5526135.html 可正常访问，文章内容与事件描述一致",
+          "中国长安网（中央政法委官微）和新华网均发声批评属实",
+          "无公开监管处罚属实：独立检索未发现任何行政处罚、约谈或立案信息"
+        ],
+        "unverified_claims": [
+          "热搜排名第20位：独立检索未找到任何来源确认此具体排名。可查到的排名记录为第1名或第6名（对应不同话题词条和时间点），持续约8小时",
+          "话题阅读量精确值1.2亿：独立检索未找到任何来源给出此精确数字。可查到的数字包括约1.1亿、3.5亿、4.4亿等（对应不同话题词条和不同统计时间点）",
+          "21财经来源URL的可访问性：本次环境因安全策略拦截无法访问该域名，不能确认文章原文与案例引用之间是否存在偏差",
+          "consequences.duration_days取值为7的来源与方法不明：首日(1/7)到第三次道歉(1/10)为4天，到南都跟进报道(1/14)为8天，7这一取值需明确计算方式",
+          "credibility_notes中三家独立媒体互相印证与sources数组仅列2个来源存在数字矛盾：需确认第三来源是遗漏、计数有误还是其他原因"
+        ],
+        "extra_sources": [
+          {
+            "name": "澎湃新闻 - 涉嫌侮辱女性！全棉时代道歉",
+            "url": "https://m.thepaper.cn/newsDetail_forward_10722361",
+            "published_at": "2021-01-08"
+          },
+          {
+            "name": "南方都市报 - 全棉时代卸妆巾视频被指侮辱女性",
+            "url": "https://m.mp.oeeee.com/a/BAAFRD000020210108413283.html",
+            "published_at": "2021-01-08"
+          },
+          {
+            "name": "界面新闻 - 道歉8行，广告2页，全棉时代第三次道歉仍不被认可",
+            "url": "https://www.jiemian.com/article/5526135.html",
+            "published_at": "2021-01-11"
+          },
+          {
+            "name": "南方+ (南方plus) - 20%道歉，80%宣传 全棉时代道歉式营销反成危机",
+            "url": "https://static.nfnews.com/content/202101/20/c4648319.html",
+            "published_at": "2021-01-20"
+          },
+          {
+            "name": "东方财富 - 全棉时代一条广告引发的危机：母公司股价下跌 稳健医疗还能有多稳？",
+            "url": "https://finance.eastmoney.com/a/202101131772351865.html",
+            "published_at": "2021-01-13"
+          },
+          {
+            "name": "第一财经 - 艰难上市的稳健医疗去年狂赚36亿元 营销翻车的全棉时代为其贡献六成收入",
+            "url": "https://www.yicai.com/news/100911466.html",
+            "published_at": "2021-01-13"
+          },
+          {
+            "name": "新浪财经/中国经济网 - 稳健医疗两天市值蒸发86亿 受累全棉时代广告危机？",
+            "url": "https://finance.sina.com.cn/roll/2021-01-14/doc-ikftpnnx7089042.shtml",
+            "published_at": "2021-01-14"
+          },
+          {
+            "name": "民生周刊 (人民日报社) - 全棉时代广告涉嫌侮辱女性，道歉似获奖感言！物化女性何时休？",
+            "url": "http://wap.msweekly.com/mobile/show.html?id=126971",
+            "published_at": "2021-01-13"
+          },
+          {
+            "name": "腾讯新闻 - 广告侮辱女性又自夸式道歉，全棉时代的黑红操作该醒醒了！",
+            "url": "https://news.qq.com/rain/a/20210111A0DQ7J00",
+            "published_at": "2021-01-11"
+          }
+        ],
+        "severity_check": "原案例定级为 high。综合核查结果，此定级基本合理但存在过度依赖单一数字指标（如热搜第20位、阅读量1.2亿）的问题。\n\n支持 high 的核心理由：\n- 中国妇女报（全国妇联机关报）点名批评\n- 新华网、中国长安网（中央政法委官微）等多官媒跟进\n- 三次道歉均失败，成为2021年危机公关典型失败案例\n- 母公司股价当日显著下跌（-3.94%），两日市值蒸发约86亿\n- 事件在营销/公关行业被广泛引用为反面教材，影响力延续至今\n\n需要注意的降权因素：\n- 无任何监管处罚（行政处罚、约谈、立案均无）\n- 无产品下架或召回\n- 微博热搜排名和阅读量两个关键量化指标均无法从第二来源核实\n- 从 severity 定级的量化一致性角度看，依靠未经验证的指标支撑 high 级别不够坚实\n\n建议保留 high 但注明：定级主要依据官媒批评力度和行业影响力，非依据热搜排名或阅读量等未充分验证的量化指标。\n"
+      }
+    },
+    {
+      "external_id": "sent-case-005",
+      "title": "宝洁公众号女人脚臭是男人的5倍侮辱女性争议",
+      "brand": "宝洁（P&G/广州宝洁）",
+      "occurred_at": "2022-03-24",
+      "industry": [
+        "日化"
+      ],
+      "platforms": [
+        "微博",
+        "微信朋友圈"
+      ],
+      "ad_copy_original": "2022年3月13日宝洁会员中心推文《女人脚臭是男人的5倍？不信现在闻一下！》。列女人脚臭是男人的5倍（称女性足部细菌繁殖速率2300%男性400%未标明出处）、女人有体臭胸部最臭、再爱干净的女人内裤比男人脏、女人头发比男人脏一倍。文末植入全身香香5件套。",
+      "trigger_short": "女人脚臭是男人的5倍等伪科普侮辱对比推销产品",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2022-03-13",
+          "stage": "发生",
+          "description": "宝洁会员中心公众号发布争议推文"
+        },
+        {
+          "at": "2022-03-24",
+          "stage": "发酵",
+          "description": "宝洁登微博热搜第4名，同日宝洁微博道歉公众号注销"
+        },
+        {
+          "at": "2022-06-24",
+          "stage": "收尾",
+          "description": "广州黄埔区市监局罚款70万元，认定违反广告法第九条第七项"
+        }
+      ],
+      "brand_response": "道歉加下架加注销账号。3月24日宝洁中国郑重道歉，涉事公众号注销。",
+      "outcome": "宝洁被罚款70万元，认定妨碍社会公共秩序及违背社会良好风尚。",
+      "consequences": {
+        "reputation": "微博热搜第4名，中国妇女报评论，华中师大收录为教学案例",
+        "business": "公开报道未见量化数据",
+        "regulatory": "广州黄埔区市监局2022年3月28日立案案号00096，6月24日罚款70万元",
+        "duration_days": 103,
+        "severity_hint": "severe"
+      },
+      "sources": [
+        {
+          "name": "观察者网",
+          "url": "https://www.guancha.cn/politics/2022_06_27_646608.shtml",
+          "published_at": "2022-06-27"
+        },
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_18758751",
+          "published_at": "2022-06-27"
+        }
+      ],
+      "credibility_notes": "行政处罚决定书为官方公开文件，多家来源一致，证据强度极高。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. occurred_at 应修正为 \"2022-03-13\"（推文发布日），非 \"2022-03-24\"。案例自身 timeline 中 3月13日 标为\"发生\"，3月24日标为\"发酵\"，occurred_at 与 timeline 矛盾。\n2. consequences.reputation 中的\"微博热搜第4名\"表述不完整：当天 #宝洁# 曾短暂出现在第4位，但 #宝洁致歉# 最终登顶热搜榜首（第1名），央广网、未来网、澎湃新闻等多家媒体验证。建议修正为\"#宝洁致歉#登微博热搜榜首，同时 #宝洁# 一度位列第4名\"。\n3. consequences.regulatory 中\"案号00096\"仅为立案号（穗黄案件〔2022〕00096号），正式的行政处罚决定书编号为穗黄市监处罚〔2022〕00098号，两者不同。建议补充正式处罚决定书编号。\n4. sources[0]（观察者网）URL 返回 HTTP 200 但页面内容为空，无法验证其内容是否与案例记载一致。sources[1]（澎湃新闻）URL 在直接访问时连接超时，虽可通过搜索引擎确认该报道存在，但直接链接可用性存疑。",
+        "confirmed_facts": [
+          "事件真实性：2022年3月13日宝洁会员中心公众号发布《女人脚臭是男人的5倍？不信现在闻一下！》推文，多源独立验证确认（澎湃新闻、南方都市报、中国新闻网、央广网、法治日报等）",
+          "ad_copy_original 引用的四个'真相'内容（女人脚臭是男人的5倍、足部细菌繁殖速率2300%/400%、胸部最臭、内裤比男人脏、头发比男人脏一倍）与多家媒体报道的推文截图一致",
+          "品牌回应：3月24日宝洁中国微博致歉、删除文章、涉事公众号注销——多源确认",
+          "处罚结果：广州黄埔区市监局罚款70万元，违反广告法第九条第（七）项和第十一条第二款——行政处罚决定书穗黄市监处罚〔2022〕00098号确认",
+          "立案日期：2022年3月28日，立案号穗黄案件〔2022〕00096号——确认",
+          "处罚日期：2022年6月24日——确认",
+          "中国妇女报评论：3月24日官微发布'不尊重女性，会让你真正被保洁'评论——确认",
+          "duration_days=103天（2022-03-13至2022-06-24）——计算正确",
+          "severity_hint=severe：罚款70万元属广告法第五十七条20-100万区间的中上水平，叠加全国性媒体关注和社会舆论反响，定级合理"
+        ],
+        "unverified_claims": [
+          "consequences.reputation 中的'华中师大收录为教学案例'：以'华中师范大学''宝洁''女人脚臭''教学案例'等多种关键词组合搜索，均未找到独立公开来源，无法验证",
+          "观察者网 source URL 内容：页面返回 HTTP 200 但 WebFetch 抓取内容为空，无法确认该报道是否仍存在于该 URL 或内容是否与案例记载一致"
+        ],
+        "extra_sources": [
+          {
+            "name": "央广网/未来网",
+            "url": "https://news.k618.cn/dj/202203/t20220324_18259246.html",
+            "published_at": "2022-03-24"
+          },
+          {
+            "name": "南方都市报",
+            "url": "https://m.mp.oeeee.com/a/BAAFRD000020220627697519.html",
+            "published_at": "2022-06-27"
+          },
+          {
+            "name": "中国新闻网/中国经济网",
+            "url": "http://finance.ce.cn/stock/gsgdbd/202206/28/t20220628_37809253.shtml",
+            "published_at": "2022-06-28"
+          },
+          {
+            "name": "法治日报/法治周末",
+            "url": "http://www.legalweekly.cn/rdcj/2022-07/07/content_8748690.html",
+            "published_at": "2022-07-07"
+          },
+          {
+            "name": "澎湃新闻（补充报道）",
+            "url": "https://www.thepaper.cn/newsDetail_forward_18792303",
+            "published_at": "2022-06-29"
+          },
+          {
+            "name": "信用中国（广东）行政处罚公示",
+            "url": "https://credit.gd.gov.cn",
+            "published_at": "2022-06-27"
+          }
+        ],
+        "severity_check": "severe 定级合理。依据：罚款70万元在广告法第五十七条20-100万元罚幅中属中上水平；事件引发全国性舆论（微博热搜榜首、中国妇女报评论、多家主流媒体报道）；违法行为涉及性别歧视和违背社会良好风尚的双重负面定性；最终被行政处罚且公众号注销。该定级无需修正。"
+      }
+    },
+    {
+      "external_id": "sent-case-006",
+      "title": "梅见“配得上”广告文案性别争议",
+      "brand": "梅见",
+      "occurred_at": "2025-01-13",
+      "industry": [
+        "酒类"
+      ],
+      "platforms": [
+        "微博",
+        "抖音",
+        "小红书"
+      ],
+      "ad_copy_original": "贤婿，你受苦了，哈哈哈，我女儿其实没那么配得上你。爸赠梅见新年酒。",
+      "trigger_short": "‘配得上’式性别贬损表述引发争议",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2025-01-13",
+          "stage": "发生",
+          "description": "网友在超市发现梅见新年包装含‘配不上你’文案，拍照上传社交平台后迅速发酵"
+        },
+        {
+          "at": "2025-01-13",
+          "stage": "回应",
+          "description": "梅见官方微博发布致歉声明（落款‘梅见品牌全体员工’），称内部审核流程存在漏洞，宣布全面下架争议物料"
+        }
+      ],
+      "brand_response": "2025年1月13日，梅见官方微博发布致歉声明，称内部审核流程存在漏洞，宣布全面下架所有引发争议的新年帖及相关物料",
+      "outcome": "品牌当日致歉并全面下架争议物料，事件快速平息",
+      "consequences": {
+        "reputation": "登上微博热搜，多家主流媒体跟进报道",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "每日经济新闻",
+          "url": "https://m.nbd.com.cn/articles/2025-01-13/3719741.html",
+          "published_at": "2025-01-13"
+        },
+        {
+          "name": "解放日报",
+          "url": "https://www.jfdaily.com.cn/sgh/detail?id=1496946",
+          "published_at": "2025-01-13"
+        }
+      ],
+      "credibility_notes": "多个权威媒体报道，品牌官方微博致歉声明可查，证据充分",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. **sources[1]（解放日报/上观新闻）URL 无法验证内容匹配**：https://www.jfdaily.com.cn/sgh/detail?id=1496946 页面可访问但仅返回站点框架/Navigation 模板，未抓取到任何梅见相关文章正文。同时用\"梅见 解放日报 2025\"和\"梅见 上观新闻 1496946\"做独立关键词检索也找不到对应报道。无法确认该来源确实存在且内容与案例记载吻合。建议替换为已验证可访问的替代来源（如澎湃新闻 https://www.thepaper.cn/newsDetail_forward_29923363、新京报 http://m.bjnews.com.cn/detail/1736766620129188.html 或红星新闻 https://static.cdsb.com/micropub/Articles/202501/19600c6e9f533d549766463029b41236.html）。\n\n2. **severity_hint 建议从 \"high\" 修正为 \"medium-high\"**：专业舆情监测报告（梅花数据/百分点等）将此事定级为\"中度偏高的负面舆情\"，热度指数 328.52，单个热搜在榜最长仅 8.42 小时，事件总持续时间约 3 天，无监管介入、无罚款、无业务量化损失。对比真正\"high\"级别事件（如罚款数百万元、代言人解约、持续一周以上热搜霸榜的全网级危机），本案更贴近 medium-high。\n\n3. **ad_copy_original 措辞存在版本差异（非关键）**：案中引用的完整版本\"贤婿，你受苦了，哈哈哈，我女儿其实没那么配得上你。爸赠梅见新年酒。\"与每日经济新闻报道完全一致，但澎湃新闻等媒体引用的是较短的\"贤婿，你受苦了。我女儿没那么配得上你\"，省略了\"哈哈哈\"\"其实\"\"爸赠梅见新年酒\"。建议在 credibility_notes 中注明存在措辞版本差异。",
+        "confirmed_facts": [
+          "事件真实存在：2025年1月12-13日梅见青梅酒新年包装文案因性别争议引发广泛舆论，多源交叉验证确认",
+          "occurred_at '2025-01-13' 准确：品牌官方微博当日发布致歉声明并宣布下架争议物料，首次热搜上榜时间为1月13日17:01",
+          "ad_copy_original 核心内容属实：每日经济新闻（sources[0]）原文包含完整引文，独立搜索亦获多个来源印证",
+          "品牌回应属实：梅见官方微博发布致歉声明，落款'梅见品牌全体员工'，宣布全面下架争议物料",
+          "reputation 影响属实：共产生5个热搜话题（微博3+百度2），澎湃新闻、新京报、每日经济新闻、光明网、界面新闻等多家主流媒体跟进报道",
+          "business '公开报道未见量化数据'属实：独立检索未发现任何营收/销量影响的量化报道",
+          "regulatory '无公开监管动作'属实：独立检索未发现市监局约谈、立案或处罚（检索到的处罚案例为兖州超市销售过期梅见产品案和安徽梅见酒业傍名牌不正当竞争案，均与本次广告争议无关）",
+          "duration_days: 3 基本属实：舆情监测报告显示事件时间窗口为1月12日-15日，约3天，1月14日为声量高峰后快速衰减"
+        ],
+        "unverified_claims": [
+          "sources[1] 解放日报/上观新闻 URL (https://www.jfdaily.com.cn/sgh/detail?id=1496946) 无法验证：页面仅返回框架模板无文章正文，独立关键词搜索也找不到对应报道，无法确认该来源确实有梅见相关报道且内容与案例记录一致",
+          "ad_copy_original 中 '哈哈哈' '其实' '爸赠梅见新年酒' 等措辞在不同媒体报道中存在差异版本，澎湃新闻版为'贤婿，你受苦了。我女儿没那么配得上你'（较短），无法确认哪个版本更贴近实际包装原文"
+        ],
+        "extra_sources": [
+          {
+            "name": "澎湃新闻",
+            "url": "https://www.thepaper.cn/newsDetail_forward_29923363",
+            "published_at": "2025-01-13"
+          },
+          {
+            "name": "新京报",
+            "url": "http://m.bjnews.com.cn/detail/1736766620129188.html",
+            "published_at": "2025-01-13"
+          },
+          {
+            "name": "红星新闻（成都商报）",
+            "url": "https://static.cdsb.com/micropub/Articles/202501/19600c6e9f533d549766463029b41236.html",
+            "published_at": "2025-01-13"
+          },
+          {
+            "name": "舆情监测报告（梅花数据/百分点）",
+            "url": "https://baijiahao.baidu.com/s?id=1821498172001762127",
+            "published_at": "2025-01-16"
+          },
+          {
+            "name": "光明网",
+            "url": "https://m.gmw.cn/2025-01/14/content_1303947066.htm",
+            "published_at": "2025-01-14"
+          },
+          {
+            "name": "界面新闻",
+            "url": "https://www.jiemian.com/article/12248185.html",
+            "published_at": "2025-01-14"
+          }
+        ],
+        "severity_check": "案例定级 \"high\" 偏高。专业舆情监测报告将此事件定性为\"中度偏高的负面舆情\"（热度指数 328.52，敏感占比 81.24%）。支持 medium-high 的理由：(1) 事件持续时间仅约3天，单条热搜在榜最长8.42小时；(2) 无监管处罚/立案/约谈；(3) 无公开业务量化损失；(4) 品牌当日快速致歉并下架有效控制了发酵。若按 high 定级，应与罚款数百万、代言人解约、持续一周以上的全网级危机事件对标，本案显著未达该量级。建议修正为 medium-high。"
+      }
+    },
+    {
+      "external_id": "sent-case-007",
+      "title": "施华蔻“处女发质”产品标签性别争议",
+      "brand": "施华蔻",
+      "occurred_at": "2025-09-11",
+      "industry": [
+        "美妆",
+        "日化"
+      ],
+      "platforms": [
+        "微博",
+        "电商详情页"
+      ],
+      "ad_copy_original": "处女发质（未经过化学处理）——施华蔻俏翎烫发药水产品包装上将英文Virgin Hair翻译为此",
+      "trigger_short": "产品标签‘处女发质’翻译用词不当引发争议",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2025-09-10",
+          "stage": "发生",
+          "description": "消费者发现施华蔻俏翎烫发药水包装标注‘处女发质’并在社交平台曝光"
+        },
+        {
+          "at": "2025-09-11",
+          "stage": "回应",
+          "description": "施华蔻官方微博凌晨发布致歉声明，称翻译未能准确传达原意，已启动包装说明更新，天猫旗舰店下架涉事产品"
+        }
+      ],
+      "brand_response": "2025年9月11日凌晨，施华蔻官方微博致歉，称‘翻译未能准确传达原意’，已启动包装说明全面更新，天猫旗舰店下架涉事产品",
+      "outcome": "品牌致歉并下架涉事产品，承诺更新包装表述",
+      "consequences": {
+        "reputation": "登上微博热搜，光明网、21世纪经济报道等多家主流媒体跟进",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "光明网",
+          "url": "https://m.gmw.cn/2025-09/12/content_1304145321.htm",
+          "published_at": "2025-09-12"
+        },
+        {
+          "name": "21世纪经济报道",
+          "url": "https://www.21jingji.com/article/20250912/herald/a4bc992033008a9db250625b47120530.html",
+          "published_at": "2025-09-12"
+        }
+      ],
+      "credibility_notes": "多个权威媒体报道，品牌官方微博致歉声明可查，证据充分",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. ad_copy_original：案例引用简化过度。包装完整原文（中华网报道可查）：\"普通发质：处女发质（未经过化学处理）即未使用过任何烫发、染发类产品，发质柔软，纤细并在干发或湿发时易于梳理\"。案例截取的\"处女发质（未经过化学处理）\"虽为核心争议词，但省略了前导\"普通发质：\"及后续说明文字，应补全或注明为部分引用。\n\n2. occurred_at：\"2025-09-11\" 实为品牌道歉日期，非事件首次曝光日期。消费者首次在社交平台曝光为 2025-09-10（封面新闻当日即报道），timeline 中 stage=发生 的 at 亦为 2025-09-10，与 occurred_at 存在内部矛盾。建议将 occurred_at 改为 2025-09-10，或增加说明\"occurred_at 取品牌回应/事件峰值日期\"。\n\n3. duration_days：案例标为 3，但公开检索未找到任何来源明确给出\"持续3天\"或具体热搜在榜时长。事件时间线（9/10 曝光 → 9/11 道歉 → 9/12 媒体跟进 → 9/15-16 评论文章）大致跨 3-6 天，但\"3 天\"这一确切数字无第二来源支撑，应降级为估算值或删除。Jing Daily 报道提及微博话题获 1.1 亿阅读量，但亦未给出在榜时长。\n\n4. severity_hint：案例判为 medium，但从检索到的全部报道来看：无监管处罚、无罚款、无强制召回、无持续抵制、品牌快速道歉并下架即平息，更符合 low 级（轻度声誉风波，PR 层面快速化解）。若以微博阅读量 1.1 亿和多家全国性媒体报道衡量，勉强可入 medium 下沿，建议标注\"low-medium 边界\"并说明理由。\n\n5. sources[0] 来源归属：URL 指向光明网，但文章正文显示内容实际来自扬子晚报/紫牛新闻记者张冰晶。光明网为转载平台，建议 name 改为\"扬子晚报/紫牛新闻（光明网转载）\"或至少注明原始来源。",
+        "confirmed_facts": [
+          "事件真实存在：施华蔻俏翎烫发药水产品包装将英文'Virgin Hair'译为'处女发质（未经过化学处理）'，2025年9月10日被消费者在社交平台曝光（封面新闻当日首发），9月11日凌晨约3:07施华蔻官方微博发布致歉声明。以上核心事实获得至少8个独立来源交叉印证：封面新闻、21世纪经济报道、扬子晚报/紫牛新闻（光明网转载）、南都湾财社（南方+）、新浪财经、中国新闻网、中华网、on.cc东网（香港）、Jing Daily（英文）。",
+          "ad_copy_original 核心争议文本准确：产品包装确标注'处女发质（未经过化学处理）'对应英文'Virgin Hair'，21经济网、光明网、南都湾财社、中华网共4个独立来源均引用相同原文。",
+          "品牌回应内容准确：2025年9月11日凌晨，施华蔻官方微博声明称'翻译未能准确传达原意'，表示已启动包装说明更新工作。多家媒体引用了声明全文。",
+          "天猫旗舰店已无法搜索到涉事产品，光明网/扬子晚报、南都湾财社均确认。",
+          "无公开监管处罚：以'施华蔻+处女发质+处罚/罚款/监管/约谈'等关键词组合检索，未发现任何监管机构介入的报道。",
+          "无量化商业影响数据：所有公开报道均未提供销售下滑、市场份额变化等量化数据。",
+          "两家 sources URL 均可正常访问、内容与案例描述一致。光明网页面标题为'国际美妆品牌标处女发质被骂！品牌致歉：翻译不准确'，21经济网页面标题为'处女发质标签引争议 施华蔻深夜道歉'。",
+          "行业分类（美妆、日化）、平台（微博、电商详情页）、风险维度（性别争议）均准确。",
+          "品牌历史背景：多家报道指出施华蔻关联公司汉高股份有限公司2018-2021年间有5次行政处罚记录（合计约205万元），另有多次标签标识不合格记录，但均与本次'处女发质'事件无关。"
+        ],
+        "unverified_claims": [
+          "duration_days: 3 —— 所有检索到的主流报道（至少12篇）均未提及此事件的具体热搜在榜天数。Jing Daily 给出的 1.1 亿微博阅读量是唯一量化指标，但亦未提供持续时长。'3天'可能来自内部估算（9/10-9/12），但缺乏公开来源支撑。",
+          "severity_hint: medium —— 定级为 medium 的核心论据是'登上微博热搜'，但公开报道中仅提到话题引起热议、多家媒体跟进，未明确证实该话题进入微博热搜榜前50/前10/第一等具体排名。Jing Daily 的 1.1 亿阅读量可佐证传播广度，但 severity 评估缺乏明确分级标准参照。",
+          "consequences.reputation 中'光明网、21世纪经济报道等多家主流媒体跟进'的列举暗示这是主要影响力指标，但对 1.1 亿阅读量和具体热搜排名这一更能量化声誉影响的数据未作引用。",
+          "brand_response 中'天猫旗舰店下架涉事产品'的'下架'一词：光明网和南都报道均使用'搜索不到相应产品'这一描述，未确认是主动下架还是自然售罄。案例将其定性为主动下架行为，报道原文更为审慎。"
+        ],
+        "extra_sources": [
+          {
+            "name": "Jing Daily (英文)",
+            "url": "https://jingdaily.com/posts/schwarzkopf-virgin-hair-translation-sparks-outrage-in-china-misstep-backlash",
+            "published_at": "2025-09-16"
+          },
+          {
+            "name": "南方网",
+            "url": "https://opinion.southcn.com/node_2055521c62/277505b5a8.shtml",
+            "published_at": "2025-09-15"
+          },
+          {
+            "name": "极目新闻",
+            "url": "https://www.ctdsb.net/c1476_202509/2533280.html",
+            "published_at": "2025-09-11"
+          },
+          {
+            "name": "南都湾财社/南方+",
+            "url": "https://www.nfnews.com/content/0oXLYdG9o9.html",
+            "published_at": "2025-09-11"
+          },
+          {
+            "name": "封面新闻/腾讯网",
+            "url": "https://news.qq.com/rain/a/20250910A04HXZ00",
+            "published_at": "2025-09-10"
+          },
+          {
+            "name": "新浪财经",
+            "url": "https://finance.sina.com.cn/jjxw/2025-09-11/doc-infqcyix1337386.shtml",
+            "published_at": "2025-09-11"
+          },
+          {
+            "name": "中国新闻网",
+            "url": "https://finance.china.com.cn/consume/20250911/6266743.shtml",
+            "published_at": "2025-09-11"
+          },
+          {
+            "name": "on.cc东网 (香港)",
+            "url": "https://hk.on.cc/hk/bkn/cnt/news/20250912/bkn-20250912152540662-0912_00822_001.html",
+            "published_at": "2025-09-12"
+          },
+          {
+            "name": "中华网 (含完整包装原文)",
+            "url": "https://news.china.com/socialgd/10000169/20250912/48817625_all.html",
+            "published_at": "2025-09-12"
+          },
+          {
+            "name": "国际金融报",
+            "url": "https://www.ifnews.com/news.html?aid=762921",
+            "published_at": "2025-09-12"
+          },
+          {
+            "name": "东方财富网/财富号",
+            "url": "https://caifuhao.eastmoney.com/news/20250912174003607691760",
+            "published_at": "2025-09-12"
+          },
+          {
+            "name": "4A广告网",
+            "url": "https://www.4anet.com/p/01k4xth46ff25ggv0m67sykwdb",
+            "published_at": "2025-09-12"
+          }
+        ],
+        "severity_check": "案例将 severity_hint 定为 medium，复核意见如下：\n\n支持 medium 的因素：\n- 微博话题阅读量 1.1 亿（Jing Daily），传播广度较大\n- 光明网、21世纪经济报道、南都、封面新闻等至少 6 家全国性媒体跟进\n- 涉及性别议题，舆论敏感度高\n- 品牌有历史标签违规记录，事件引发对其系统性问题的讨论\n\n反对 medium（倾向 low）的因素：\n- 无任何监管介入（无约谈、无处罚、无立案）\n- 无罚款金额\n- 品牌 24 小时内道歉并启动整改，危机响应迅速\n- 未见持续抵制或消费者集体诉讼\n- 未见量化商业损失（销售下滑、股价波动等均无报道）\n- 问题本质是产品包装文字表述不当，非产品质量/安全/虚假广告问题\n- 多数消费者表示\"道歉态度值得肯定，仍愿继续信任\"（腾讯新闻引述）\n\n综合判断：本事件更接近 low 级声誉风波。若机构内部 severity 定级包含\"微博热搜（不论排名）自动升一档\"的规则，则 medium 勉强可接受。建议降为 low 并注明理由，或保留 medium 但补充\"仅因性别敏感议题+1.1亿阅读量触发，实际缺乏监管/商业后果支撑\"的限定说明。"
+      }
+    },
+    {
+      "external_id": "sent-case-008",
+      "title": "迪卡侬“处女地”广告文案用词争议",
+      "brand": "迪卡侬",
+      "occurred_at": "2025-09-16",
+      "industry": [
+        "服饰"
+      ],
+      "platforms": [
+        "电商详情页",
+        "微博"
+      ],
+      "ad_copy_original": "海洋，是一块尚未开发且无边无际的处女地。",
+      "trigger_short": "海洋比喻‘处女地’被指用词不当",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2025-09-15",
+          "stage": "发生",
+          "description": "网友发现迪卡侬电商平台OLAIAN冲浪品牌宣传页将海洋比喻为‘处女地’并在社交平台曝光"
+        },
+        {
+          "at": "2025-09-16",
+          "stage": "回应",
+          "description": "迪卡侬回应称‘高度重视，已全网下架相关内容’，感谢消费者及专家监督"
+        }
+      ],
+      "brand_response": "2025年9月16日，迪卡侬回应称‘高度重视，已全网下架相关内容’，感谢消费者及专家监督，未正式道歉",
+      "outcome": "品牌全网下架争议内容，未正式道歉，争议双方各执一词",
+      "consequences": {
+        "reputation": "引发社交平台热议，网友观点分歧明显（一方认为用词不当，另一方认为是过度敏感）",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "low"
+      },
+      "sources": [
+        {
+          "name": "光明网",
+          "url": "https://m.gmw.cn/2025-09/17/content_1304151753.htm",
+          "published_at": "2025-09-17"
+        },
+        {
+          "name": "南方都市报",
+          "url": "https://m.mp.oeeee.com/oe/BAAFRD0000202509171123927.html",
+          "published_at": "2025-09-17"
+        }
+      ],
+      "credibility_notes": "多家媒体报道，品牌方回应可查，但因‘处女地’在汉语中有词典释义支持，争议两极分化，severity定为low",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. occurred_at: 应为 \"2025-09-14\"（非 \"2025-09-16\"）。多源（极目新闻、新浪财经、香港01）一致确认网友于9月14日在社交平台首次发帖质疑，此为事件触发日；9月16日为品牌回应日期。\n2. timeline[0].at: 应为 \"2025-09-14\"（非 \"2025-09-15\"）。迪卡侬官方旗舰店在9月15日（记者查看时）已撤下内容，说明下架动作在9月14日曝光后至9月15日之间已完成，但触发事件本身发生于9月14日。\n3. ad_copy_original: 引用不全。完整文案为\"海洋，是一块尚未开发且无边无际的处女地，我们希望帮助冲浪的你或即将体验冲浪的你探索冲浪的奥秘。\"（来源：极目新闻、每日经济新闻、香港01均引用完整版）。案例仅截取前半句，省略了商业功能描述部分，使文案语境略显不完整。\n4. platforms: \"微博\"未被任何可查来源点名确认。所有来源均使用\"社交平台\"泛称（如南方都市报\"有网友在社交平台发文\"），应修正为\"社交平台\"或标注\"平台未具体确认\"。\n5. trigger_short: \"用词不当\"仅为新闻标题中的简写。实际投诉内容为\"物化女性/不尊重女性\"（极目新闻：将女性身体符号用于自然景观的修辞，本质是对女性的物化与不尊重）。建议改为更准确的概括。",
+        "confirmed_facts": [
+          "事件真实存在：迪卡侬OLAIAN冲浪品牌电商详情页确实使用了'处女地'比喻海洋（至少7家独立媒体双源确认：光明网/新闻晨报、南方都市报/南都N视频、极目新闻/荆楚网、新浪财经、凤凰网、腾讯新闻、每日经济新闻、香港01）",
+          "ad_copy_original 前半句属实：'海洋，是一块尚未开发且无边无际的处女地'与多家媒体报道完全一致",
+          "品牌回应属实：迪卡侬于2025年9月16日通过媒体回应'高度重视，已全网下架相关内容'，感谢消费者及专家监督",
+          "品牌未正式道歉：回应措辞中无'道歉''抱歉'等词语，仅表示感谢监督建议",
+          "网友观点两极分化：一方认为用词不当/物化女性并发起购物平台投诉，另一方认为'处女地'为词典中性词无需过度敏感",
+          "《现代汉语词典》释义为'未开垦的土地'，确为中性词——多源确认",
+          "无监管处罚：独立检索未发现任何市场监管部门约谈、罚款或立案信息",
+          "无量化商业影响数据：公开报道未见销量下降等具体数字",
+          "迪卡侬客服在9月15日前已完成内容下架（极目新闻9月15日查看时已不可见）",
+          "两个来源URL均真实可访问：光明网页面内容属转载新闻晨报/南方都市报稿，南方都市报页面为原创报道"
+        ],
+        "unverified_claims": [
+          "platforms 中 '微博' 的指认：所有可查来源仅使用'社交平台'泛称，无任何一家媒体明确指出微博为具体曝光平台",
+          "duration_days=3 的精确依据：事件触发于9月14日，品牌9月16日回应，媒体报道延续至9月19日（腾讯新闻深度分析稿），争议实际存续至少5天，3天的估算缺乏明确计算标准",
+          "occurred_at=2025-09-16 的合理性：将回应日而非触发日作为发生日期，与常见案例记录惯例不一致（通常以首次公开曝光日期为 occurred_at）",
+          "brand_response 中'感谢消费者及专家监督'的'专家'身份：所有来源均未说明所称'专家'具体为谁，可能仅是品牌公关措辞中的泛称"
+        ],
+        "extra_sources": [
+          {
+            "name": "极目新闻/荆楚网",
+            "url": "http://m.cnhubei.com/content/2025-09/16/content_19505217.html",
+            "published_at": "2025-09-16"
+          },
+          {
+            "name": "凤凰网",
+            "url": "https://news.ifeng.com/c/8mh2tnJvQLN",
+            "published_at": "2025-09-16"
+          },
+          {
+            "name": "香港01",
+            "url": "https://www.hk01.com/%E5%A4%A7%E5%9C%8B%E5%B0%8F%E4%BA%8B/60276960/",
+            "published_at": "2025-09-16"
+          },
+          {
+            "name": "每日经济新闻",
+            "url": "https://www.nbd.com.cn/articles/2025-09-17/4064108.html",
+            "published_at": "2025-09-17"
+          },
+          {
+            "name": "腾讯新闻（深度分析）",
+            "url": "https://news.qq.com/rain/a/20250919A02KS800",
+            "published_at": "2025-09-19"
+          },
+          {
+            "name": "新浪财经",
+            "url": "https://finance.sina.com.cn/jjxw/2025-09-16/doc-infqstcm5801914.shtml",
+            "published_at": "2025-09-16"
+          },
+          {
+            "name": "东方财富网",
+            "url": "https://finance.eastmoney.com/a/202509173515960672.html",
+            "published_at": "2025-09-17"
+          }
+        ],
+        "severity_check": "severity_hint=\"low\" 定级基本合理。理由：(1) 无任何监管介入（无罚款、无约谈、无立案）；(2) 品牌主动下架而非被动受罚；(3) 争议两极分化严重——反对者与支持者均有大量声音，词典释义为品牌提供了正当性支撑；(4) 无量化商业损失数据；(5) 该事件被普遍视为此前施华蔻\"处女发质\"争议的延续性讨论，非独立引爆的重大危机。唯一可商榷的是：若将网友发起的购物平台投诉和法语投诉信发至总部视为升级信号，severity 可上调至 low-medium，但鉴于无实质后果，low 尚可接受。"
+      }
+    },
+    {
+      "external_id": "sent-case-009",
+      "title": "瑞幸苹果拿铁“她乖乖结果”文案性别争议",
+      "brand": "瑞幸咖啡",
+      "occurred_at": "2025-09-24",
+      "industry": [
+        "餐饮"
+      ],
+      "platforms": [
+        "微博",
+        "小红书"
+      ],
+      "ad_copy_original": "世界上有超过7500种苹果，可她好像还是所有水果中，最没有性格的那一个……一年又一年，她乖乖结果。",
+      "trigger_short": "‘她乖乖结果’拟人化表述被指暗含性别刻板印象",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2025-09-24",
+          "stage": "发生",
+          "description": "瑞幸阿克苏苹果拿铁文案在微博引发激烈讨论，话题‘瑞幸苹果拿铁文案翻车’登上微博热搜第一"
+        }
+      ],
+      "brand_response": "截至媒体报道发出，瑞幸咖啡未作任何官方回应（沉默）",
+      "outcome": "品牌保持沉默，未回应也未下架，事件自行降温",
+      "consequences": {
+        "reputation": "登上微博热搜第一，话题‘瑞幸苹果拿铁文案翻车’引发广泛讨论",
+        "business": "公开报道未见量化数据（瑞幸Q2 2025净营收124亿元，同比+47.1%，未见事件对业绩的影响）",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "新黄河",
+          "url": "https://www.jinantimes.com.cn/news-7-5142581.html",
+          "published_at": "2025-09-24"
+        },
+        {
+          "name": "雷科技",
+          "url": "https://www.leikeji.com/article/71893",
+          "published_at": "2025-09-24"
+        }
+      ],
+      "credibility_notes": "多个权威媒体报道，百度百科已收录该事件词条，证据充分；品牌未回应",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. outcome字段\"未回应也未下架\" → 品牌虽然未作口头/文字公开回应（所有9/24-25的一手报道均确认\"截至发稿未获回复\"），但至少有1个独立信源称品牌在90分钟内完成了删帖和更换海报。一手媒体报道因发稿时间早（9/24当日）未能覆盖后续操作，故\"未下架\"属于未经验证的断言，有证据指向相反事实。建议修正为：\"品牌未作公开回应（沉默），争议物料疑似在舆论爆发后下架/调整\"。\n\n2. duration_days: 3 → 独立检索中未找到任何公开报道提及热搜持续天数。该数字缺乏信源支撑，建议标记为估算值或移除。\n\n3. Q2营收数字 → 搜狐/大鱼财经文章原文为\"123.6亿元\"，案例记为\"124亿元\"，两者均为近似表述，但公开报道的确切数字是123.6亿。\n\n4. timeline仅有一条记录 → 9/25（羊城晚报）和9/26（红星新闻）均有后续评论文章发表，说明事件讨论至少持续到9/26，timeline可补充\"持续发酵\"阶段。\n\n5. brand_response\"截至媒体报道发出，瑞幸咖啡未作任何官方回应（沉默）\" → 基本准确，但建议补充说明品牌虽未口头回应但可能已采取了删帖等操作措施。\n\n6. 案例提到\"多个权威媒体报道，百度百科已收录该事件词条\" → 确认真实，百度百科词条\"2025年瑞幸文案翻车事件\"可被检索到。",
+        "confirmed_facts": [
+          "事件真实性：2025年9月24日瑞幸咖啡因新品「阿克苏苹果拿铁」文案引发性别争议，双源确认（新黄河+雷科技，均为2025-09-24发表）",
+          "ad_copy_original 文案原文：\"世界上有超过7500种苹果，可她好像还是所有水果中，最没有性格的那一个……一年又一年，她乖乖结果。\" 三源确认（新黄河、雷科技、羊城晚报），措辞完全一致",
+          "热搜排名：话题\"瑞幸苹果拿铁文案翻车\"登上微博热搜第一，雷科技文章标题即为\"骂上热搜第一！\"",
+          "品牌未作正式公开回应：新黄河和雷科技（9/24）、羊城晚报（9/25）均写明\"截至发稿未获回复\"",
+          "无监管处罚/约谈/罚款：独立检索结果为0",
+          "百度百科已收录词条\"2025年瑞幸文案翻车事件\"",
+          "品牌此前确有多次争议营销史（2024年黑神话联名、2025年草莓果茶\"20颗草莓\"等），由新黄河/羊城晚报报道确认",
+          "occurred_at 日期 2025-09-24 准确：china.com URL含\"20250924\"、百度百科词条标题含\"2025年\"、所有一手报道日期一致",
+          "两个引用来源 URL 均可访问且内容匹配",
+          "行业标签\"餐饮\"和平台标签\"微博、小红书\"均准确"
+        ],
+        "unverified_claims": [
+          "duration_days: 3 — 独立检索未找到任何公开报道提及热搜持续天数，该数字无信源支撑",
+          "outcome \"未下架\" — 一手报道因发稿时间早未覆盖后续，至少1个信源称内容已被删除/更换，\"未下架\"与可查证据矛盾",
+          "Q2净营收\"124亿元\" — 搜狐/大鱼财经原文为\"123.6亿元\"，124为近似取整",
+          "consequences.duration_days 的具体数值需要一手信源支撑，当前找不到任何报道提及\"3天\""
+        ],
+        "extra_sources": [
+          {
+            "name": "羊城晚报/金羊网",
+            "url": "https://news.ycwb.com/ikinvkbtin/content_53693209.htm",
+            "published_at": "2025-09-25"
+          },
+          {
+            "name": "中华网",
+            "url": "https://news.china.com/socialgd/10000169/20250924/48851088_all.html",
+            "published_at": "2025-09-24"
+          },
+          {
+            "name": "红星新闻/成都商报",
+            "url": "https://e.cdsb.com/html/2025-09/26/content_798362.htm",
+            "published_at": "2025-09-26"
+          },
+          {
+            "name": "百度百科",
+            "url": "https://baike.baidu.com/item/2025%E5%B9%B4%E7%91%9E%E5%B9%B8%E2%80%9C%E6%96%87%E6%A1%88%E7%BF%BB%E8%BD%A6%E2%80%9D%E4%BA%8B%E4%BB%B6/66790995",
+            "published_at": "2025"
+          }
+        ],
+        "severity_check": "定级\"medium\"基本合理：事件登上热搜第一（高可见度），但无监管行动、无罚款、无约谈、品牌虽未正式道歉但采取了删帖操作，事件自行降温。若严格按\"热搜第一+性别敏感话题\"标准，可适当向\"high\"倾斜，但考虑到无实质商业/监管后果，medium 是可接受的定级。建议保持 medium 但不应降为 low。"
+      }
+    },
+    {
+      "external_id": "sent-case-010",
+      "title": "五个女博士电梯广告侮辱女性遭立案调查并处罚",
+      "brand": "五个女博士",
+      "occurred_at": "2023-05-12",
+      "industry": [
+        "医疗"
+      ],
+      "platforms": [
+        "电梯广告",
+        "微博"
+      ],
+      "ad_copy_original": "老公气我，喝！熬夜追剧，喝！又老一岁，喝！胶原蛋白流失快，五个女博士补得更快。喝五个女博士，都是你们逼的！",
+      "trigger_short": "‘都是你们逼的’贩卖焦虑侮辱女性被罚40万元",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2023-04-15",
+          "stage": "发生",
+          "description": "五个女博士电梯广告在全国多城市小区投放，因渲染女性焦虑、面目狰狞嘶喊的画面引发争议"
+        },
+        {
+          "at": "2023-05-12",
+          "stage": "发酵",
+          "description": "北京市朝阳区市场监督管理局对北京青颜博识健康管理有限公司立案调查，约谈品牌方，中国妇女报点名批评"
+        },
+        {
+          "at": "2023-06-14",
+          "stage": "收尾",
+          "description": "品牌方被罚款40万元，连夜致歉，广告全面下线；7月31日广告制作方被罚约47.7万元；9月被市场监管总局列为全国典型案例通报"
+        }
+      ],
+      "brand_response": "2023年6月14日处罚决定后，品牌方连夜发布致歉声明，广告全面下线，内部严查整顿30天",
+      "outcome": "品牌方被罚40万元，广告制作方被罚约47.7万元，被市场监管总局列为2023年涉导向广告违法典型案例全国通报",
+      "consequences": {
+        "reputation": "登上微博热搜，《中国妇女报》点名批评‘哗众取宠、博取眼球’",
+        "business": "公开报道未见量化数据",
+        "regulatory": "北京市朝阳区市场监督管理局罚款40万元（品牌方）+22万元罚款+没收违法所得25.7万元（广告制作方）；被市场监管总局列为2023年全国典型案例通报",
+        "duration_days": 75,
+        "severity_hint": "severe"
+      },
+      "sources": [
+        {
+          "name": "新京报",
+          "url": "https://m.bjnews.com.cn/detail/1686808874169227.html",
+          "published_at": "2023-06-15"
+        },
+        {
+          "name": "光明网",
+          "url": "https://m.gmw.cn/toutiao/2023-06/15/content_1303407604.htm",
+          "published_at": "2023-06-15"
+        }
+      ],
+      "credibility_notes": "官方行政处罚决定书可查，被市场监管总局列为全国典型案例，证据极为充分。注：候选提及‘你气的样子真丑’未在官方处罚文书和公开报道中找到确证，实际争议文案为‘都是你们逼的’",
+      "verification": {
+        "verdict": "confirmed",
+        "corrections": "以下细节存在轻微不精确，但不影响核心事实认定：\n\n1. 广告投放起始日期：案例记载\"2023-04-15\"。上海市市场监管局处罚决定书显示广告实际发布期为 2023年4月17日至5月7日（上海15个行政区464个楼宇点位）。4月15日可能为签约日期，非实际上线日期。\n\n2. 中国妇女报点名时间：案例将其归入 5月12日 timeline 节点，但中国妇女报评论实际发表于 2023年5月6-8日期间（每日经济新闻5月6日即引用中国妇女报发声），早于立案日期。建议单独列为\"发酵前奏\"时间点。\n\n3. 广告制作方处罚日期：案例记载\"7月31日\"，此为媒体报道日期。实际行政处罚决定书落款日期为 2023年7月28日。\n\n4. 遗漏的连锁处罚：上海市市场监管局于2023年9月对广告发布方\"上海定向广告传播有限公司\"另处罚款20万元，2024年4月被列为上海市第一批虚假违法广告典型案例。该处罚未在案例中记载。\n\n5. 行业分类：案例标记为\"医疗\"，但五个女博士核心产品胶原蛋白肽饮品执行的是植物饮料标准（GB/T 31326），无保健食品备案，严格来说应归入\"食品/保健品\"行业。",
+        "confirmed_facts": [
+          "事件真实存在：2023年4-5月，胶原蛋白饮料品牌五个女博士（北京青颜博识健康管理有限公司）在电梯液晶屏投放争议广告，引发全国舆论关注，新京报、光明网、澎湃新闻、央广网、中国消费者报等多源证实",
+          "广告词原文完全属实：老公气我喝熬夜追剧喝又老一岁喝胶原蛋白流失快五个女博士补得更快喝五个女博士都是你们逼的，新京报处罚公示报道、光明网致歉报道、上海市监局处罚决定书三源一致",
+          "立案调查日期 2023-05-12 准确：北京市朝阳区市场监管局当日正式立案，央广网、澎湃新闻、中国青年报多源证实",
+          "品牌方罚款40万元属实：2023年6月14日朝阳区市场监管局依据广告法第九条第一款第七项作出处罚，行政处罚决定书文号京都市监处罚2023-590号，新京报、光明网、中新网多源证实",
+          "广告制作方被罚没约47.7万元属实：北京红枣文化传播有限公司被罚款22万元加没收违法所得257162元，合计约477162元，处罚日期2023年7月28日，光明网、东方财富、中国网多源证实",
+          "被市场监管总局列为2023年全国典型案例属实：2023年9月8日市场监管总局集中曝光8起涉导向广告违法典型案例，五个女博士位列其中，澎湃新闻、中国消费者报、新京报多源证实",
+          "中国妇女报点名批评属实：批评该广告哗众取宠博取眼球不尊重女性营销之路走歪了，中国妇女报原文、每日经济新闻转载、澎湃新闻转载多源证实",
+          "登上微博热搜属实：多家媒体报道提及该事件登上微博热搜",
+          "品牌方连夜致歉属实：2023年6月14日晚五个女博士官方微博发布致歉声明，广告全面下线，内部整顿30天，光明网、南方+多源证实",
+          "risk_dimension 标记为性别争议准确：争议核心为贩卖容貌年龄焦虑、物化女性、挑动两性对立"
+        ],
+        "unverified_claims": [
+          "广告投放起始日期2023-04-15：上海市监局处罚决定书显示实际上线为4月17日，未见任何独立来源佐证4月15日这一精确日期",
+          "约谈品牌方是否在5月12日当日完成：朝阳区市场监管局工作人员当时对媒体表述为正在收集证据材料约谈品牌方，属于进行时态，约谈完成的具体日期未见独立确认",
+          "consequences.duration_days等于75的计算起止点不明：若以4月17日至6月30日为约75天，但案例timeline的收尾延续至9月，计算口径未说明",
+          "广告在全国多城市小区投放中的全国范围：上海市场监管局处罚书仅确认上海15区464个点位，其他城市的投放规模无独立量化数据",
+          "consequences.business标注公开报道未见量化数据属于案例自身的诚实声明，核查中亦未发现可靠销售影响数据"
+        ],
+        "extra_sources": [
+          {
+            "name": "澎湃新闻：市监总局曝光8起涉导向广告违法典型案例",
+            "url": "https://www.thepaper.cn/newsDetail_forward_24535570",
+            "published_at": "2023-09-11"
+          },
+          {
+            "name": "央广网：五个女博士广告引争议疑涉违反广告法被立案调查",
+            "url": "https://china.cnr.cn/gdgg/20230514/t20230514_526250791.shtml",
+            "published_at": "2023-05-14"
+          },
+          {
+            "name": "中国消费者报：涉及五个女博士自嗨锅等典型案例",
+            "url": "https://zxb.ccn.com.cn/html/zxb/20230913/121693.html",
+            "published_at": "2023-09-13"
+          },
+          {
+            "name": "光明网：制造性别焦虑广告公司被罚没近50万",
+            "url": "https://m.gmw.cn/2023-07/31/content_1303461331.htm",
+            "published_at": "2023-07-31"
+          },
+          {
+            "name": "每日经济新闻：中国妇女报批五个女博士不尊重女性",
+            "url": "https://www.nbd.com.cn/articles/2023-05-06/2809100.html",
+            "published_at": "2023-05-06"
+          },
+          {
+            "name": "中新网：五个女博士被罚40万营销不能走歪路",
+            "url": "http://www.chinanews.com.cn/cj/2023/06-16/10025813.shtml",
+            "published_at": "2023-06-16"
+          },
+          {
+            "name": "凤凰网：广告方被罚没48万含处罚金额明细",
+            "url": "https://news.ifeng.com/c/8RrqSIATt4R",
+            "published_at": "2023-07-31"
+          }
+        ],
+        "severity_check": "定级severe恰当。理由：(1) 引发全国性舆情，中国妇女报点名批评，登上微博热搜；(2) 北京市朝阳区市场监管局立案调查并罚款40万元，处于广告法第五十七条法定罚款区间20万至100万的中位偏上；(3) 引发连锁处罚：广告制作方被罚没约47.7万元、广告发布方另被罚20万元，合计近108万元；(4) 被市场监管总局列为2023年全国8起涉导向广告违法典型案例之首。该事件的监管关注层级从区局到总局、舆论烈度央媒点名加热搜、罚款规模均超出一般moderate范畴，但未达到吊销营业执照或刑事追责的critical级别，severe定级准确。"
+      }
+    },
+    {
+      "external_id": "sent-case-011",
+      "title": "大润发女装尺码表侮辱性用语事件",
+      "brand": "大润发",
+      "occurred_at": "2020-11-11",
+      "industry": [
+        "服饰"
+      ],
+      "platforms": [
+        "微博"
+      ],
+      "ad_copy_original": "尺码表标注：S=瘦 M=美 L=烂 XL=稀烂 XXL=稀巴烂，并标注“仅限18-35岁女生，根据身材请先咨询客服”",
+      "trigger_short": "女装尺码L标‘烂’XL标‘稀烂’侮辱性标注",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2020-11-11",
+          "stage": "发生",
+          "description": "网友在微博曝光大润发某门店女装尺码建议表含侮辱性标注，话题阅读量迅速破5120万"
+        },
+        {
+          "at": "2020-11-12",
+          "stage": "回应",
+          "description": "大润发官方微博致歉，确认有一家门店存在此情况，已撤下问题物料，中国妇女报官微点名批评"
+        }
+      ],
+      "brand_response": "2020年11月12日，大润发官方微博发布致歉声明，确认有一家门店存在不当标注，已迅速撤下问题宣传物料，承诺加强内部管理",
+      "outcome": "品牌致歉并撤下物料，未受行政处罚，中国妇女报官微点名批评",
+      "consequences": {
+        "reputation": "话题阅读量超2.7亿，讨论量1万+，中国妇女报官微批评‘如此营销，令人生畏’",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "新京报",
+          "url": "https://m.bjnews.com.cn/detail/160516426115066.html",
+          "published_at": "2020-11-12"
+        },
+        {
+          "name": "新浪新闻",
+          "url": "https://news.sina.cn/gn/2020-11-12/detail-iiznctke1096667.d.html",
+          "published_at": "2020-11-12"
+        }
+      ],
+      "credibility_notes": "多个权威媒体报道，品牌官方致歉声明可查，证据充分。注：候选标注为2022年，经核查实际发生时间为2020年11月",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. 中国妇女报评论原文用词错误：案例consequences.reputation记载为\"如此营销，令人生畏\"，实际原文为\"如此营销，令人生厌\"（\"厌\"而非\"畏\"）。澎湃新闻、红星新闻、HK01等均引述为\"令人生厌\"，无一来源支持\"令人生畏\"。\n2. timeline中2020-11-11节点\"话题阅读量迅速破5120万\"时间有误：多源显示5120万是截至11月12日12时的数据，而非11月11日当天。11月11日晚仅为首发曝光时间，话题尚未大规模发酵。\n3. ad_copy_original省略了尺码表中实际包含的体重区间（S=85-95斤、M=95-105斤、L=105-120斤、XL=120-135斤、XXL=135-150斤），核心侮辱性标注文字本身正确。\n4. consequences.reputation中\"讨论量1万+\"偏保守：HK01援引数据为\"1.48万条评论\"，建议修正为\"讨论量超1.4万\"或\"1.48万+\"。",
+        "confirmed_facts": [
+          "事件真实存在，发生于2020年11月11日（网友曝光），品牌于11月12日道歉",
+          "大润发某门店女装尺码表将L标为烂、XL标为稀烂、XXL标为稀巴烂，并标注仅限18-35岁女生根据身材请先咨询客服",
+          "大润发官方微博于2020年11月12日发布道歉声明，承认确有一家门店存在此情况，已撤下问题物料",
+          "中国妇女报官微对此事点名批评，原文包含「如此营销，令人生厌」「不要为了吸引眼球，没有尊重与底线」",
+          "微博话题阅读量超2.7亿（最终数据），为界面新闻等多源交叉确认",
+          "未见任何市场监管部门对此事件作出行政处罚或立案的公开记录",
+          "两个sources URL（新京报bjnews.com.cn和新浪新闻news.sina.cn）均为真实可访问页面，内容与事件吻合"
+        ],
+        "unverified_claims": [
+          "duration_days: 3 —— 舆论高热期约3天（11/11-11/13）虽合理，但无公开来源明确定义持续天数的计算口径",
+          "5120万话题阅读量于11月11日当天达成 —— 多源显示5120万为11月12日12时数据，11月11日当晚仅为首发曝光",
+          "中国妇女报原文「令人生畏」—— 实际原文为「令人生厌」，畏字查无实据"
+        ],
+        "extra_sources": [
+          {
+            "name": "界面新闻：大润发作上热搜被骂的那种",
+            "url": "https://www.jiemian.com/article/5264509.html",
+            "published_at": "2020-11-13"
+          },
+          {
+            "name": "澎湃新闻：L码=烂、XL码=稀烂？网友怒斥！大润发致歉",
+            "url": "https://www.thepaper.cn/newsDetail_forward_9973619",
+            "published_at": "2020-11-12"
+          },
+          {
+            "name": "红星新闻：女装尺码建议表XL对应稀烂 大润发致歉",
+            "url": "https://static.cdsb.com/micropub/Articles/202011/c378ef125e12a81467c9d320c1eb4c37.html",
+            "published_at": "2020-11-12"
+          },
+          {
+            "name": "HK01：M码为美 L码是烂？女装尺码建议表惹议 大润发致歉",
+            "url": "https://www.hk01.com/大國小事/548074/",
+            "published_at": "2020-11-13"
+          }
+        ],
+        "severity_check": "severity_hint=high 的定级可以成立但需加说明：该事件未触发任何行政处罚或罚款，品牌仅做了道歉和撤物料，无实际监管后果。定high的主要依据是舆论烈度（2.7亿+阅读量、中国妇女报点名批评）和行业警示意义（此后被广泛引为恶意营销反面教材）。若按是否有监管/业务后果的刚性标准，更接近medium；若按舆论杀伤力与行业影响标准，high可成立。建议在severity_hint旁标注定级依据以避免歧义。"
+      }
+    },
+    {
+      "external_id": "sent-case-012",
+      "title": "椰树椰汁「从小喝到大」广告低俗及虚假宣传被罚20万",
+      "brand": "椰树集团",
+      "occurred_at": "2019-02-13",
+      "industry": [
+        "食品"
+      ],
+      "platforms": [
+        "电视",
+        "户外广告",
+        "电梯广告",
+        "微博",
+        "电商详情页"
+      ],
+      "ad_copy_original": "我从小喝到大；用椰汁擦乳，每日多饮椰汁能使乳房饱满",
+      "trigger_short": "「我从小喝到大」双关暗示及丰胸虚假宣传",
+      "risk_dimension": "低俗擦边",
+      "timeline": [
+        {
+          "at": "2019-02-13",
+          "description": "海口市龙华区工商局对椰树集团涉嫌发布违法广告立案调查，并拆除涉嫌违法广告牌",
+          "stage": "发生"
+        },
+        {
+          "at": "2019-02-14",
+          "description": "椰树集团发布新广告视频回应，女主角换成中小学生强调陪伴长大；话题登上微博热搜",
+          "stage": "发酵"
+        },
+        {
+          "at": "2019-03-18",
+          "description": "广电总局发文要求全国停播相关广告；3月27日龙华区工商局作出20万元行政处罚",
+          "stage": "收尾"
+        }
+      ],
+      "brand_response": "辩解。2019年2月16日通过官微声明称「我从小喝到大」不违反广告法，已获中国广告协会批准和工商部门认可，解释称是指从小孩时喝到长大成人而非丰胸",
+      "outcome": "海口市龙华区工商局认定广告妨碍社会公共秩序或违背社会良好风尚，罚款20万元；国家广电总局全国停播该版本广告",
+      "consequences": {
+        "business": "公开报道未见量化数据；椰树事后内部总结称风波促进销量持续逆势增长",
+        "duration_days": 45,
+        "regulatory": "海口市龙华区工商局罚款20万元(2019-03-27)；国家广播电视总局全国停播相关广告(2019-03-18)",
+        "reputation": "引发全网热议，椰树自述合计引起5亿多人次网民关注；品牌被贴上广告界泥石流标签",
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "人民政协网",
+          "published_at": "2019-03-19",
+          "url": "http://www.rmzxw.com.cn/c/2019-03-19/2312532_1.shtml"
+        },
+        {
+          "name": "观察者网",
+          "published_at": "2019-02-14",
+          "url": "https://www.guancha.cn/politics/2019_02_14_490063.shtml"
+        },
+        {
+          "name": "腾讯新闻",
+          "published_at": "2024-05-10",
+          "url": "https://news.qq.com/rain/a/20240510A07MPP00"
+        }
+      ],
+      "credibility_notes": "多个权威媒体交叉印证；罚款20万元有明确行政处罚记录；广告原文多源一致；与2021年招聘广告40万罚款为不同事件，需注意区分",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. ad_copy_original 不准确（关键修正）：案例将两条来源不同的广告语合并为一条——「我从小喝到大」是2019年电视广告/包装标语（配代言人徐冬冬形象），「用椰汁擦乳，每日多饮椰汁能使乳房饱满」是椰树集团门口悬挂的户外横幅/街头广告牌文字。两者来自不同广告载体和场景，不应作为单一「广告原句」呈现。正确做法：拆分为两条独立广告文案，并注明各自出处（电视广告 vs 户外广告牌）。\n\n2. occurred_at 应为 2019-02-12：争议实际于2019年2月12日由「时间视频」率先报道并登上微博热搜，海口工商局当日即对外确认「正在调查中」；2月13日是龙华区工商局正式立案日期。建议将 occurred_at 修正为 2019-02-12（争议爆发日），或至少标注「2019-02-12 争议爆发，2019-02-13 正式立案」。\n\n3. duration_days 不准确：案例标注45天。无论以何种起止点计算均无法对应——从2019-02-12争议爆发到2019-03-27罚款日为43天，从2019-02-13立案到2019-03-18广电总局停播为33天，从2019-02-13立案到2019-03-27罚款为42天。建议根据实际采用的起止事件重新计算或删除此字段。\n\n4. timeline 细节偏差：2019-02-13条目描述「拆除涉嫌违法广告牌」——实际是椰树集团在工商立案后自行拆除，非工商局强制执法拆除。建议修正为「椰树集团自行拆除公司门口争议广告横幅」。\n\n5. credibility_notes 中「广告原文多源一致」不成立：如上所述，案例将两条独立广告语合并，且不同来源引用的原文确实存在差异（官网文章为「每日强以饮大量椰汁，再用椰汁擦乳，所以人人饱满」，街头广告牌简化为「用椰汁擦乳，每日多饮椰汁能使乳房饱满」），并非「多源一致」。",
+        "confirmed_facts": [
+          "2019年2月椰树牌椰汁因新广告引发低俗及虚假宣传争议，事件真实存在",
+          "2019年2月13日海口市龙华区工商局对椰树集团立案调查（多源确认：人民网、新京报、海南日报等）",
+          "2019年2月16日椰树集团通过官微发布声明，坚称「我从小喝到大」不违反广告法（新京报、中新网、联合早报等多源确认）",
+          "2019年3月18日国家广播电视总局发文要求全国停播相关版本广告（人民政协网、中国新闻网确认）",
+          "2019年3月27日海口市龙华区工商局作出罚款20万元的行政处罚（腾讯新闻2024年回顾文章及多个2024年报道交叉确认）",
+          "椰树集团始终未道歉，采取强硬否认姿态（多方报道一致）",
+          "涉案核心广告语「我从小喝到大」为双关语，搭配性感女性形象引发争议（多源一致）",
+          "椰树集团被媒体长期贴上「广告界泥石流」标签（工人日报、界面新闻等多源确认，最早可追溯至2017年）"
+        ],
+        "unverified_claims": [
+          "consequences.reputation 中「合计引起5亿多人次网民关注」——此为椰树集团2022年1月官网内部文件《开门红报喜》中的自述，且将2019年与2021年两次风波合并计算，非独立第三方数据。建议标注来源为「椰树自述」或删除此数字",
+          "consequences.duration_days: 45——无法通过公开报道确认具体的45天计算依据，任何起止组合均无法得到精确的45天",
+          "platforms 中的「电梯广告」和「电商详情页」——独立检索中未找到2019年椰树在电梯广告或电商详情页投放该争议广告的明确报道，主要确认的渠道为电视、户外广告牌、产品包装和微博",
+          "consequences.business 中「风波促进销量持续逆势增长」——此说法主要来源于椰树自身宣传，独立第三方未见量化销售数据佐证",
+          "sources[1] 观察者网 URL (https://www.guancha.cn/politics/2019_02_14_490063.shtml) 无法通过自动工具验证访问，需人工确认",
+          "brand_response 中「已获工商部门认可」——此说法为椰树单方面声明，后续工商局的处罚决定（罚款20万元）实际上否定了这一声称"
+        ],
+        "extra_sources": [
+          {
+            "name": "人民网 - 涉事广告牌拆了！海口工商对椰树集团涉嫌发布违法广告立案调查",
+            "url": "http://m.people.cn/n4/2019/0214/c120-12323626.html",
+            "published_at": "2019-02-14"
+          },
+          {
+            "name": "新京报 - 椰树集团回应质疑：我从小喝到大广告词不违反广告法",
+            "url": "http://www.bjnews.com.cn/finance/2019/02/16/547548.html",
+            "published_at": "2019-02-16"
+          },
+          {
+            "name": "中国新闻网 - 椰树椰汁低俗广告被停播",
+            "url": "https://www.chinanews.com/sh/2019/03-19/8784377.shtml",
+            "published_at": "2019-03-19"
+          },
+          {
+            "name": "联合早报 - 海南椰树集团：我从小喝到大广告词不违反广告法",
+            "url": "https://www.zaobao.com/realtime/china/story20190217-932594",
+            "published_at": "2019-02-17"
+          },
+          {
+            "name": "澎湃新闻 - 马上评：椰汁是正经椰汁，营销走丰胸路线却极不正经",
+            "url": "https://www.thepaper.cn/newsDetail_forward_2980036",
+            "published_at": "2019-02-13"
+          },
+          {
+            "name": "南方都市报 - 椰树椰汁广告涉低俗虚假被立案调查",
+            "url": "https://www.oeeee.com/html/201902/15/740603.html",
+            "published_at": "2019-02-15"
+          },
+          {
+            "name": "工人日报 - 低俗广告背后是创新乏力",
+            "url": "https://www.workercn.cn/papers/grrb/2019/02/18/3/news-3.html",
+            "published_at": "2019-02-18"
+          },
+          {
+            "name": "界面新闻 - 椰树为什么在冒犯的路上走到黑（含5亿人次自述）",
+            "url": "https://www.jiemian.com/article/8186222.html",
+            "published_at": "2022-08"
+          }
+        ],
+        "severity_check": "severity_hint 定为 high 基本可接受但存在讨论空间。支持 high 的理由：(1) 触发国家级监管响应——广电总局全国范围内停播广告；(2) 社会影响广泛——登微博热搜、全网热议、多部委介入；(3) 涉及双重违法定性——低俗（妨碍社会良好风尚）+ 虚假宣传（普通食品暗示丰胸功效）。质疑 high 的理由：(1) 罚款仅20万元，远低于椰树2021年和2024年的各40万元罚款；(2) 品牌实际受损有限——椰树销售未受明显冲击，品牌甚至从中获得「黑红」流量；(3) 广告仅在部分版本停播，包装上的「从小喝到大」至今保留。综合判断：在中国广告合规处罚案例中属中高等级，high 定级可保留，但建议在 severity_hint 旁注明「罚款金额较低（20万），严重性主要体现在广电总局全国停播令的监管升级」。"
+      }
+    },
+    {
+      "external_id": "sent-case-013",
+      "title": "椰树集团「入学就有车有房有美女帅哥追」招聘广告被罚40万",
+      "brand": "椰树集团",
+      "occurred_at": "2021-03-25",
+      "industry": [
+        "食品"
+      ],
+      "platforms": [
+        "微博"
+      ],
+      "ad_copy_original": "入学就有车、有房、有高薪，肯定有美女帅哥追",
+      "trigger_short": "「肯定有美女帅哥追」传递拜金低俗婚恋观",
+      "risk_dimension": "低俗擦边",
+      "timeline": [
+        {
+          "at": "2021-03-25",
+          "description": "椰树集团官微发布正副总经理学校招生广告，含「肯定有美女帅哥追」等文案引发巨大争议",
+          "stage": "发生"
+        },
+        {
+          "at": "2021-03-31",
+          "description": "海南省市场监管局依法立案调查并行政约谈；椰树回应招生真实性没有影响",
+          "stage": "发酵"
+        },
+        {
+          "at": "2021-04-30",
+          "description": "海南省市场监督管理局以妨碍社会公共秩序或违背社会良好风尚为由罚款40万元",
+          "stage": "收尾"
+        }
+      ],
+      "brand_response": "辩解。3月31日回应称招生真实性没有影响，配合了解情况但否认炒作",
+      "outcome": "海南省市场监管局认定广告违背社会良好风尚，罚款40万元",
+      "consequences": {
+        "business": "公开报道未见量化数据",
+        "duration_days": 37,
+        "regulatory": "海南省市场监督管理局罚款40万元(2021-04-30)；此前还因同系列广告被行政约谈",
+        "reputation": "话题登上微博热搜引发广泛讨论",
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "新京报",
+          "published_at": "2024-05-08",
+          "url": "https://m.bjnews.com.cn/detail/1715155639129810.html"
+        },
+        {
+          "name": "快科技",
+          "published_at": "2021-06-02",
+          "url": "https://news.mydrivers.com/1/762/762878.htm"
+        },
+        {
+          "name": "每经网",
+          "published_at": "2021-03-28",
+          "url": "https://www.nbd.com.cn/articles/2021-03-28/1675000.html"
+        }
+      ],
+      "credibility_notes": "新京报援引天眼查及信用中国数据确认40万罚款属实；罚款决定日期2021年4月30日；与2019年从小喝到大广告罚款20万元为不同事件",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. consequences.regulatory: 罚款40万元为两笔合并（扰乱社会公共秩序/违背良好风尚罚款38万元 + 广告中引用荣誉证书未标明出处/有效期罚款2万元），建议在 regulatory 中补充此拆分细节，以更精确反映处罚决定书全貌。\n2. sources[0]（新京报）: 该 URL（https://m.bjnews.com.cn/detail/1715155639129810.html）实际为2024年5月8日文章，报道的是椰树2024年因\"用椰子擦乳\"\"南太平洋美女很少飞机场\"等广告语被罚40万元的事件，仅顺带提及2021年罚款作为历史背景，并非2021年事件的直接报道。建议替换为2021年的直接报道来源（如新京报2021年6月13日相关报道，或南方都市报/红星新闻2021年6月的报道），或标注为\"间接提及\"。\n3. consequences.duration_days: 从广告发布日（2021-03-25）到处罚决定日（2021-04-30）计为37天（含首尾），但处罚决定书公示日期为2021年6月9日，公众实际知晓处罚结果的时间晚于4月30日。若以完整事件（从发布到公示）计算，实际跨度约为76天。建议标注 duration_days 的计算口径（从发布到处罚决定，还是到公示）。\n4. severity_hint: 建议从\"high\"调整为\"medium\"。理由：40万元罚款额度在广告违法案件中属中等水平；无产品安全风险或消费者人身损害；椰树品牌未因此遭受市场份额显著下滑；且同类低俗广告案件中罚款多为20万-40万区间，不构成\"high\"级别的典型特征。",
+        "confirmed_facts": [
+          "广告原句「入学就有车、有房、有高薪，肯定有美女帅哥追」属实，多个独立来源一致引用",
+          "品牌为椰树集团（椰树集团海南椰汁饮料有限公司），确认无误",
+          "广告于2021年3月25日在椰树集团官方微博发布，日期准确",
+          "海南省市场监督管理局于2021年3月31日依法立案调查并行政约谈，日期准确",
+          "行政处罚决定日期为2021年4月30日，决定书文号琼市监处[2021]19号，确认无误",
+          "处罚事由为「妨碍社会公共秩序或者违背社会良好风尚」，确认无误",
+          "罚款总额40万元属实（38万+2万），确认无误",
+          "处罚机关为海南省市场监督管理局，确认无误",
+          "广告引发广泛争议，登上微博热搜，有多家央媒（人民日报、新华网、央视网）发文批评",
+          "椰树集团回应属辩解性质——称招生真实性不受影响，否认炒作，称是企业一贯风格",
+          "该事件与2019年「从小喝到大」广告被罚20万元为不同事件，确认无误",
+          "广告在2021年4月初被删除，确认无误"
+        ],
+        "unverified_claims": [
+          "热搜具体排名和持续时长：公开报道中未能找到该话题在微博热搜榜上的具体排名数字和精确在榜时长，案中仅描述「话题登上微博热搜引发广泛讨论」为定性表述，无需补充具体数字",
+          "后果中 business 字段「公开报道未见量化数据」：独立检索同样未找到关于该事件对椰树集团营收、销量、市场份额等方面的量化影响数据，该表述准确",
+          "此前还因同系列广告被行政约谈：原文措辞「同系列广告」不够精确——2020年椰树因招聘广告要求「以房产作抵押」「承诺终身服务」引发争议并致歉，但该事件与2021年招生广告性质相近而非同一「系列」；2019年被罚事件为产品广告（「从小喝到大」），与2021年招聘广告属不同类型"
+        ],
+        "extra_sources": [
+          {
+            "name": "红星新闻/南方都市报（转载）",
+            "url": "https://static.cdsb.com/micropub/Articles/202106/545b37e1773f34b5007f620216d379fb.html",
+            "published_at": "2021-06-13"
+          },
+          {
+            "name": "中国质量新闻网",
+            "url": "https://m.cqn.com.cn/ms/content/2021-06/11/content_8702521.htm",
+            "published_at": "2021-06-11"
+          },
+          {
+            "name": "每日经济新闻（立案调查报道）",
+            "url": "https://m.nbd.com.cn/articles/2021-03-31/1681808.html",
+            "published_at": "2021-03-31"
+          },
+          {
+            "name": "每日经济新闻（罚款40万报道）",
+            "url": "https://www.nbd.com.cn/articles/2021-06-11/1790093.html",
+            "published_at": "2021-06-11"
+          },
+          {
+            "name": "海南日报（处罚详情）",
+            "url": "https://www.hndnews.com/p/451686.html",
+            "published_at": "2021-06"
+          }
+        ],
+        "severity_check": "建议从 high 下调为 medium。理由：(1) 40万元罚款在广告法违规处罚中属中等水平，法律规定的此类违规罚款上限为100万元，实际处罚力度仅为上限的40%；(2) 事件性质为广告价值观/内容违规，无产品安全风险、无人身伤害、无消费者欺诈，不符合典型 high 级舆情（如食品安全事件、重大消费者纠纷、刑事立案等）；(3) 椰树集团事后几乎未受实质商业影响——2021年营收约40亿元且逆势增长，品牌忠诚度未受显著侵蚀；(4) 同类低俗广告处罚案件（如2019年椰树自身被罚20万、2024年被罚40万）均为20-40万量级，属中等级别。综合以上，建议 severity_hint 调整为 medium。"
+      }
+    },
+    {
+      "external_id": "sent-case-014",
+      "title": "绝味鸭脖双十一低俗海报涉嫌侮辱女性被罚60万",
+      "brand": "绝味食品",
+      "occurred_at": "2017-11-01",
+      "industry": [
+        "食品",
+        "餐饮"
+      ],
+      "platforms": [
+        "电商详情页",
+        "微信朋友圈"
+      ],
+      "ad_copy_original": "鲜嫩多汁，想要吗？",
+      "trigger_short": "「鲜嫩多汁想要吗」配合女性戴镣铐卡通图",
+      "risk_dimension": "低俗擦边",
+      "timeline": [
+        {
+          "at": "2017-11-01",
+          "description": "绝味鸭脖天猫旗舰店首页贴出低俗海报：女性戴镣铐卡通图配文「鲜嫩多汁，想要吗？」引发强烈争议",
+          "stage": "发生"
+        },
+        {
+          "at": "2017-11-02",
+          "description": "海报被紧急撤下；绝味官微发布首次致歉信",
+          "stage": "发酵"
+        },
+        {
+          "at": "2017-11-03",
+          "description": "绝味微信公众号再发大卫雕像马赛克图及暗示性行为文字，二次引爆舆论",
+          "stage": "发酵"
+        },
+        {
+          "at": "2017-12-22",
+          "description": "长沙市工商局下达行政处罚决定书，罚款60万元；绝味发布正式致歉信，免去营销负责人职务",
+          "stage": "收尾"
+        }
+      ],
+      "brand_response": "道歉并追责。11月2日首次致歉撤海报；12月22日发正式致歉信，接受处罚，免去长沙绝味食品营销公司负责人职务，电商团队通报批评并扣发奖金，全员进行广告法学习",
+      "outcome": "长沙市工商行政管理局以违反广告法第九条第七项为由罚款60万元；广告代理公司同样被罚60万元；营销负责人被免职",
+      "consequences": {
+        "business": "公开报道未见量化数据",
+        "duration_days": 52,
+        "regulatory": "长沙市工商行政管理局罚款60万元(2017-12-22)；广告代理方长沙汇邦广告公司同样被罚60万元",
+        "reputation": "民调显示75.1%网友表示不会再购买绝味产品；66.7%认为开黄腔式营销会损失用户",
+        "severity_hint": "severe"
+      },
+      "sources": [
+        {
+          "name": "澎湃新闻",
+          "published_at": "2017-12-22",
+          "url": "https://www.thepaper.cn/newsDetail_forward_1917819"
+        },
+        {
+          "name": "每日经济新闻",
+          "published_at": "2017-12-23",
+          "url": "https://www.nbd.com.cn/articles/2017-12-23/1174998.html"
+        },
+        {
+          "name": "人民网",
+          "published_at": "2017-11-24",
+          "url": "http://media.people.com.cn/n1/2017/1124/c40606-29664867.html"
+        }
+      ],
+      "credibility_notes": "澎湃新闻获长沙市工商局处罚决定书原文验证，罚款金额、被罚主体、违规事实均确凿；多源交叉印证；事件时间线清晰",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. platforms 字段错误：实际发布渠道为「天猫旗舰店首页」和「微信公众号」，而非「电商详情页」和「微信朋友圈」。该广告从未投放在微信朋友圈信息流中，微信公众号推送是两处独立发布渠道之一。建议改为：[\"天猫旗舰店首页\", \"微信公众号\"]。\n\n2. timeline 缺失关键节点：长沙市工商局于 2017-11-06 前后正式立案调查（红网、每日经济新闻等多源报道），案例时间线从 11-03 直接跳到 12-22，遗漏了立案这一重要节点。建议在「发酵」阶段增加一条 2017-11-06「长沙市工商局立案调查」的记录。\n\n3. sources 中三个 URL 实测均无法正常访问：澎湃新闻 URL 连接超时，每日经济新闻 URL 返回 TLS 证书错误，人民网 URL 因 HTTP→HTTPS 重定向产生证书校验错误。建议替换为可访问的替代来源，如红网报道(https://hn.rednet.cn/c/2017/12/23/4511515.htm)、长沙市监局官方通报(http://amr.changsha.gov.cn/zfxxgk/zwyw/gzdt_1_1/201906/t20190621_3385130.html)或新浪财经民调原文(https://finance.sina.com.cn/chanjing/2017-11-15/doc-ifynshev6351915.shtml)。\n\n4. occurred_at 仅标注 2017-11-01 过于简化：事件实际跨越 2017-11-01（首发）至 2017-12-22（处罚），历时 52 天，建议将 occurred_at 改为日期范围或保留 11-01 并在字段说明中标注为「起始日期」。\n\n5. ad_copy_original 标点略有出入：多个来源记载为「鲜·嫩·多汁，想要吗」（中间有间隔号），但「鲜嫩多汁，想要吗？」也被多源使用，差异不构成实质错误，无需强行修改。",
+        "confirmed_facts": [
+          "事件主体真实：绝味食品（长沙绝味食品营销有限公司）于 2017 年双十一期间在天猫旗舰店发布低俗海报，确有其事，超 10 个独立媒体报道交叉印证",
+          "广告文案核心内容属实：海报配文「鲜嫩多汁，想要吗？」以及其他性暗示表述被澎湃新闻、每日经济新闻、新浪财经、人民网、中国妇女报等多源确认",
+          "首次广告日期 2017-11-01 准确：天猫旗舰店海报于当日上线，数小时后因舆论强烈反弹撤下",
+          "首次道歉 2017-11-02 准确：海报撤下后绝味官微发布致歉信",
+          "二次违规 2017-11-03 准确：微信公众号推送《我不搞预售，我就是玉兽》，以大卫雕像私处打马赛克配图，再次引发舆论",
+          "处罚日期 2017-12-22 准确：长沙市工商局当日下达行政处罚决定书",
+          "罚款金额准确：长沙绝味食品营销有限公司被罚 60 万元，广告代理方长沙汇邦广告有限公司同样被罚 60 万元，合计 120 万元",
+          "处罚法律依据准确：违反《广告法》第九条第（七）项「妨碍社会公共秩序或者违背社会良好风尚」，依据第五十七条处罚",
+          "企业整改措施属实：免去营销负责人职务、电商团队通报批评扣发奖金、全员广告法学习，绝味致歉信中均有体现",
+          "民调数据有出处：新浪财经 2017-11-15 发布的民调显示 75.1% 网友表示不会再购买、66.7% 认为开黄腔营销会损失用户，原始文章可查",
+          "行政处罚决定书原文存在：长沙市市场监管局官网 2019-06-21 公开发布了针对该事件的行政处罚情况说明",
+          "severity_hint 定级恰当：全国性媒体曝光+行政罚款+高管免职+品牌声誉严重受损，符合 severe 标准"
+        ],
+        "unverified_claims": [
+          "consequences.business「公开报道未见量化数据」：此判断基本成立，独立检索未发现绝味方面公开的销售/营收影响数字，但新浪民调 75.1%「不再购买」的比例属于间接量化信号，与「未见量化数据」的表述存在轻微张力",
+          "source 澎湃新闻 https://www.thepaper.cn/newsDetail_forward_1917819 实测连接超时无法访问（curl exit code 28），虽历史上有该文章存在，但当前 URL 不可达",
+          "source 每日经济新闻 https://www.nbd.com.cn/articles/2017-12-23/1174998.html 实测 TLS 证书校验失败，无法确认当前可访问性",
+          "source 人民网 http://media.people.com.cn/n1/2017/1124/c40606-29664867.html HTTP 重定向至 HTTPS 后证书校验失败，无法确认当前可访问性",
+          "75.1% 和 66.7% 的民调样本量、抽样方法在原始报道中未披露，数据统计学意义无法验证（仅能确认该报道确实发布了这些数字）",
+          "长沙市工商局立案具体日期各家报道不一：红网等称 11 月 6 日立案，其他来源称 11 月 30 日正式立案，无法确定精确日期"
+        ],
+        "extra_sources": [
+          {
+            "name": "长沙市市场监管局：关于对长沙绝味食品营销有限公司、长沙汇邦广告有限公司违法行为进行行政处罚的情况说明",
+            "url": "http://amr.changsha.gov.cn/zfxxgk/zwyw/gzdt_1_1/201906/t20190621_3385130.html",
+            "published_at": "2019-06-21"
+          },
+          {
+            "name": "新浪财经：绝味促销开黄腔 75.1%网友表示不会再购买（民调原始报道）",
+            "url": "https://finance.sina.com.cn/chanjing/2017-11-15/doc-ifynshev6351915.shtml",
+            "published_at": "2017-11-15"
+          },
+          {
+            "name": "红网：绝味鸭脖因低俗广告被处罚",
+            "url": "https://hn.rednet.cn/c/2017/12/23/4511515.htm",
+            "published_at": "2017-12-23"
+          },
+          {
+            "name": "中国经济网：绝味食品涉嫌低俗广告被调查 超半数网友表示不再购买",
+            "url": "https://economy.china.com/news/11173316/20171129/31736140_all.html",
+            "published_at": "2017-11-29"
+          },
+          {
+            "name": "红网市场监管频道：长沙「绝味鸭脖」发布违法广告被罚60万元",
+            "url": "https://scjg.rednet.cn/c/2017/12/27/724276.htm",
+            "published_at": "2017-12-27"
+          }
+        ],
+        "severity_check": "定级 severe 恰当，无需调整。理由：(1) 违法行为触发行政处罚，罚款金额在广告法第五十七条法定幅度（20万-100万）中属于中上水平；(2) 人民日报旗下人民网、全国妇联中国妇女报等中央级媒体介入批评；(3) 涉事企业高管被免职，属于公司治理层面的直接后果；(4) 民调显示超七成消费者表示不会再购买，品牌声誉实质性受损；(5) 该事件后被广泛引用为中国低俗营销的典型案例，行业警示意义显著。"
+      }
+    },
+    {
+      "external_id": "sent-case-015",
+      "title": "妇炎洁「洗出少女粉」低俗广告贬损女性人格两企业被罚130万",
+      "brand": "妇炎洁",
+      "occurred_at": "2022-05-17",
+      "industry": [
+        "日化",
+        "医疗"
+      ],
+      "platforms": [
+        "电商详情页"
+      ],
+      "ad_copy_original": "中日韩三国社会调查显示：83%的男性不愿意给伴侣的原因竟然是下不去嘴；太黑太难闻；洗出少女粉",
+      "trigger_short": "「洗出少女粉」贬损女性人格的低俗广告用语",
+      "risk_dimension": "低俗擦边",
+      "timeline": [
+        {
+          "at": "2022-04-30",
+          "description": "涉事科技公司在天猫妇炎洁官方旗舰店推广玻尿酸玫瑰滋养洗液时发布低俗广告图文",
+          "stage": "发生"
+        },
+        {
+          "at": "2022-05-17",
+          "description": "网友发现广告内容并截图传播，话题引爆微博热搜；妇炎洁客服回应已下架产品并内部彻查",
+          "stage": "发酵"
+        },
+        {
+          "at": "2022-05-23",
+          "description": "江西省樟树市检察院以行政公益诉讼立案；樟树市市监局接到省局线索后立案调查",
+          "stage": "发酵"
+        },
+        {
+          "at": "2022-11-25",
+          "description": "两涉案企业分别被罚80万元和50万元共计130万元；追责20余人；最高检将其列为妇女权益保障检察公益诉讼典型案例",
+          "stage": "收尾"
+        }
+      ],
+      "brand_response": "道歉并下架。5月17日回应称公司高度重视，产品已下架，内部正在彻查；后续配合整改，增设企业合规经理岗，完善宣传管理制度",
+      "outcome": "樟树市市监局对两涉案企业分别罚款80万元和50万元共130万元；20余人被解聘降薪追责；列为最高检公益诉讼典型案例",
+      "consequences": {
+        "business": "公开报道未见量化数据",
+        "duration_days": 209,
+        "regulatory": "樟树市市监局对两企业分别罚款80万元+50万元=130万元；最高人民检察院列为妇女权益保障公益诉讼典型案例(2022-11-25)；追责20余人",
+        "reputation": "话题登上微博热搜，中国妇女报发文批评拿女性身体做如此不堪的营销",
+        "severity_hint": "severe"
+      },
+      "sources": [
+        {
+          "name": "北京日报/检察日报正义网",
+          "published_at": "2022-11-25",
+          "url": "https://news.bjd.com.cn/2022/11/25/10240352.shtml"
+        },
+        {
+          "name": "澎湃新闻",
+          "published_at": "2022-11-25",
+          "url": "https://www.thepaper.cn/newsDetail_forward_20890806"
+        },
+        {
+          "name": "南方都市报",
+          "published_at": "2022-05-18",
+          "url": "https://pub-zhtb.hizh.cn/a/202205/18/AP6284d873e4b0d1d0a2162ae6.html"
+        }
+      ],
+      "credibility_notes": "最高检官方发布的公益诉讼典型案例提供完整案件事实和时间线；罚款金额130万元由北京日报、澎湃新闻等多源交叉印证；广告原文来自多家媒体报道的电商详情页截图",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. ad_copy_original 原文有误。案例记载为「中日韩三国社会调查显示：83%的男性不愿意给伴侣的原因竟然是下不去嘴；太黑太难闻；洗出少女粉」，这是一个拼接重构版本。根据澎湃新闻、搜狐新闻、上游新闻、野马财经等多家媒体2022年5月的报道（均附有电商详情页截图），广告实际完整措辞为「中日韩三国社会调查显示：83%的男性不愿意给伴侣口爱的原因竟然是太黑太难闻下不去嘴」。案例版遗漏了「口爱」二字，且错误地用分号将本为连续表述的「太黑太难闻下不去嘴」拆断为「下不去嘴；太黑太难闻」。「洗出少女粉」是广告中独立出现的另一句宣传语，不应与前述长句用分号串联。建议将 ad_copy_original 修正为两个独立原文引用。\n\n2. duration_days=209 存在内部不一致。209天是从 timeline 最早事件（2022-04-30 广告发布）到最晚事件（2022-11-25 典型案例公布）的天数，但 occurred_at 标注为 2022-05-17（公众发现日）。如以 occurred_at 为起点计算，至 2022-11-25 应为 192 天。建议统一口径。\n\n3. sources 中澎湃新闻 URL（https://www.thepaper.cn/newsDetail_forward_20890806）经两次独立访问均超时（>60s）。同内容可通过 https://m.thepaper.cn/newsDetail_forward_20891866 访问，建议替换为可验证的 URL。\n\n4. industry 中「医疗」不够准确。涉事产品为普通日化消字号产品（赣卫消证字），非药品或医疗器械，建议仅保留「日化」。",
+        "confirmed_facts": [
+          "事件真实存在：2022年4月30日广告发布，5月17日引爆微博热搜，多源交叉印证（澎湃新闻、北京日报/检察日报正义网、南方都市报、中国妇女报、上游新闻等）",
+          "罚款130万元属实：樟树市市监局对广告主仁和堂医药罚款50万元、对广告经营者慧康科技罚款80万元，北京日报、澎湃新闻、中国消费者报、新浪财经等多源独立印证",
+          "最高检列为妇女权益保障公益诉讼典型案例属实：2022年11月25日由最高检会同全国妇联联合发布",
+          "追责20余人属实：多源一致确认通过解聘、降薪等方式追责",
+          "中国妇女报发文批评属实：2022年5月17-18日发文《营销，勿以猎奇、低俗去钻营》",
+          "三项违法认定（违反广告法第9条违背社会良好风尚、第11条引证内容无来源、第28条虚假广告）在多源报道中一致",
+          "樟树市检察院2022年5月23日公益诉讼立案、6月20日召开听证会均有多源印证",
+          "处罚决定在2022年8月作出（非11月25日），11月25日为最高检发布典型案例日期，案例timeline对此表述准确"
+        ],
+        "unverified_claims": [
+          "ad_copy_original 中遗漏「口爱」二字的拼接版本在任何公开报道中均找不到逐字对应原文，所有可查报道均引用含「口爱」的完整版本",
+          "duration_days=209 的计算基准（以4月30日而非 occurred_at 的5月17日为起点）与 occurred_at 字段不一致，该计算口径未在任何公开报道中得到确认",
+          "brand_response 中「增设企业合规经理岗」的具体时间节点在公开报道中未见明确日期"
+        ],
+        "extra_sources": [
+          {
+            "name": "中国消费者报：妇炎洁低俗广告涉案企业被处罚",
+            "url": "https://zxb.ccn.com.cn/html/zxb/20221206/116867.html",
+            "published_at": "2022-12-06"
+          },
+          {
+            "name": "上游新闻：妇炎洁低俗广告被最高检点名通报",
+            "url": "https://cqcb.com/xindiaocha/redian/2022-11-25/5098987_pc.html",
+            "published_at": "2022-11-25"
+          },
+          {
+            "name": "中新网：贬低损害妇女人格，妇炎洁低俗广告事件追责20余人",
+            "url": "https://www.chinanews.com/cj/2022/11-25/9902251.shtml",
+            "published_at": "2022-11-25"
+          },
+          {
+            "name": "澎湃新闻（替代URL）：贬损侮辱女性，妇炎洁低俗广告事件涉案两企业被罚130万",
+            "url": "https://m.thepaper.cn/newsDetail_forward_20891866",
+            "published_at": "2022-11-25"
+          },
+          {
+            "name": "澎湃新闻：妇炎洁打情色擦边球翻车（含广告原文截图）",
+            "url": "https://www.thepaper.cn/newsDetail_forward_18154662",
+            "published_at": "2022-05-18"
+          },
+          {
+            "name": "中国妇女报官微：营销，勿以猎奇、低俗去钻营",
+            "url": "https://www.thepaper.cn/newsDetail_forward_18144926",
+            "published_at": "2022-05-18"
+          }
+        ],
+        "severity_check": "severity_hint 取值为「severe」定级恰当。理由：130万元罚款接近广告法单项最高100万元的处罚上限（且两企业并罚），被最高人民检察院列为全国十大妇女权益保障公益诉讼典型案例，追责20余人，全网下架，登上微博热搜，中国妇女报等央媒发文批评，樟树市市监局对辖区内300余家经营主体开展重点检查——事件的监管后果、舆论影响和法律示范意义均达到「严重」级别。"
+      }
+    },
+    {
+      "external_id": "sent-case-016",
+      "title": "卫龙辣条「约吗」「贼大」包装文案低俗擦边争议",
+      "brand": "卫龙",
+      "occurred_at": "2022-03-25",
+      "industry": [
+        "食品"
+      ],
+      "platforms": [
+        "微博",
+        "电商详情页"
+      ],
+      "ad_copy_original": "约吗；贼大；强硬",
+      "trigger_short": "「约吗」「贼大」「强硬」词汇组合打色情擦边球",
+      "risk_dimension": "低俗擦边",
+      "timeline": [
+        {
+          "at": "2022-03-25",
+          "description": "微博博主豆豆酱有点闲曝光卫龙辣条外包装印有约吗贼大强硬等词，话题登顶微博热搜，阅读量4.8亿",
+          "stage": "发生"
+        },
+        {
+          "at": "2022-03-28",
+          "description": "漯河市市场监管局介入调查；部分电商平台下架争议包装产品；网友争议两极分化",
+          "stage": "发酵"
+        },
+        {
+          "at": "2022-03-30",
+          "description": "卫龙官微道歉，决定停止争议文案包装生产，进行版面文案及设计优化",
+          "stage": "收尾"
+        }
+      ],
+      "brand_response": "道歉并整改。3月25日客服最初解释「约吗」是指约小伙伴吃辣条；3月28日改口称配合市场监管部门调查核实；3月30日正式道歉并宣布停止争议包装生产",
+      "outcome": "漯河市市场监管局介入调查；卫龙道歉并停止争议包装生产，未见公开罚款记录",
+      "consequences": {
+        "business": "公开报道未见量化数据",
+        "duration_days": 6,
+        "regulatory": "漯河市市场监督管理局经济开发区分局介入调查，无公开罚款记录",
+        "reputation": "话题冲上微博热搜第一，阅读量达4.8亿次；网友意见两极分化，人民网发文批评低俗营销",
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "澎湃新闻",
+          "published_at": "2022-03-29",
+          "url": "https://www.thepaper.cn/newsDetail_forward_17359013"
+        },
+        {
+          "name": "观察者网/界面新闻",
+          "published_at": "2022-03-30",
+          "url": "https://www.guancha.cn/politics/2022_03_30_632467.shtml"
+        },
+        {
+          "name": "联合早报",
+          "published_at": "2022-03-30",
+          "url": "https://www.zaobao.com.sg/realtime/china/story20220330-1257716"
+        }
+      ],
+      "credibility_notes": "多个权威媒体交叉印证；话题确认为微博热搜第一且阅读量4.8亿；广告文案原文多源一致；涉事包装据称已使用6年",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. timeline 2022-03-25 条目中\"阅读量4.8亿\"是截至3月28日15时的累计数据（澎湃新闻原文：\"截至3月28日15时，微博话题#卫龙辣条包装被指打低俗擦边球#，相关阅读次数为4.8亿次\"），不应标注在3月25日当天条目中。建议将4.8亿移至3月28日条目或标注截止日期。\n\n2. timeline 2022-03-28 条目存在两处时间错位：(a)\"漯河市市场监管局介入调查\"实际发生于3月25日（澎湃新闻原文：\"25日，卫龙所在的漯河市市场监督管理局经济开发区分局已介入调查\"）；(b)\"部分电商平台下架争议包装产品\"据新京报报道实际发生于3月25日晚（澎湃新闻转引：\"3月25日晚……新京报记者在部分电商平台卫龙旗舰店看到，带有上述文案内容的辣条已经下架\"）。3月28日实际发生的关键事件是卫龙客服改口称\"配合市场监管部门进行调查核实\"（观察者网、联合早报双源确认）。\n\n3. brand_response 中\"3月25日客服最初解释「约吗」是指约小伙伴吃辣条\"表述不够精确。澎湃新闻源引述的客服回应原文为\"这个是设计的文案，没有其他的意思\"；\"约小伙伴吃辣条\"的详细解释来自联合早报转述博主与客服的互动。建议将两处客服回应原文分别引用或合并表述。",
+        "confirmed_facts": [
+          "事件真实存在：卫龙辣条外包装文案低俗擦边争议发生于2022年3月，澎湃新闻、观察者网/界面新闻、联合早报三源交叉印证",
+          "ad_copy_original「约吗；贼大；强硬」三词组合属实：三个来源均引用相同包装文字，多源一致",
+          "occurred_at 2022-03-25 准确：澎湃新闻记载3月25日有微博网友晒出照片曝光",
+          "漯河市市场监督管理局经济开发区分局介入调查属实：澎湃新闻（3月25日已介入）、观察者网双源确认",
+          "卫龙3月30日正式道歉并宣布停止争议包装生产：观察者网（转引界面新闻）、联合早报双源确认",
+          "微博话题阅读量4.8亿次属实：澎湃新闻原文记载截至3月28日15时相关阅读次数为4.8亿次",
+          "话题登顶微博热搜：澎湃新闻原文记载瞬间登顶微博热搜",
+          "人民网/人民财评发文批评低俗营销：联合早报确认，标题为《低俗营销，卫龙如此抖机灵要不得》，发布于2022年3月29日",
+          "无公开罚款记录属实：多渠道检索均未发现针对本次包装争议的行政处罚决定或罚款公开信息",
+          "三个来源URL均真实可访问：澎湃新闻URL返回完整舆情分析报道，观察者网URL返回卫龙道歉报道，联合早报URL返回深度评论报道，内容均与案例记载对得上",
+          "duration_days=6 合理：从3月25日曝光到3月30日道歉共6天",
+          "网友意见两极分化：澎湃新闻舆情统计显示约40%认为低俗、约24%认为小题大做，联合早报也记载了两极化反应"
+        ],
+        "unverified_claims": [
+          "涉事包装据称已使用6年仅有点时新闻单一信源（经联合早报转引），未能找到第二独立来源直接确认该时间长度。联合早报原文为据点时新闻报道，卫龙涉事版包装已使用了六年，属于单源转引，建议标注为据点时新闻报道称已使用6年并降低确定性表述。"
+        ],
+        "extra_sources": [
+          {
+            "name": "人民网/人民财评（中国青年网转载）",
+            "url": "http://news.youth.cn/jsxw/202203/t20220329_13568814.htm",
+            "published_at": "2022-03-29"
+          },
+          {
+            "name": "光明网-光明观察",
+            "url": "https://guancha.gmw.cn/2022-03/31/content_35626220.htm",
+            "published_at": "2022-03-31"
+          },
+          {
+            "name": "中新网",
+            "url": "https://www.chinanews.com.cn/cj/2022/03-30/9715407.shtml",
+            "published_at": "2022-03-30"
+          },
+          {
+            "name": "中国网（食品频道）",
+            "url": "http://food.china.com.cn/2022-03/28/content_78134441.htm",
+            "published_at": "2022-03-28"
+          },
+          {
+            "name": "新京报",
+            "url": "http://www.bjnews.com.cn/detail/1648619677169928.html",
+            "published_at": "2022-03-30"
+          }
+        ],
+        "severity_check": "severity_hint=medium 定级恰当。理由：(1) 无公开罚款记录，与绝味鸭脖（罚款60万）和椰树集团（罚款40万+约谈）相比处罚显著更轻；(2) 市场监管部门介入但未见后续行政处罚决定书；(3) 企业自行道歉并停止争议包装生产，无强制召回；(4) 影响主要集中于声誉层面（微博热搜、人民网批评），属于中等烈度的舆情事件。建议维持 medium 不变。"
+      }
+    },
+    {
+      "external_id": "sent-case-017",
+      "title": "喜茶x杜蕾斯419联名文案「今夜一滴都不许剩」低俗争议",
+      "brand": "喜茶",
+      "occurred_at": "2019-04-19",
+      "industry": [
+        "餐饮"
+      ],
+      "platforms": [
+        "微博"
+      ],
+      "ad_copy_original": "今夜一滴都不许剩；你唇上始终有我的芝士；你的第一口最珍贵",
+      "trigger_short": "「今夜一滴都不许剩」等性暗示联名文案",
+      "risk_dimension": "低俗擦边",
+      "timeline": [
+        {
+          "at": "2019-04-19",
+          "description": "杜蕾斯发起不眠夜话题，发布与喜茶联名微博配图今夜一滴都不许剩，喜茶评论回复你唇上始终有我的芝士，引发网友大量差评",
+          "stage": "发生"
+        },
+        {
+          "at": "2019-04-20",
+          "description": "杜蕾斯更换文案；喜茶官微发布道歉声明并删除争议微博",
+          "stage": "收尾"
+        }
+      ],
+      "brand_response": "道歉。4月20日喜茶官微发布道歉声明，称对于上线内容喜茶并无恶意，目前已对该微博进行了删除处理",
+      "outcome": "喜茶道歉并删除争议微博，杜蕾斯更换文案；无监管处罚",
+      "consequences": {
+        "business": "公开报道未见量化数据",
+        "duration_days": 2,
+        "regulatory": "无公开监管动作",
+        "reputation": "社交媒体引发轩然大波，网友评价为跨界作死典范、引起不适",
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "北京商报",
+          "published_at": "2019-04-20",
+          "url": "https://www.bbtnews.com.cn/2019/0420/296542.shtml"
+        },
+        {
+          "name": "界面新闻",
+          "published_at": "2019-04-20",
+          "url": "https://www.jiemian.com/article/3059884.html"
+        },
+        {
+          "name": "中新经纬",
+          "published_at": "2019-04-23",
+          "url": "http://www.ce.cn/cysc/newmain/yc/jsxw/201904/23/t20190423_31918684.shtml"
+        }
+      ],
+      "credibility_notes": "多源交叉印证；文案原文多家媒体一致记录；事件爆发于2019年4月19日杜蕾斯微博发布当天，次日即收尾；无行政处罚记录",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. consequences.regulatory: \"无公开监管动作\"错误。2019年4月23日全国扫黄打非办公室官微转发文章点名此事，纳入网上低俗信息专项整治。应修正为: \"2019年4月23日全国扫黄打非办官微公开点名此事，宣布将软色情问题纳入专项整治，但未见对喜茶的单独行政处罚决定书\"。\n\n2. consequences.severity_hint: \"medium\"定级过低。国家级监管部门公开点名、登上微博热搜、被澎湃新闻/虎嗅/界面新闻等多家主流媒体密集报道、作为软色情营销典型案例纳入全国专项整治 -- 应上调为\"high\"。\n\n3. consequences.duration_days: \"2\"偏短。核心事发与道歉为4/19-4/20共2天，但扫黄打非办4/23回应引发新一轮报道高潮(21财经/中国经济网/中国青年网/时代在线等)，实际舆论周期至少5天(4/19-4/24)。虎嗅报道指出周六#杜蕾斯换文案#和#喜茶道歉#双双上热搜，周日#杜蕾斯文案翻车#占据百度搜索热点TOP3。\n\n4. timeline: 缺少关键节点。应补充: \"2019-04-23, 全国扫黄打非办官微转发评论文章，公开点名杜蕾斯x喜茶低俗文案事件，将其作为软色情典型案例纳入专项整治\"。\n\n5. credibility_notes: \"次日即收尾\"不准确。4月23-24日扫黄打非办回应引发新一轮密集报道，事件并非次日即收尾。\n\n6. ad_copy_original: 三条文案短语均可在多源报道中印证，但有两处细微失准: (a)喜茶完整回复为\"Hi杜杜，我记得那次约会。说好了从那天起，你唇上始终有我的芝士\"，案例截取后半句省略前缀; (b)三句短语中\"你的第一口最珍贵\"和\"今夜一滴都不许剩\"来自杜蕾斯微博，\"你唇上始终有我的芝士\"来自喜茶评论，案例混排未标注来源方。\n\n7. sources第三条: 标注为\"中新经纬\"但URL为ce.cn(中国经济网转载)，建议注明转载关系。",
+        "confirmed_facts": [
+          "事件真实存在: 2019年4月19日杜蕾斯官微发起#419不眠夜#话题，发布与喜茶联名微博，海报文案为「今夜一滴都不许剩」-- 21财经、界面新闻、中新经纬、澎湃新闻、虎嗅、新浪财经等至少7家独立媒体一致印证",
+          "喜茶官微在评论区回复互动，核心短语「你唇上始终有我的芝士」被多源证实(界面新闻、中新经纬、21财经、澎湃新闻、虎嗅均记录)",
+          "喜茶于2019年4月20日发布道歉声明，称「并无恶意」并删除争议微博 -- 北京商报当日、界面新闻、中新经纬等多家媒体均报道",
+          "杜蕾斯于4月19-20日修改文案，将海报改为「今夜你是我的NICE GUY」 -- 界面新闻详细记录了修改过程和Plan B",
+          "2019年4月23日全国扫黄打非办官微@扫黄打非 转发评论文章公开回应此事，纳入网上低俗信息专项整治 -- 21财经、中国经济网、中国青年网、青岛网络广播电视台、时代在线等至少5家独立媒体证实",
+          "三个原始来源URL均真实可访问，内容与引用相符: bbtnews.com.cn(北京商报)、jiemian.com(界面新闻)、ce.cn(中国经济网转载中新经纬)",
+          "occurred_at日期「2019-04-19」准确 -- 所有来源一致确认",
+          "risk_dimension「低俗擦边」归类准确 -- 澎湃新闻、中国妇女报、扫黄打非办均以此定性",
+          "网友负面反应剧烈 -- 中新经纬记录「引起不适」「吐了」等评论，北京商报记录「跨界作死典范」评价，界面新闻记录「风流与下流只是一字之差」",
+          "platforms「微博」准确、industry「餐饮」准确、outcome核心(道歉+删博+换文案)准确"
+        ],
+        "unverified_claims": [
+          "consequences.duration_days=2: 若严格定义为「喜茶自身卷入的时长」，2天(4/19-4/20)可勉强成立，但扫黄打非办4/23回应后舆论再度发酵，实际影响力持续时间超过2天。无权威来源明确给出「2天」这个数字，该值缺乏直接引用支撑",
+          "consequences.business: 「公开报道未见量化数据」的表述本身无法被「证实为无」 -- 属于否定性声明，逻辑上只能标注为无法验证而非确认为真",
+          "consequences.reputation中「社交媒体引发轩然大波」: 虽有多家媒体描述为引发大量争议，但热搜具体排名、时长等量化指标在多源报道中存在不一致(有说上热搜、有说百度热点TOP3)，缺乏统一量化依据"
+        ],
+        "extra_sources": [
+          {
+            "name": "21财经(南方财经全媒体集团)",
+            "url": "https://m.21jingji.com/article/20190420/herald/0c0bbe70afe3dc10602b2fd99d109bb2.html",
+            "published_at": "2019-04-20"
+          },
+          {
+            "name": "澎湃新闻(马上评)",
+            "url": "https://www.thepaper.cn/newsDetail_forward_3334366",
+            "published_at": "2019-04-20"
+          },
+          {
+            "name": "虎嗅网",
+            "url": "https://www.huxiu.com/article/295379.html",
+            "published_at": "2019-04-20"
+          },
+          {
+            "name": "21财经(扫黄打非办点名)",
+            "url": "https://m.21jingji.com/article/20190424/herald/8a4d5b685dedaef9d79da709e119d547.html",
+            "published_at": "2019-04-24"
+          },
+          {
+            "name": "中国青年网(扫黄打非办回应)",
+            "url": "http://news.youth.cn/jsxw/201904/t20190424_11935725.htm",
+            "published_at": "2019-04-24"
+          },
+          {
+            "name": "青岛网络广播电视台(扫黄打非办点名)",
+            "url": "http://news.qtv.com.cn/system/2019/04/24/015342101.shtml",
+            "published_at": "2019-04-24"
+          },
+          {
+            "name": "新浪财经",
+            "url": "https://finance.sina.com.cn/china/2019-04-20/doc-ihvhiqax4121533.shtml",
+            "published_at": "2019-04-20"
+          },
+          {
+            "name": "中国经济网(扫黄打非办)",
+            "url": "http://www.ce.cn/cysc/sp/info/201904/24/t20190424_31934774.shtml",
+            "published_at": "2019-04-24"
+          }
+        ],
+        "severity_check": "原定级medium显著偏低。核心依据:(1)2019年4月23日全国扫黄打非办官微公开点名此事，并将其作为典型案例纳入持续8个月的全国网上低俗信息专项整治，属于国家级监管层面的公开定性;(2)事件连续多日登上微博热搜和百度热点TOP3;(3)澎湃新闻、虎嗅、界面新闻、新浪财经、21财经等超过10家主流媒体密集报道;(4)中国妇女报专门就此发表评论。综合以上，建议上调至high。即便考虑到喜茶非直接发布方(微博原文由杜蕾斯发布)、未受单独行政处罚，扫黄打非办的公开点名已构成显著的监管关注，medium无法反映这一层级的影响。"
+      }
+    },
+    {
+      "external_id": "sent-case-018",
+      "title": "桃李面包「生活毒打」五仁月饼电梯广告价值观争议",
+      "brand": "桃李面包",
+      "occurred_at": "2025-09-01",
+      "industry": [
+        "食品"
+      ],
+      "platforms": [
+        "电梯广告",
+        "微博"
+      ],
+      "ad_copy_original": "有人说五仁不好吃，我们认为：那是因为你还年轻，还没饱尝过生活的毒打。桃李蛋月烧，等一个有故事的人下单！",
+      "trigger_short": "「还没饱尝过生活的毒打」式爹味说教与消费苦难",
+      "risk_dimension": "价值观争议",
+      "timeline": [
+        {
+          "at": "2025-09-01",
+          "stage": "发生",
+          "description": "桃李面包在电梯间投放「桃李蛋月烧」五仁月饼广告，文案含「还没饱尝过生活的毒打」，引发消费者拍照上传社交平台"
+        },
+        {
+          "at": "2025-09-04",
+          "stage": "发酵",
+          "description": "社交平台广泛讨论，消费者表达不满，品牌方删除消费者评论加剧负面情绪；广告上线仅一天后即下架"
+        },
+        {
+          "at": "2025-09-05",
+          "stage": "回应",
+          "description": "桃李面包官方微博正式道歉：「文案翻车了，确实是领导拍的板……他现在正在接受现实毒打」，宣布后续宣发「由年轻人接管」；话题登上微博、百度、搜狗等平台热搜，累计在榜约15小时"
+        }
+      ],
+      "brand_response": "2025年9月4日下架广告并初步回应（称系「内部共创机制」试水）；9月5日官方微博正式道歉，承认「文案翻车」，宣布后续宣发「正式由年轻人接管」",
+      "outcome": "涉事电梯广告全面下架，五仁口味和红豆馅蛋月烧在京东旗舰店显示无货，品牌方公开道歉",
+      "consequences": {
+        "reputation": "话题登上微博、百度、搜狗等多个平台热搜，累计在榜约15小时；截至9月5日15时全网相关信息6126篇，互动量6.27万次；工人日报、新京报、光明网等主流媒体刊发评论批评",
+        "business": "五仁口味和红豆馅蛋月烧在京东旗舰店显示无货（其他六种口味仍正常销售）；品牌2025上半年营收同比下降13.55%，广告宣传费同比增超40%而研发投入降30.81%",
+        "regulatory": "无公开监管动作",
+        "duration_days": 5,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "工人日报",
+          "url": "https://www.workercn.cn/c/2025-09-06/8598751.shtml",
+          "published_at": "2025-09-06"
+        },
+        {
+          "name": "新京报",
+          "url": "https://www.bjnews.com.cn/detail/1757064029168750.html",
+          "published_at": "2025-09-05"
+        },
+        {
+          "name": "证券时报/界面新闻",
+          "url": "https://www.stcn.com/article/detail/3322984.html",
+          "published_at": "2025-09-05"
+        },
+        {
+          "name": "羊城晚报金羊网",
+          "url": "https://news.ycwb.com/ikinvkbtkn/content_53644814.htm",
+          "published_at": "2025-09-05"
+        }
+      ],
+      "credibility_notes": "多篇主流媒体交叉印证，广告原文图片在社交平台广泛流传，品牌方已公开承认并道歉，证据充分",
+      "verification": {
+        "verdict": "confirmed",
+        "corrections": "1. timeline 9/4 条目写「广告上线仅一天后即下架」但置于 9/4 阶段: 广告 9/1 悬挂，约 9/2 已撤下，9/4 是品牌方通过媒体首次对外解释内部共创机制的日期，非下架当日。建议将该句归入 9/1 或独立设条。\n2. 道歉文本省略了官方微博原文末尾的括弧补充「(有一说一，五仁蛋月烧真的挺好吃的，别迁怒它)」，新京报和网易/都市快报均引用了完整版本。\n3. sources 第3条标注为「证券时报/界面新闻」: 该文实际来源为界面新闻，发布在证券时报网站，建议修正为「界面新闻(载于证券时报)」。\n4. duration_days 设为 5 天，若按广告上线 9/1 至道歉 9/5 为 4-5 天，建议明确起算口径。",
+        "confirmed_facts": [
+          "事件真实存在: 桃李面包 2025 年 9 月初为桃李蛋月烧五仁月饼投放电梯广告，因文案含「还没饱尝过生活的毒打」引发大规模消费者反感，9/4-5 先后通过媒体和官微道歉并下架广告。工人日报、新京报、证券时报、羊城晚报、每经网、极目新闻、澎湃新闻等多家主流媒体均有独立报道。",
+          "ad_copy_original 原文经双源以上印证属实: 证券时报报道附有广告图片截图，新京报、工人日报、界面新闻等多家媒体引用相同文本。",
+          "occurred_at 2025-09-01 为广告悬挂日: 新京报明确记载「这则广告9月1日悬挂在当地电梯间里」。",
+          "品牌方 9/4 回应属实: 南方都市报、新黄河等报道桃李面包负责人解释系首次尝试内部共创机制，共产出 20 组文案，涉事版本引发争议后已下架。",
+          "品牌方 9/5 官微道歉属实: 新京报、新浪财经、极目新闻、上游新闻等多条独立来源引用一致道歉文本。",
+          "舆情数据(6126 篇、互动量 6.27 万次、热搜累计在榜约 15 小时)来自苗建信息舆情监测，被腾讯新闻、澎湃新闻等多家独立渠道转载，可作为单一权威数据源接受。",
+          "财务数据(2025 上半年营收同比降 13.55%、广告宣传费同比增超 40%、研发投入降 30.81%)来自上市公司半年报，每经网、界面新闻、北京商报等均有引述。",
+          "京东旗舰店五仁和红豆馅蛋月烧无货、其余六种口味正常销售: 界面新闻、证券时报、极目新闻均独立核实。",
+          "四篇 sources URL 均真实可访问，内容与案例所引一致。",
+          "regulatory 标注「无公开监管动作」属实: 所有检索中均未发现市场监管局或广告监管部门立案、约谈或处罚记录。"
+        ],
+        "unverified_claims": [
+          "舆情数据(6126 篇、6.27 万次互动、15 小时热搜在榜)虽被多家媒体引用，但均源自同一家监测机构(苗建信息)，并非独立双源交叉验证。数据可信但建议标注来源为单一第三方监测。",
+          "timeline 声称社交平台讨论始于 9/1(「引发消费者拍照上传社交平台」): 多数报道将社交平台发酵时间描述为「9月3日前后」或「近日」，9/1 当日即大规模上传的说法未找到独立来源佐证。",
+          "「工人日报、新京报、光明网等主流媒体刊发评论批评」中，光明网的独立评论文章未在本次核查中直接定位(工人日报文章中以配图形式提及光明网)，建议补充光明网原文链接或降级表述。"
+        ],
+        "extra_sources": [
+          {
+            "name": "每经网(每日经济新闻)",
+            "url": "https://www.nbd.com.cn/articles/2025-09-05/4049659.html",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "极目新闻",
+            "url": "https://m.10jqka.com.cn/20250905/c670935850.shtml",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "澎湃新闻(苗建信息舆情数据)",
+            "url": "https://www.thepaper.cn/newsDetail_forward_31568107",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "新京报(道歉全文版)",
+            "url": "https://www.bjnews.com.cn/detail/1757074812168764.html",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "北京商报",
+            "url": "https://www.bbtnews.com.cn/2025/0909/569128.shtml",
+            "published_at": "2025-09-09"
+          }
+        ],
+        "severity_check": "severity_hint 定为 high 可辩论。支持理由: 多平台热搜(微博/百度/搜狗)、主流媒体集中批评(工人日报/新京报/光明网)、上市公司公开道歉。保留意见: 无监管处罚、无罚款、月饼仅占营收约 2%、持续时间短(约 5 天)、且据台湾经济日报和东方财富报道，争议期间品牌抖音账号反而涨粉 8000+、直播间销售额达近 30 天峰值——说明实际商业损害有限。综合看 medium 更为审慎，但 high 并非明显错误，属判断差异。"
+      }
+    },
+    {
+      "external_id": "sent-case-019",
+      "title": "京东金融「升舱」短视频借贷广告价值观争议",
+      "brand": "京东金融",
+      "occurred_at": "2020-12-15",
+      "industry": [
+        "金融"
+      ],
+      "platforms": [
+        "抖音",
+        "微博"
+      ],
+      "ad_copy_original": "空姐：「请问您需要升舱吗？升舱费用是1290。」男子打开微信零钱显示53.12元。后排西装男子：「升，升舱的钱我来出。」随后拿过男子手机在京东金条备用金借了150000元：「京东金融是大品牌，新用户30天内免息，万元日息最低1.9元，还没有一瓶水贵。」",
+      "trigger_short": "佯装「钱我来出」实则擅自替他人开通网贷的欺骗性广告",
+      "risk_dimension": "价值观争议",
+      "timeline": [
+        {
+          "at": "2020-12-15",
+          "stage": "发生",
+          "description": "京东金融短视频广告在网络引发争议，网友批评「三观扭曲」「诱导网贷」；同日京东金融APP致歉，下架视频，对相关责任人处以开除、降级和扣除绩效"
+        },
+        {
+          "at": "2020-12-17",
+          "stage": "发酵升级",
+          "description": "京东集团深夜再次发布致歉声明：「没有任何理由，我们完全做错了」，称不仅是管理审核问题，更是操作团队的导向、文化和价值观出了问题，宣布成立专门调查小组"
+        }
+      ],
+      "brand_response": "2020年12月15日京东金融APP首次致歉并下架视频，对相关负责人及其管理者处以开除、降级和扣除绩效；12月17日京东集团层面再次发布声明致歉，承认「完全做错了」",
+      "outcome": "广告下架，相关责任人被开除/降级/扣绩效，京东集团两次公开致歉并承诺全集团反省",
+      "consequences": {
+        "reputation": "全网热议，新华网等央媒批评此类广告「不是土而是恶」，引发对互联网借贷广告行业的集中批评",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 5,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_10408816",
+          "published_at": "2020-12-16"
+        },
+        {
+          "name": "中华网财经",
+          "url": "https://finance.china.com/tech/13001906/20201215/37247113.html",
+          "published_at": "2020-12-15"
+        },
+        {
+          "name": "观察者网/网易",
+          "url": "http://www.163.com/dy/article/FTTOC28S051481US.html",
+          "published_at": "2020-12-15"
+        }
+      ],
+      "credibility_notes": "多家主流媒体交叉印证，广告对白原文完整可查，品牌方两次公开道歉事实确凿，证据充分",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. ad_copy_original 是压缩改写，非完整的逐字对白还原。实际广告为多轮对话：西装男子擅自操作借出15万后先说「急用钱的时候随用随取，别被没有礼貌的人笑话了」（以\"备用金\"话术淡化借贷性质），男子表达对网贷安全的担忧后，西装男子才引出「大品牌」「新用户30天内免息」「万元日息最低1.9元，还没有一瓶水贵」等推销话术。案例将多轮递进式诱导压缩为单轮报价，丢失了「先用备用金包装、再在被质疑后才搬出大品牌背书」这一关键诱导结构。建议补全中间对白，或注明为「对白摘要/压缩版」。\n2. duration_days 的\"5天\"无公开报道直接来源。中新网（2020-12-20）等媒体表述为\"短短三日内\"两次道歉（12月15日至17日为核心爆发期），媒体持续跟进约一周（至12月23日前后）。建议改为保守表述如\"约3-7天\"或移除具体数字。\n3. 案例中男子身份描述为普通乘客，但多家报道描述其为\"农民工打扮\"\"穿着迷彩服\"的特定人设——这是广告引发\"阶层歧视\"批评的关键要素，建议在 ad_copy_original 或 trigger_short 中补充此身份设定。\n4. 该广告实为系列广告中的一条（另有一条外卖小哥救董事长被报答开通网贷的版本），案例未提及此为系列广告的一部分，建议在 credibility_notes 中补充说明。",
+        "confirmed_facts": [
+          "事件真实存在：京东金融于2020年12月在抖音等平台投放借贷短视频广告引发价值观争议，多家主流媒体交叉印证（澎湃新闻、中华网财经、观察者网、中国新闻网、新华网等）",
+          "2020年12月15日京东金融APP首次致歉，承认「存在严重价值观问题」，下架视频，对相关责任人处以开除、降级和扣除绩效（澎湃新闻/界面新闻/观察者网等多源一致确认）",
+          "2020年12月17日京东集团层面深夜再次致歉（京东发言人官微），声明「没有任何理由，我们完全做错了」，宣布成立专门调查小组（澎湃新闻/新浪财经/第一财经等多源一致确认）",
+          "广告核心情节属实：空姐建议升舱（1290元）→ 男子微信零钱53.12元 → 后排西装男子声称「升舱的钱我来出」→ 擅自操作借出15万元 → 推销京东金条（澎湃新闻/中华网财经/观察者网原文逐字对照确认）",
+          "新华网确实发布评论批评此类广告——「这不是'土'而是'恶'」「三观不正，低劣奸诈」（腾讯新闻转载、新华网官方渠道可查）",
+          "无公开监管处罚记录：事件仅限于企业自律整改和声誉损失，未见监管机构对京东金融就此广告作出行政处罚或立案（多源搜索未发现）",
+          "三个 sources URL 均真实可访问，内容与案例记载一致：澎湃新闻（2020-12-16）、中华网财经（2020-12-15）、网易订阅号转载观察者网（2020-12-15）"
+        ],
+        "unverified_claims": [
+          "duration_days: 5 —— 无任何公开报道直接标定「持续5天」。中新网称「短短三日内」两次道歉，媒体报道持续至12月23日前后，实际周期可能在3-8天之间。5天为估算值，缺少出处",
+          "consequences.reputation 中「新华网等央媒批评此类广告『不是土而是恶』」——经检索，新华网评论原文为「这不是'土'而是'恶'」，案例引用方向正确但引号内措辞略有出入（原文有「这」字），且新华网评论面向的是整个行业现象，并非单独针对京东金融",
+          "consequences.business「公开报道未见量化数据」——此表述正确（确实未查到业务量化数据），但属于以「未见」代替「不存在」，严谨性取决于检索范围是否穷尽"
+        ],
+        "extra_sources": [
+          {
+            "name": "新浪财经（京东金融回应借钱广告价值观争议）",
+            "url": "https://finance.sina.com.cn/chanjing/gsnews/2020-12-15/doc-iiznezxs7096214.shtml",
+            "published_at": "2020-12-15"
+          },
+          {
+            "name": "腾讯新闻（再道歉！京东金融低俗营销犯众怒）",
+            "url": "https://news.qq.com/rain/a/20201218A0ECLE00",
+            "published_at": "2020-12-18"
+          },
+          {
+            "name": "第一财经（京东就金融广告事件道歉）",
+            "url": "https://www.yicai.com/news/100882136.html",
+            "published_at": "2020-12-18"
+          },
+          {
+            "name": "中国新闻网（借贷广告屡毁三观，道歉就可了事？）",
+            "url": "https://www.chinanews.com/cj/2020/12-20/9366960.shtml",
+            "published_at": "2020-12-20"
+          },
+          {
+            "name": "新浪财经（京东集团再次致歉：没有任何理由 我们完全做错了）",
+            "url": "https://finance.sina.com.cn/money/bank/bank_hydt/2020-12-17/doc-iiznezxs7496394.shtml",
+            "published_at": "2020-12-17"
+          },
+          {
+            "name": "澎湃新闻（京东集团就京东金融广告道歉：严格问责，全集团进行反省教育）",
+            "url": "https://www.thepaper.cn/newsDetail_forward_10437129",
+            "published_at": "2020-12-17"
+          }
+        ],
+        "severity_check": "定级「high」略偏高但可辩。事件实质为纯声誉危机：品牌两次道歉+央媒批评+内部人员处分，影响面广、声量大，确实达到了互联网广告合规领域的标志性案例级别。但缺少监管罚款、诉讼、业务暂停等硬性后果——若对照有监管介入的同类事件（如被市场监管部门立案/罚款），此事件更接近 medium-high。建议维持「high」但补充说明：以声誉损害维度衡量为 high，以监管/法律后果维度衡量为 medium。"
+      }
+    },
+    {
+      "external_id": "sent-case-020",
+      "title": "360借条「空姐相亲」低俗借贷广告争议",
+      "brand": "360借条",
+      "occurred_at": "2020-09-07",
+      "industry": [
+        "金融"
+      ],
+      "platforms": [
+        "抖音",
+        "微博"
+      ],
+      "ad_copy_original": "空姐：「我还有最后一个问题要问你，你在360借条上有多少额度？」男子不知360借条为何物。空姐：「你连360借条是什么都不知道，咱俩不合适！」「每个人在360借条上都有属于自己的额度，你连360借条是什么都不知道，你拿什么给我以后啊？」「用360借条借款4万元，最长免息期30天，即使超过免息期，日利息最低0.027%。」男子查看后：「我有15万额度！」空姐：「那行吧，我再给你一次机会。」",
+      "trigger_short": "「你连360借条是什么都不知道，咱俩不合适」式拜金借贷营销",
+      "risk_dimension": "价值观争议",
+      "timeline": [
+        {
+          "at": "2020-09-07",
+          "stage": "发生",
+          "description": "互联网科技博主发布360借条广告视频引发全网声讨，网友批评其低俗、物化女性、职业歧视、婚恋观扭曲；同日360借条紧急下线广告并致歉"
+        },
+        {
+          "at": "2020-09-10",
+          "stage": "回应",
+          "description": "360借条发布「情况说明及四大改进措施」，将责任归咎于「合作推广商」，称将「痛定思痛、刮骨疗伤」"
+        },
+        {
+          "at": "2020-12-18",
+          "stage": "收尾",
+          "description": "新华网发表评论批评低俗借贷广告「不是土而是恶，既辣眼睛又毒心灵」，360借条与京东金融等被并列为典型反面教材"
+        }
+      ],
+      "brand_response": "2020年9月7日官方微博致歉称已「第一时间紧急下线」；9月10日发布改进措施，将责任归咎于「合作推广商为博眼球策划拍摄」，被批评「甩锅」",
+      "outcome": "广告紧急下线，品牌道歉并承诺改进，但被批评责任推卸给合作商；与京东金融等一同被新华网点名批评",
+      "consequences": {
+        "reputation": "全网声讨，数百万播放量，新华网点名批评，成为网贷低俗广告标志性反面教材；黑猫投诉平台相关投诉超1.2万条",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 5,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "腾讯新闻/北京青年报",
+          "url": "https://news.qq.com/rain/a/20200908A0NVGD00",
+          "published_at": "2020-09-08"
+        },
+        {
+          "name": "凤凰网财经",
+          "url": "https://news.ifeng.com/c/7zbZHeQ4Z1m",
+          "published_at": "2020-09-08"
+        },
+        {
+          "name": "羊城晚报",
+          "url": "https://ycpai.ycwb.com/ycppad/content/2020-09/11/content_1146661.html",
+          "published_at": "2020-09-11"
+        },
+        {
+          "name": "界面新闻",
+          "url": "https://www.jiemian.com/article/4952721.html",
+          "published_at": "2020-09-08"
+        }
+      ],
+      "credibility_notes": "多家主流媒体交叉印证，广告对白原文有详细逐字记录，品牌方已公开道歉，证据充分",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. ad_copy_original 中「每个人在360借条上都有属于自己的额度」——该句在所有列出的来源（腾讯新闻/北京青年报、凤凰网财经、羊城晚报、界面新闻）的原始报道中均无法找到逐字印证，属于未经原始来源证实的合成对白。应以原始报道中可核实的对白为准，标注为\"综合多篇报道还原\"而非\"原句\"。\n\n2. timeline 2020-12-18 条目存在两处错误：(a) 新华网评论实际发布日期为 2020-12-17，非 12-18；(b) 新华网该篇评论点名批评的是京东金融，并未明确点名 360借条（经澎湃新闻转载原文核实，文中\"360借条未被点名\"）。点名同时批评 360借条与京东金融的是《人民政协报》2021-01-25 文章《网络广告：低俗扰民得管》，非新华网。建议将 timeline 该条目拆分为两条或修正来源归属。\n\n3. occurred_at \"2020-09-07\" 正确（当天广告发酵、品牌首次致歉下线），但广告的实际首发投放日期可能早于 9月7日——9月7日是舆论引爆日而非广告首次出现日，建议标注为\"舆论引爆日\"。\n\n4. consequences.reputation 中\"数百万播放量\"——在各列出来源原文中未找到确切播放量数据，仅有概括性描述如\"刷爆网\"；建议降级为\"网络热传，登上平台热搜\"等可核实的定性描述。\n\n5. consequences.reputation 中\"黑猫投诉平台相关投诉超1.2万条\"——凤凰网财经（2020-09-08）报道中确实提到该数据，可以保留，但这是平台整体投诉量，并非全部与本次广告事件直接相关，建议加注说明。\n\n6. title 中\"空姐相亲\"——广告剧情实为男子带空姐回家见父母/求婚场景，并非严格意义上的\"相亲\"；多数媒体描述为\"空姐与农民\"或\"空姐嫌弃穷人\"。\"相亲\"一词不够准确。",
+        "confirmed_facts": [
+          "事件真实存在：2020年9月，360借条因一条以空姐与农民为角色的借贷广告引发全网争议，多方独立媒体报道交叉印证",
+          "2020年9月7日品牌首次致歉并下线广告：360借条官方微博当天回应，称已'第一时间紧急下线'并致歉，腾讯新闻/北京青年报、凤凰网财经、界面新闻等多家媒体均有记载",
+          "2020年9月10日再次发布情况说明及四大改进措施：羊城晚报（2020-09-11）等媒体详细报道了360借条将责任归于'合作推广商'的回应",
+          "广告核心情节属实：空姐以360借条额度为择偶条件、男子申请后显示15万额度、空姐改变态度——所有列出来源均一致记载",
+          "广告宣称的关键数字属实：借款4万元、最长免息30天、日利息最低0.027%、展示额度15万元——多家媒体报道一致",
+          "无公开监管处罚：独立检索未发现360借条因该广告被正式约谈、罚款或立案的公开记录，品牌系主动下架而非监管强制",
+          "黑猫投诉平台投诉量超1.2万条：凤凰网财经（2020-09-08）报道中明确记载",
+          "所有四个来源URL均可访问（腾讯新闻、凤凰网财经、羊城晚报、界面新闻），内容与事件描述基本吻合",
+          "该事件后续被人民政协报（2021-01-25）与京东金融并列批评，成为互联网金融低俗广告的标志性反面教材",
+          "广告被批评涉及多重歧视（职业歧视、贫富歧视、外貌歧视、拜金主义婚恋观），多家媒体和律师指出涉嫌违反《广告法》第三条"
+        ],
+        "unverified_claims": [
+          "ad_copy_original 中「每个人在360借条上都有属于自己的额度」——所有列出来源原始报道中均未找到该句的逐字记录，无法确认广告中是否确实包含此句",
+          "consequences.reputation 中「数百万播放量」——四个列出来源原文中均未提供具体播放数字，无法通过第二来源独立核实",
+          "consequences.duration_days 为 5——从9月7日到9月11日（羊城晚报评论）的核心讨论期约5天，但舆论余波持续至2020年12月及2021年1月（人民政协报再批），'5天'仅反映最密集讨论期，严格来说低估了事件的实际持续时间",
+          "timeline 2020-12-18 条目声称新华网将360借条'并列为典型反面教材'——澎湃新闻转载的新华网原文未点名360借条，该说法无法在原始来源中证实",
+          "credibility_notes 声称'广告对白原文有详细逐字记录'——实际上各媒体报道的对白均为概括性转述，措辞互有出入，不存在一份来源提供完整'逐字记录'"
+        ],
+        "extra_sources": [
+          {
+            "name": "人民政协报/人民政协网《网络广告：低俗扰民得管》",
+            "url": "http://www.rmzxw.com.cn/c/2021-01-25/2769614.shtml",
+            "published_at": "2021-01-25"
+          },
+          {
+            "name": "澎湃新闻转载新华网评《短视频平台恶俗广告：为了流量不顾吃相》",
+            "url": "https://www.thepaper.cn/newsDetail_forward_10433205",
+            "published_at": "2020-12-17"
+          },
+          {
+            "name": "IT之家《奇葩低俗广告毁三观，360借条致歉》",
+            "url": "https://www.ithome.com/0/507/754.htm",
+            "published_at": "2020-09-08"
+          },
+          {
+            "name": "南方都市报/南方+《360借条视频广告被指低俗、涉嫌歧视》",
+            "url": "https://static.nfapp.southcn.com/content/202009/09/c4011473.html",
+            "published_at": "2020-09-09"
+          },
+          {
+            "name": "新浪财经《360借条低俗广告被质疑后紧急下线 律师称多处涉嫌违规》",
+            "url": "http://finance.sina.com.cn/roll/2020-09-09/doc-iivhuipp3330407.shtml",
+            "published_at": "2020-09-09"
+          }
+        ],
+        "severity_check": "severity_hint 定为 \"high\" 基本合理。理由：(1) 事件引发全网声讨，登上多平台热搜；(2) 腾讯新闻、凤凰网、界面新闻、羊城晚报等主流媒体集中批评；(3) 后续被人民政协报、新华网（间接）等官方媒体卷入批评；(4) 成为网贷低俗广告的标志性反面教材，在京东金融事件中被反复提及。\n\n但需注意：(1) 无任何监管处罚、罚款或约谈记录——品牌系主动下架；(2) 无证据表明该事件对360借条业务造成可量化的实质性打击（consequences.business 标注\"公开报道未见量化数据\"本身也说明这一点）；(3) 与真正触发监管重拳的案例（如滴滴App下架、蚂蚁集团上市暂停）相比，本事件的实际后果限于声誉层面。因此 \"high\" 属于合理但偏上限的定级，若以\"是否有监管介入+是否有量化业务损失\"为尺度，部分评估者可能认为 \"medium\" 更保守。当前定级可维持，但建议在 severity_hint 旁加注\"无监管处罚\"以体现完整图景。"
+      }
+    },
+    {
+      "external_id": "sent-case-021",
+      "title": "茶颜悦色「捡篓子」主题杯文案性别争议",
+      "brand": "茶颜悦色",
+      "occurred_at": "2021-02-19",
+      "industry": [
+        "餐饮"
+      ],
+      "platforms": [
+        "微博"
+      ],
+      "ad_copy_original": "来茶颜买奶茶的美女很多，如果你碰巧认识了一个，你可以小声告诉我们的小伙伴：「我捡了一个篓子。」",
+      "trigger_short": "「捡篓子」式将女性物化为被凝视对象的文案",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2021-02-19",
+          "stage": "发生",
+          "description": "微博博主@厌女文化观察室 发布网友投稿截图，曝光茶颜悦色多款产品文案涉嫌侮辱女性，包括「捡篓子」马克杯、「官人我要」茶包、「宽衣解带」泡茶文案等"
+        },
+        {
+          "at": "2021-02-19晚",
+          "stage": "回应",
+          "description": "茶颜悦色发布第一篇致歉声明，仅针对「捡篓子」马克杯道歉并承诺召回，被网友批评「避重就轻」"
+        },
+        {
+          "at": "2021-02-20凌晨",
+          "stage": "升级回应",
+          "description": "茶颜悦色3小时内再发第二篇致歉声明，承认2014-2015年期间早期创作「错误地把抖机灵、打两性关系擦边球当作创意灵感」，相关产品已下线处理；人民网评发声：「创意不可破底线」"
+        }
+      ],
+      "brand_response": "2021年2月19日晚首次致歉并承诺召回「捡篓子」马克杯；2月20日凌晨二次致歉，承认早期创作边界失当，打两性关系擦边球；相关产品均已下架",
+      "outcome": "3小时内两次道歉，涉事马克杯召回、茶包等相关产品下架，人民网评发声批评",
+      "consequences": {
+        "reputation": "话题登上微博热搜，人民网评发声批评「不可破了底线」，引发「她经济」时代品牌营销边界广泛讨论；事件发生时长沙市正倡导构建女性友好型城市，形成鲜明对比",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "新京报",
+          "url": "https://m.bjnews.com.cn/detail/161378805815825.html",
+          "published_at": "2021-02-20"
+        },
+        {
+          "name": "澎湃新闻/观察者网",
+          "url": "https://m.thepaper.cn/newsDetail_forward_11391105",
+          "published_at": "2021-02-20"
+        }
+      ],
+      "credibility_notes": "多家主流媒体交叉印证，品牌方两次公开道歉，人民网评发声，广告文案原文可查，证据充分",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. timeline第三条把「人民网评发声」归入「2021-02-20凌晨」不准确：第二篇致歉声明发布于2月20日0:13（凌晨），但人民网评文章是在2月20日日间发表的，不应与凌晨道歉捆绑在同一timeline条目。建议拆分为：凌晨「发布第二篇致歉声明」+ 日间「人民网评发声批评」。\n\n2. consequences.duration_days=3 无独立来源佐证：所有检索结果中均无媒体明确报道\"热搜持续3天\"的具体数字。中国经济网2月20日报道话题阅读量超3亿、讨论超1.5万，但未提及持续天数。多家媒体在2月22-23日仍有跟进报道，但无法确认热搜榜实际停留天数。应降级为保守表述或标注为无法独立验证。\n\n3. sources第二个来源标注为「澎湃新闻/观察者网」有歧义：澎湃新闻与观察者网是两家不同媒体，不应以\"/\"并列为一个来源。建议拆分为独立条目。该URL（https://m.thepaper.cn/newsDetail_forward_11391105.html）实测返回超时，虽在搜索结果中被引用，但当前可访问状态存疑。\n\n4. consequences.reputation中「事件发生时长沙市正倡导构建女性友好型城市」需加限定：长沙市十四五规划在2021年1月两会首次提出该概念，但正式的《关于大力发展\"她经济\"的若干意见》政策文件是2021年9月发布。事件发生时（2021年2月）该概念仅处于规划层面，尚未形成正式政策。表述易误导读者认为当时已有成文政策。\n\n5. title中「主题杯」表述不够精确：涉事产品为\"长沙话主题马克杯\"（周边文创马克杯），并非饮品杯本身。此为极轻微措辞问题。",
+        "confirmed_facts": [
+          "事件真实性：茶颜悦色于2021年2月因马克杯文案「捡篓子」、茶包文案「官人我要」及泡茶说明文案「宽衣解带」等引发性别争议，经新京报、澎湃新闻、央广网、中国经济网、红星新闻、人民网评等多家主流媒体交叉印证，事件确实发生。",
+          "发生日期准确：2021年2月19日下午由微博博主@厌女文化观察室发布网友投稿截图曝光。",
+          "ad_copy_original原文经至少5个独立来源逐字印证：「来茶颜买奶茶的美女很多，如果你碰巧认识了一个，你可以小声告诉我们的小伙伴：我捡了一个篓子。」——新京报、澎湃新闻、中国经济网、央广网、腾讯新闻等均引用相同原文。",
+          "道歉时间线经多源核实：第一封致歉发布于2月19日晚（仅针对马克杯道歉+承诺召回），第二封发布于2月20日凌晨0:13（南方+精确记录），承认2014-2015年早期创作「错误地把抖机灵、打两性关系擦边球当作创意灵感」，两次道歉间隔约3小时。",
+          "第一封道歉被网友批评「避重就轻」：央广网、腾讯新闻等均报道了网友的批评。",
+          "品牌回应措施：承诺召回长沙话主题马克杯；茶包等早期问题产品品牌称已在2020年自查中下线处理。",
+          "人民网评于2021年2月20日发表评论，核心句为「在营销上搞创意、抖机灵无可厚非，但不可破了底线」。",
+          "登上微博热搜：#茶颜悦色道歉#话题阅读量超3亿、讨论超1.5万（中国经济网2月20日报道数据）。",
+          "监管后果确认为零：无公开行政处罚、无罚款、无立案。",
+          "商业影响：公开报道中未见具体量化销售或财务数据。",
+          "涉事产品创作时间：品牌方自述为2014年至2015年期间。",
+          "来源URL一（新京报）可访问：https://m.bjnews.com.cn/detail/161378805815825.html 内容与案例描述一致，发布于2021-02-20。"
+        ],
+        "unverified_claims": [
+          "consequences.duration_days=3：检索了多种关键词组合（茶颜悦色+热搜+持续天数），未找到任何公开报道明确支持「3天」这一具体数字。建议标注为无法验证。",
+          "consequences.reputation中「事件发生时长沙市正倡导构建女性友好型城市」与严格的时间线存在细微偏差：十四五规划2021年1月提出概念属实，但正式政策至2021年9月才发布。",
+          "consequences.reputation中「引发她经济时代品牌营销边界广泛讨论」属于叙述性概括，缺少可精确验证的具体指称。",
+          "第二个来源URL的当前可访问性：https://m.thepaper.cn/newsDetail_forward_11391105.html 实测超时，无法确认当前是否仍可正常访问。"
+        ],
+        "extra_sources": [
+          {
+            "name": "央广网",
+            "url": "http://food.cnr.cn/trends/20210220/t20210220_525417186.shtml",
+            "published_at": "2021-02-20"
+          },
+          {
+            "name": "中国经济网",
+            "url": "http://www.ce.cn/cysc/sp/info/202102/20/t20210220_36324925.shtml",
+            "published_at": "2021-02-20"
+          },
+          {
+            "name": "南方+（南方日报）",
+            "url": "https://static.nfapp.southcn.com/content/202102/20/c4819454.html",
+            "published_at": "2021-02-20"
+          },
+          {
+            "name": "红星新闻",
+            "url": "https://static.cdsb.com/micropub/Articles/202102/67d6c8fb458dfc7517c82944554dbe2b.html",
+            "published_at": "2021-02-20"
+          },
+          {
+            "name": "华中师范大学新闻传播学院案例库",
+            "url": "https://media-ethic.ccnu.edu.cn/info/1189/2700.htm",
+            "published_at": "2021"
+          },
+          {
+            "name": "证券日报",
+            "url": "http://www.zqrb.cn/gscy/qiyexinxi/2021-02-23/A1614008205420.html",
+            "published_at": "2021-02-23"
+          },
+          {
+            "name": "荆楚网（湖北日报网）",
+            "url": "http://m.cnhubei.com/content/2021-02/23/content_13639760.html",
+            "published_at": "2021-02-23"
+          }
+        ],
+        "severity_check": "severity_hint=high 基本合理但可讨论：事件涉及官媒点名批评（人民网评）、品牌3小时内两次道歉、产品召回、微博热搜3亿+阅读量，属于典型的高关注度广告合规危机事件。然而，综合考虑无监管处罚、无法律后果、无量化商业损失，若评估标准侧重实际法律/监管后果则可能降为medium，若侧重舆情烈度和品牌声誉冲击则high恰如其分。当前定级建议保留但加注说明。"
+      }
+    },
+    {
+      "external_id": "sent-case-022",
+      "title": "B站五四短片「消失的青年」苦难消费争议",
+      "brand": "哔哩哔哩（B站）",
+      "occurred_at": "2025-05-04",
+      "industry": [
+        "互联网"
+      ],
+      "platforms": [
+        "B站",
+        "微博",
+        "微信朋友圈"
+      ],
+      "ad_copy_original": "（品牌短片，非产品广告，无单一广告语）短片以黑白大字报形式列出焦虑标签：「20岁再不医美就老了」「30岁年入百万是基操」「35岁只能去当离职博主」等，展示26岁程序员凌晨猝死出租屋、海归硕士在星巴克假装上班等场景，主题落点为「面对焦虑，我们依然还有选择」",
+      "trigger_short": "将青年困境「流量化」「景观化」的苦难营销争议",
+      "risk_dimension": "价值观争议",
+      "timeline": [
+        {
+          "at": "2025-05-04",
+          "stage": "发生",
+          "description": "B站五四青年节发布品牌短片「消失的青年」，单日播放量破8000万，B站股价上涨5.7%"
+        },
+        {
+          "at": "2025-05-05",
+          "stage": "发酵",
+          "description": "舆论两极分化：支持者称其「敢于替年轻人喊疼」；批评者指其为「自残式营销」「致郁狂欢」，将青年真实苦难流量化、景观化以换取商业利益"
+        },
+        {
+          "at": "2025-05-06",
+          "stage": "收尾",
+          "description": "证券时报刊文讨论短片揭示的青年困境；数英等营销媒体刊发深度分析；争议逐渐平息"
+        }
+      ],
+      "brand_response": "B站未就争议单独回应；短片为品牌年度五四系列广告（继「后浪」之后第六年），代理商Blank连续第三年创作",
+      "outcome": "短片引发两极争议但未被下架，B站股价短期上涨；关于「苦难消费/苦难美化」的伦理讨论持续发酵",
+      "consequences": {
+        "reputation": "单日播放量破8000万，B站股价上涨5.7%；舆论两极分化，支持者称「宁愿痛苦不要麻木」，批评者称「自残式营销」「消费苦难」；微信公众号、数英、证券时报等刊发多篇深度分析",
+        "business": "B站股价在短片发布后上涨5.7%",
+        "regulatory": "无公开监管动作",
+        "duration_days": 4,
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "证券时报",
+          "url": "http://epaper.stcn.com/con/202505/06/content_2777776.html",
+          "published_at": "2025-05-06"
+        },
+        {
+          "name": "数英",
+          "url": "https://www.digitaling.com/articles/1350670.html",
+          "published_at": "2025-05-06"
+        },
+        {
+          "name": "微信公众平台（B站五四广告进化史）",
+          "url": "http://mp.weixin.qq.com/s?__biz=MzIwODY4NjI1OQ==&mid=2247486799&idx=1&sn=30ecb455252736598085e0bbc39346f2",
+          "published_at": "2025-05-07"
+        },
+        {
+          "name": "新浪视频微博",
+          "url": "https://k.sina.cn/article_1887344341_707e96d504001m74q.html",
+          "published_at": "2025-05-04"
+        }
+      ],
+      "credibility_notes": "短片真实存在且可于B站观看，争议讨论见于多家媒体；该短片为品牌形象片而非商业产品广告，与传统广告争议性质有所不同，关于「苦难美化」的批评是舆论观点而非官方定性",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. 【播放量数据】案例称\"单日播放量破8000万\"，B站官方视频页(BV15kVJzYE5N)实际播放量为641.6万，8000万这个数字仅出现在营销类微信公众号的流转引用中，未找到B站官方、第三方数据平台或权威媒体的独立验证来源。即使考虑全平台累计，也缺乏可追溯的数据出处。建议修正为\"B站单平台播放量641.6万（截至核查日），全平台传播数据缺乏可靠来源\"。\n\n2. 【股价数据】案例称\"B站股价上涨5.7%\"，经多角度检索（B站股价+五四、BILI+May+2025+5.7%、哔哩哔哩+2025年5月+涨幅），未找到任何独立财经来源（港交所公告、彭博、路透、雅虎财经等）证实该数字。值得注意的是，B站官方视频页显示点赞数为5.7万，投币数为2.4万，存在将互动数据与股价数据混淆的可能。该数字应列为未验证或直接删除。\n\n3. 【来源名称错误】sources第4条标注为\"新浪视频微博\"，但URL实际内容来源为观察者网(guancha.cn)，标题为\"5月4日，五四青年节短片《消失的青年》引起网友热议\"，来源应为\"观察者网\"而非\"新浪视频微博\"。\n\n4. 【来源不可访问】sources第3条微信公众平台URL被反爬机制拦截，无法验证其内容是否与案例描述一致，应标注为\"无法验证\"或替换为可访问的替代来源。\n\n5. 【短片导演】case正文未提及导演，但核查发现该片导演为马思原（数英项目页确认），而非2024年B站五四短片《大魔术师》的导演陈马俊。此处虽非case正文错误，但若后续补充时需注意区分。\n\n6. 【时长】duration_days标为4天，但争议讨论从5月4日持续至5月9日以后（数英分析文章5月9日发布），建议保守修正为5-7天。",
+        "confirmed_facts": [
+          "B站于2025年5月4日发布五四青年节品牌短片《消失的青年》，BV号为BV15kVJzYE5N，B站官方视频页可查",
+          "短片由代理商Blank创作，为Blank与B站连续第三年合作五四短片，B站连续第六年推出五四系列（继《后浪》之后）",
+          "短片主题为\"面对焦虑，我们依然还有选择\"，核心传达\"中国青年绝不会被焦虑消除\"",
+          "短片确实引用了社交媒体焦虑标签：\"20岁，再不医美就老了\"\"30岁，年入百万是基操\"\"35岁，只能去当离职博主\"（SocialBeta、多个微信公众号独立确认）",
+          "短片包含26岁程序员凌晨猝死出租屋、海归硕士在星巴克假装上班、三战考研女生躲进寺庙等具体场景",
+          "短片引发舆论两极分化：支持者称引发共鸣，批评者指其为\"致郁\"\"消费苦难\"",
+          "证券时报于2025年5月6日刊发评论文章《年轻人如何才能打破焦虑魔咒》，署名为孔德淇",
+          "数英(digitaling.com)于2025年5月6日(项目页)和5月9日(分析文章)刊登了关于该短片的内容",
+          "无公开监管处罚、无短片下架、B站未就争议单独发表回应声明",
+          "短片真实存在且至今仍可在B站观看，未因争议被删除或下架",
+          "该短片为品牌形象片（非商业产品广告），与传统商品广告争议性质不同"
+        ],
+        "unverified_claims": [
+          "单日播放量破8000万：仅见于营销类微信公众号流转引用，B站官方页面显示播放量641.6万，无独立数据来源证实8000万这一数字",
+          "B站股价上涨5.7%：经多角度检索未找到任何独立财经来源确认，该数字与B站视频点赞数5.7万高度相近，疑似数据混淆",
+          "微信公众平台来源文章的实际内容：URL被反爬机制拦截，无法验证文章内容是否与案例描述一致",
+          "案例 trigger_short 概括为\"将青年困境「流量化」「景观化」的苦难营销争议\"——但\"苦难营销/苦难消费\"这一具体定性标签在搜索中主要见于自媒体评论，未见权威媒体或监管机构以此定性",
+          "短片是否为\"伪纪录片形式\"——部分来源描述为伪纪录片风格，另有来源描述为\"先抑后扬的叙事结构\"，具体形式描述存在分歧"
+        ],
+        "extra_sources": [
+          {
+            "name": "B站官方视频页《消失的青年》：面对焦虑，我们依然还有选择",
+            "url": "https://www.bilibili.com/video/BV15kVJzYE5N/",
+            "published_at": "2025-05-04"
+          },
+          {
+            "name": "数英项目页：B站青年节-致不会被焦虑消除的你",
+            "url": "https://www.digitaling.com/projects/338540.html",
+            "published_at": "2025-05-06"
+          },
+          {
+            "name": "SocialBeta：B 站青年节消除「焦虑」",
+            "url": "https://socialbeta.com/campaign/24773",
+            "published_at": "2025-05-06"
+          },
+          {
+            "name": "观察者网：5月4日，五四青年节短片《消失的青年》引起网友热议",
+            "url": "https://k.sina.cn/article_1887344341_707e96d504001m74q.html",
+            "published_at": "2025-05-04"
+          }
+        ],
+        "severity_check": "原案例定为 medium，考虑到以下因素：1) 无任何监管处罚或约谈，2) 短片未被下架，3) B站未被迫回应，4) 舆论虽有分化但无严重品牌危机（股价实际影响无法证实），5) 争议主要在营销/自媒体圈讨论，未上升为重大社会事件——medium 基本合理，但若严格按\\\"无监管动作、无下架、无官方回应\\\"的标准，实际严重程度更接近 low-medium。建议在 severity_hint 字段加注说明争议性质的局限性。"
+      }
+    },
+    {
+      "external_id": "sent-case-023",
+      "title": "三只松鼠国潮风产品海报模特眯眯眼妆容被指丑化国人",
+      "brand": "三只松鼠",
+      "occurred_at": "2021-12-26",
+      "industry": [
+        "食品"
+      ],
+      "platforms": [
+        "微博",
+        "电商详情页"
+      ],
+      "ad_copy_original": "海报为2019年10月上线的国潮风平面广告, 模特身穿印有平等字样的服装, 配文标语: 撸粉大法好, 撸粉大法妙。模特妆容为细长上扬眼线即眯眯眼妆容, 搭配民国时期广告风格排版。",
+      "trigger_short": "模特眯眯眼妆容被指迎合西方刻板印象丑化国人",
+      "risk_dimension": "国家形象",
+      "timeline": [
+        {
+          "at": "2021-12-26",
+          "stage": "发生/发酵",
+          "description": "网友在微博晒出三只松鼠2019年10月产品海报, 质疑模特眯眯眼妆容故意丑化中国人, 三只松鼠模特话题登上微博热搜阅读量超3亿, 网友涌入淘宝直播间攻击主播致直播中断"
+        },
+        {
+          "at": "2021-12-26",
+          "stage": "回应",
+          "description": "三只松鼠中午发声明称模特妆容基于其个人特征打造无刻意丑化, 对不适感深表歉意并替换页面; 模特菜孃孃当晚发微博称眼睛就长这样, 事事上纲上线是病态"
+        },
+        {
+          "at": "2021-12-27",
+          "stage": "发酵",
+          "description": "上海市消保委发声称消费圈的审美也要与时俱进; 胡锡进为模特辩护; 舆论出现赞成与反对两极化"
+        },
+        {
+          "at": "2021-12-30",
+          "stage": "收尾",
+          "description": "微博官方对恶意攻击与事件无关人士的28个账号做出禁言7至30天处置"
+        }
+      ],
+      "brand_response": "道歉并下架。2021年12月26日三只松鼠官方微博声明: 经查该产品于2019年10月上线, 模特为中国人, 妆容基于其个人特征打造, 无刻意丑化; 针对网友反馈模特妆容不符合大众审美并由此产生不适感, 我司深表歉意, 并第一时间已进行页面的替换。",
+      "outcome": "涉事广告页面被替换下架, 三只松鼠道歉, 微博官方对极端言论账号进行禁言处置, 舆论随着2022年初逐渐平息。",
+      "consequences": {
+        "reputation": "微博话题阅读量超3亿, 登顶热搜, 引发全国性讨论; 上海市消保委发声评论; 多名KOL及媒体参与争论",
+        "business": "网友涌入淘宝直播间攻击主播致直播半小时中断; 公开报道未见具体销量或股价量化数据",
+        "regulatory": "无公开监管动作; 上海市消保委发表评论文章但非约谈或处罚",
+        "duration_days": 5,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "BBC中文",
+          "url": "https://www.bbc.com/zhongwen/simp/chinese-news-59815600",
+          "published_at": "2021-12-30"
+        },
+        {
+          "name": "21财经",
+          "url": "https://m.21jingji.com/article/20211226/herald/5ffc99c2495e6c7af316aa79f5a8ddd7.html",
+          "published_at": "2021-12-26"
+        },
+        {
+          "name": "新浪财经",
+          "url": "https://finance.sina.com.cn/stock/s/2021-12-26/doc-ikyamrmz1312943.shtml",
+          "published_at": "2021-12-26"
+        }
+      ],
+      "credibility_notes": "BBC中文、21财经、新浪财经、维基百科等多方独立信源交叉验证, 三只松鼠官方微博发布声明, 事实确凿; 海报系2019年上线2021年底被翻出, 时间线清晰",
+      "verification": {
+        "verdict": "confirmed",
+        "corrections": "1. 热搜位次存在轻微歧义：案例记载\"登顶热搜\"，但独立检索中发现\"东北新闻网\"等来源明确表述为\"被骂上热搜第二\"，也有多处称\"登顶热搜第一\"，两种说法并存，建议表述为\"冲上微博热搜高位（阅读量超3亿）\"更为稳妥。\n2. outcome中\"舆论随着2022年初逐渐平息\"表述可商榷：2022年1月3日三只松鼠再因\"红领巾\"广告（2019年\"331补脑节\"海报）被翻出而二次道歉，品牌危机在年初并未真正平息。但该\"红领巾\"事件属独立事件，不影响本案核心时间线。",
+        "confirmed_facts": [
+          "事件真实存在，2021年12月26日微博网友翻出三只松鼠2019年10月国潮风海报引发争议——Wikipedia、BBC中文、21财经、新浪财经、澎湃新闻等5+独立信源交叉验证",
+          "海报原句「撸粉大法好，撸粉大法妙」经澎湃新闻及多家媒体独立报道确认属实",
+          "模特服装印有「平等」字样经澎湃新闻等来源确认",
+          "三只松鼠当日在官方微博发表声明致歉并替换页面——21财经、新浪财经、观察者网等多家媒体引用声明原文",
+          "涉事模特@菜孃孃当日晚间发微博回应「眼睛就长这样」「事事上纲上线是病态」——新浪财经、上游新闻、每日经济新闻等多源确认",
+          "微博话题阅读量超3亿——Wikipedia及多家媒体报道一致确认",
+          "网友涌入淘宝直播间攻击主播致直播约半小时中断——21财经、每日经济新闻、Wikipedia等多源确认",
+          "上海市消保委12月27日发表评论文章「消费圈的审美也要与时俱进」——东北新闻网、Wikipedia等多源确认",
+          "胡锡进12月27日为模特辩护——新浪财经、中华网等多源确认",
+          "12月30日微博对28个账号做出禁言7至30天处置——联合早报、界面新闻、Wikipedia三源确认",
+          "无公开监管处罚/约谈动作——所有来源均未发现监管机构正式处罚记录",
+          "海报为民国时期广告风格排版——新浪财经报道确认「民国时期广告宣传风格」"
+        ],
+        "unverified_claims": [
+          "「登顶热搜」（即热搜榜第1位）：部分来源称「热搜第二」，具体最高位次存在多源分歧，无法唯一确认",
+          "ad_copy_original中的描述性文字（如「细长上扬眼线」「民国时期广告风格排版」）系对海报视觉元素的综合描述而非广告文案原文，其措辞准确性难以完全验证——建议将ad_copy_original字段限定为海报上实际印刷的文字内容（即「撸粉大法好，撸粉大法妙」+「平等」字样），视觉描述移至其他字段"
+        ],
+        "extra_sources": [
+          {
+            "name": "维基百科 - 三只松鼠海报事件",
+            "url": "https://zh.wikipedia.org/wiki/%E4%B8%89%E5%8F%AA%E6%9D%BE%E9%BC%A0%E6%B5%B7%E6%8A%A5%E4%BA%8B%E4%BB%B6",
+            "published_at": "持续更新"
+          },
+          {
+            "name": "界面新闻 - 28个微博账号被禁言",
+            "url": "https://www.jiemian.com/article/6963751.html",
+            "published_at": "2021-12-30"
+          },
+          {
+            "name": "联合早报 - 眯眯眼事件微博禁言28账号",
+            "url": "https://www.zaobao.com/realtime/china/story20211230-1227933",
+            "published_at": "2021-12-30"
+          },
+          {
+            "name": "澎湃新闻 - 三只松鼠广告翻车分析",
+            "url": "https://m.thepaper.cn/newsDetail_forward_16031036",
+            "published_at": "2021-12-27"
+          },
+          {
+            "name": "观察者网 - 三只松鼠海报模特眯眯眼妆容引争议",
+            "url": "https://export.shobserver.com/wx/detail.do?id=435974",
+            "published_at": "2021-12-26"
+          },
+          {
+            "name": "每日经济新闻 - 故意丑化国人？零食巨头直播间遭攻击",
+            "url": "https://www.nbd.com.cn/articles/2021-12-26/2059169.html",
+            "published_at": "2021-12-26"
+          },
+          {
+            "name": "上游新闻 - 三只松鼠眯眯眼模特正面回应",
+            "url": "https://m.cqcb.com/topics/feidian/2021-12-27/4693553_pc.html",
+            "published_at": "2021-12-27"
+          },
+          {
+            "name": "搜狐新闻 - 三只松鼠广告被指辱华，模特本人回应",
+            "url": "https://www.sohu.com/a/512067824_120823584",
+            "published_at": "2021-12-27"
+          }
+        ],
+        "severity_check": "定级为high恰当。该事件符合high级别的典型特征：(1) 微博话题阅读量超3亿，登顶或接近登顶热搜；(2) 引发全国性大讨论，涉及国家形象/文化自信敏感议题；(3) 上海市消保委、共青团中央等多方机构发声评论；(4) 迫使品牌方公开道歉并下架广告；(5) 持续5天以上并产生后续连锁反应（奔驰、雄狮少年等关联争议被联动讨论）。事件虽无监管处罚/约谈，但社会影响力和舆论规模已达到high级别。"
+      }
+    },
+    {
+      "external_id": "sent-case-024",
+      "title": "奔驰CLS轿跑朋友圈广告女模特眯眯眼妆容争议",
+      "brand": "梅赛德斯-奔驰",
+      "occurred_at": "2021-12-25",
+      "industry": [
+        "汽车"
+      ],
+      "platforms": [
+        "微博",
+        "微信朋友圈"
+      ],
+      "ad_copy_original": "朋友圈广告配文: 先锋, 不彰自显。夺目登场。50秒视频中女模特在翻阅杂志场景中展示明显吊梢眼/眯眯眼妆容, 朋友圈广告封面选出女模特眼部特写作焦点。推广车型为新一代CLS四门轿跑车。",
+      "trigger_short": "朋友圈广告女模特吊梢眼妆容被批顶风作案迎合西方刻板印象",
+      "risk_dimension": "国家形象",
+      "timeline": [
+        {
+          "at": "2021-12-25",
+          "stage": "发生",
+          "description": "奔驰在微博和微信朋友圈投放新一代CLS轿跑车50秒广告, 视频中女模特吊梢眼妆容引发争议; 此时正值三只松鼠、迪奥、雄狮少年等眯眯眼争议高潮期"
+        },
+        {
+          "at": "2021-12-27至28",
+          "stage": "发酵",
+          "description": "继三只松鼠之后, 奔驰广告成为新一轮眯眯眼争议焦点, 人民日报评论发文多角度讨论, 胡锡进称对奔驰极感失望; 网友涌入微博留言批评"
+        },
+        {
+          "at": "2021-12-28前后",
+          "stage": "收尾",
+          "description": "奔驰未作公开回应, 但悄然下架涉事微博视频, 仅保留一条无模特出镜的15秒纯车型视频"
+        }
+      ],
+      "brand_response": "沉默/悄然下架。奔驰未作出任何公开道歉或官方声明, 仅在舆论压力下于2021年12月28日前后悄然删除涉事视频, 替换为无模特出镜的15秒车型展示视频。",
+      "outcome": "奔驰未公开回应, 仅悄悄删除涉事视频, 舆论随三只松鼠等眯眯眼事件整体降温后逐渐平息。",
+      "consequences": {
+        "reputation": "人民日报评论文章中被点名讨论; 胡锡进公开批评; 澎湃新闻、观察者网等多家主流媒体发文批评奔驰傲慢",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 4,
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "联合早报",
+          "url": "https://www.zaobao.com.sg/realtime/china/story20211228-1227203",
+          "published_at": "2021-12-28"
+        },
+        {
+          "name": "澎湃新闻/观察者网",
+          "url": "https://m.thepaper.cn/newsDetail_forward_16048806",
+          "published_at": "2021-12-29"
+        }
+      ],
+      "credibility_notes": "联合早报、澎湃新闻、汽车之家等多方媒体证实, 但奔驰官方未作公开声明, 部分细节仅来自媒体引述; 因视频已下架, 原始广告内容无法直接核查",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. sources[0].url (zaobao.com.sg) 无法访问: WebFetch 实测连接失败，该来源内容无法验证，建议替换为Global Times/Al Jazeera/明报等可验证来源。\n2. sources[1].published_at 错误: 案例标注\"2021-12-29\"，实际澎湃文章发布于 2021-12-28 21:10。\n3. sources[1] 内容归因错误: 澎湃文章经全文核查未提及胡锡进或人民日报，案例将此URL归因覆盖胡锡进和人民日报的评论是不准确的。胡锡进文章发表于其微信公众号(2021-12-29)，人民日报评论发表于其官方微博(2021-12-28)，两者均为独立来源。\n4. timeline[1] 发酵阶段日期不精确: 标注\"2021-12-27至28\"，但胡锡进评论文章实际发表于2021-12-29，应修正为\"2021-12-27至29\"。\n5. timeline[2] 收尾阶段日期不精确: 标注\"2021-12-28前后\"，但澎湃新闻12月28日21:10发文时明确写\"奔驰官方尚未……暂未下线这则广告\"，视频实际于12月28日深夜至29日下架，应修正为\"2021-12-28晚至29\"。\n6. ad_copy_original 不完整: 案例写\"先锋, 不彰自显。夺目登场。\"，多源证实完整文案为\"先锋，不彰自显，新一代CLS夺目登场\"（缺失\"新一代CLS\"）。\n7. brand_response 时间描述不精确: 写\"2021年12月28日前后悄然删除\"，多源交叉验证删除实际发生在12月28日深夜至29日。\n8. 胡锡进评论归属阶段错误: timeline暗示胡锡进在\"12/27至28\"发酵期发声，实则其微信公众号文章发布于2021-12-29，应归入收尾阶段。\n9. ad_copy_original 中眼部特写细节需补充说明: 朋友圈封面确实使用了女模特眼部特写作为焦点，但微博版50秒正片视频中\"基本没有女模特的面部特写\"(据北京青年报/新浪报道)，眼部特写仅用于微信朋友圈广告封面，案例描述未区分此差异。",
+        "confirmed_facts": [
+          "事件真实存在: 2021年12月25日奔驰在微博和微信朋友圈投放新一代CLS轿跑车50秒广告，女模特吊梢眼妆容引发争议(中外多源证实: 澎湃新闻、Global Times、Al Jazeera、明报、Reuters、NY Post、The Independent等)",
+          "广告发布时间2021-12-25准确(多源交叉确认)",
+          "广告核心文案'先锋，不彰自显。夺目登场'属实(多源引用一致)",
+          "奔驰未作任何公开道歉或官方声明，仅悄然下架视频(多源一致确认，包括Al Jazeera、Bloomberg等国际媒体)",
+          "人民日报于2021-12-28发表评论文章'怎样看待围绕眯眯眼的争议'(多源确认，含三个维度: 产品/审美/传播)",
+          "胡锡进批评奔驰'极感失望，并且生气''顶风作案''情商转速太慢，顶多386的水平'(经其微信公众号2021-12-29文章原文引用确认)",
+          "无公开监管处罚/约谈/立案(独立检索未发现任何监管动作报道)",
+          "事件背景正值三只松鼠、迪奥陈漫、雄狮少年等眯眯眼争议集中爆发期(多源确认)",
+          "微博话题#奔驰广告模特妆容惹争议#阅读量约2.4-2.6亿(多源引用一致)",
+          "奔驰于12月27日发布了无模特出镜的15秒替换视频(多源确认)"
+        ],
+        "unverified_claims": [
+          "sources中引用的联合早报(zaobao.com.sg)URL无法访问，该来源内容完全无法验证",
+          "consequences.duration_days=4: 广告12/25发布，12/28深夜至29日下架，约3-4天，合理性可接受但精确小时级删除时间无法从公开报道确认",
+          "澎湃新闻/观察者网作为sources[1]的name: 该URL实际为澎湃新闻旗下观察者网澎湃号文章，非两个独立媒体，name表述可能引起误解",
+          "热搜#奔驰广告模特妆容惹争议#的具体阅读量各来源有差异(2.4亿 vs 2.6亿)，案例未引用具体数字因此不构成硬伤，但需注意数据来源差异",
+          "ad_copy_original中'翻阅杂志场景'的细节描述: 多源确认视频确为翻阅杂志切换场景的创意形式，属实则无法直接核查原视频(已下架)"
+        ],
+        "extra_sources": [
+          {
+            "name": "Global Times: Mercedes-Benz removes controversial ad amid Chinese netizens' uproar",
+            "url": "https://www.globaltimes.cn/page/202112/1243631.shtml",
+            "published_at": "2021-12-29"
+          },
+          {
+            "name": "Al Jazeera: Mercedes axes ad after Chinese backlash over model's eyes",
+            "url": "https://www.aljazeera.com/economy/2021/12/30/bbmercedes-axes-slanted-eyes-ad-after-chinese-netizen-backlash",
+            "published_at": "2021-12-30"
+          },
+          {
+            "name": "明报: 女模'眯眯眼'妆容被质疑辱华 平治下架涉事微博及广告视频",
+            "url": "https://finance.mingpao.com/fin/instantf/20211229/1640746442784/",
+            "published_at": "2021-12-29"
+          },
+          {
+            "name": "NY Post: Mercedes-Benz removes ad with Chinese model over 'slanted eye' backlash",
+            "url": "https://nypost.com/2021/12/30/mercedes-benz-removes-ad-with-slanted-eye-model-following-backlash/",
+            "published_at": "2021-12-30"
+          },
+          {
+            "name": "The Independent: Mercedes-Benz drops ad after backlash in China over 'slanted eye' make-up of model",
+            "url": "https://www.the-independent.com/asia/china/mercedes-benz-china-model-eyes-b1984258.html",
+            "published_at": "2021-12-30"
+          },
+          {
+            "name": "Reuters: Mercedes-Benz pulls Chinese 'slanted eyes' ad after backlash (via rtrunews)",
+            "url": "https://rtrunews.com/business/544783-china-backlash-mercedes-benz-commercial/",
+            "published_at": "2021-12-30"
+          },
+          {
+            "name": "上游新闻: 最新!奔驰微博悄悄下架'眯眯眼'争议视频",
+            "url": "https://cqcb.com/headline/2021-12-28/4696429_pc.html",
+            "published_at": "2021-12-28"
+          },
+          {
+            "name": "北京青年报/新浪: '眯眯眼'再遭围观: 奔驰广告惹争议!人民日报评论这样说",
+            "url": "https://k.sina.com.cn/article_1749990115_684ebae3020018e1p.html",
+            "published_at": "2021-12-28"
+          }
+        ],
+        "severity_check": "severity_hint=medium 基本合理，但可议。支撑medium的理由: (1)无监管处罚/罚款/约谈; (2)奔驰未公开道歉; (3)舆论约3-4天随整体眯眯眼事件降温后消退; (4)未见可量化的商业损失数据。支撑可升为high的理由: (1)人民日报专门发文评论; (2)胡锡进点名批评; (3)中外多国主流媒体广泛报道(Al Jazeera/Reuters/NY Post/The Independent/Bloomberg); (4)微博话题阅读量2.4-2.6亿; (5)触及'国家形象'敏感风险维度。综合来看medium是保守合理的定级，但标注为medium-high更为准确。"
+      }
+    },
+    {
+      "external_id": "sent-case-025",
+      "title": "迪奥上海艺术展摄影作品傲慢的矜持被指丑化亚裔女性",
+      "brand": "迪奥",
+      "occurred_at": "2021-11-15",
+      "industry": [
+        "服饰"
+      ],
+      "platforms": [
+        "微博"
+      ],
+      "ad_copy_original": "非商业广告文案, 为摄影师陈漫2012年创作的摄影作品傲慢的矜持亦作骄傲的矜持, 画面为一位亚裔女性手拿迪奥经典款戴妃包, 乌黑眼影, 暗沉带有雀斑的脸色, 油腻头发, 佩戴清朝护甲, 被网友形容为太阴间、丑化亚裔。",
+      "trigger_short": "摄影作品阴间风亚裔女性形象被指丑化中国人迎合西方审美",
+      "risk_dimension": "国家形象",
+      "timeline": [
+        {
+          "at": "2021-11-12",
+          "stage": "发生",
+          "description": "迪奥在上海西岸艺术中心举办迪奥与艺术展览, 展出陈漫2012年摄影作品傲慢的矜持"
+        },
+        {
+          "at": "2021-11-15至17",
+          "stage": "发酵",
+          "description": "照片被网友分享至社交媒体, 迪奥摄影作品被指丑化亚裔话题登上微博热搜, 点击量超1.7亿; 陈漫此前少先队员组图也被翻出批评; 北京日报发表评论文章"
+        },
+        {
+          "at": "2021-11-23",
+          "stage": "回应",
+          "description": "迪奥发布声明称该作品并非商业广告, 已删除线上及线下相关内容; 陈漫同日在微博发长文道歉称早期艺术观尚未成型"
+        }
+      ],
+      "brand_response": "道歉/下架。迪奥于2021年11月23日官方微博声明: 陈漫女士的摄影作品骄傲的矜持并非迪奥商业广告, 已删除该作品在迪奥官方线上及线下的相关内容, 迪奥一如既往地尊重中国人民情感。摄影师陈漫同日发微博致歉。",
+      "outcome": "迪奥删除涉事作品, 陈漫公开道歉, 舆论逐渐平息; 迪奥借此重申尊重中国消费者。",
+      "consequences": {
+        "reputation": "微博话题迪奥摄影作品被指丑化亚裔点击量超1.7亿, 北京日报发表评论文章; 陈漫历年作品遭全面审视, 包括少先队员组图引发额外争议",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 12,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "BBC中文",
+          "url": "https://www.bbc.com/zhongwen/simp/chinese-news-59400415",
+          "published_at": "2021-11-24"
+        },
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_15518700",
+          "published_at": "2021-11-23"
+        },
+        {
+          "name": "联合早报",
+          "url": "https://www.zaobao.com.sg/news/china/story20211125-1216828",
+          "published_at": "2021-11-25"
+        }
+      ],
+      "credibility_notes": "BBC中文、澎湃新闻、联合早报多方权威媒体证实, 迪奥及陈漫均发布公开声明, CCTV等官媒亦有报道, 事实确凿无疑",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. ad_copy_original 作品名称主次颠倒：迪奥官方声明使用的正式名称为《骄傲的矜持》，\"傲慢的矜持\"为媒体报道中混用的变体名称。建议改为\"摄影作品《骄傲的矜持》（亦被部分媒体称为《傲慢的矜持》）\"。\n\n2. brand_response 定性过重：迪奥2021年11月23日的声明核心并非\"道歉\"，而是强调该作品\"并非迪奥商业广告\"、属于\"迪奥艺术项目作品之一\"、已删除相关内容。多个媒体（环球网、上游新闻等）将此定性为\"辩解\"而非道歉。建议改为\"声明/下架\"或\"辩解/下架\"，而非\"道歉/下架\"。\n\n3. duration_days 计算偏差：展览于2021年11月12日开幕，迪奥于11月23日发表声明，实际跨度为11天（非12天）。若从舆论爆发日（11月15日）起算，则约为8天。\n\n4. credibility_notes 中\"CCTV等官媒亦有报道\"表述不精确：独立检索未找到CCTV（中央电视台）对该事件的直接报道。发表评论的官媒为央广网（中央广播电视总台旗下，与CCTV属同一总台但非同一频道）、北京日报、中国妇女报、环球网等。\"CCTV\"应更正为\"央广网\"或泛称\"中央媒体\"。\n\n5. occurred_at 应优先反映展览开幕日：展览于2021年11月12日在上海西岸艺术中心开幕，作品当日即公开展出。2021-11-15为舆论开始发酵的日期。建议改为2021-11-12，或在 timeline 中更清晰地标出展览开幕日与舆论爆发日的区分。\n\n6. outcome 中\"迪奥借此重申尊重中国消费者\"措辞偏正面：迪奥声明被多家媒体和网友批评为\"避重就轻\"\"甩锅给摄影师\"，声明语气并非积极主动的\"重申尊重\"，而是被动回应。建议改为更中性的表述。",
+        "confirmed_facts": [
+          "事件真实存在：2021年11月，迪奥在上海西岸艺术中心举办《迪奥与艺术》(ART'N DIOR)展览，展出陈漫2012年创作的摄影作品，因画面中亚裔女性形象（乌黑眼影、暗沉雀斑肤色、油腻头发、清朝护甲、手持迪奥戴妃包）被指丑化亚裔而引发全网争议",
+          "陈漫于2021年11月23日在微博发布长文道歉，承认'早期艺术观尚未成型''为当时的稚拙无知而自责'",
+          "迪奥于2021年11月23日（陈漫道歉后约19分钟）发布官方声明，称该作品并非商业广告，已删除线上及线下相关内容",
+          "微博话题#迪奥摄影作品被指丑化亚裔#阅读量超过1.7亿，多个相关话题登上微博热搜",
+          "北京日报于2021年11月17日发表评论文章《为中国量身定制的'美'可以休矣》，批评西方时尚圈的刻板审美",
+          "陈漫此前作品《少先队员》组图（2008年）和《中国十二色》组图（2012年）在事件中被网友翻出并受到额外批评",
+          "央广网（中央广播电视总台主办）于2021年11月发表评论《个性创作不等于无底线丑化》",
+          "展览展期为2021年11月12日至11月23日，地点为上海西岸艺术中心",
+          "BBC中文、澎湃新闻、联合早报均对该事件进行了报道（BBC和联合早报URL因网络限制无法直接访问，但通过搜索确认文章存在）",
+          "该事件涉及风险维度为国家形象/文化自信，折射出西方对亚裔刻板形象与中国审美话语权之间的冲突"
+        ],
+        "unverified_claims": [
+          "CCTV（中央电视台）对该事件的直接报道：独立检索仅找到央广网（同属中央广播电视总台）的评论，未找到CCTV频道的直接报道证据",
+          "迪奥声明属于'道歉'性质：多方来源表明迪奥声明更多是辩解/澄清而非道歉，环球网评论称'如果想做的是道歉，请直接且诚恳'，暗示迪奥声明并非道歉",
+          "duration_days具体为12天：展览11月12日开幕至11月23日回应为11天，非12天",
+          "sources中BBC中文URL(https://www.bbc.com/zhongwen/simp/chinese-news-59400415)的可访问性：工具无法直接获取该页面，存在simp版和trad版两个变体URL",
+          "联合早报URL(https://www.zaobao.com.sg/news/china/story20211125-1216828)的可访问性：工具无法直接获取该页面，通过搜索确认文章标题存在但无法验证全文内容"
+        ],
+        "extra_sources": [
+          {
+            "name": "央广网评论《个性创作不等于无底线丑化》",
+            "url": "https://baijiahao.baidu.com/s?id=1716679718515126943",
+            "published_at": "2021-11-15"
+          },
+          {
+            "name": "北京日报《为中国量身定制的'美'可以休矣》",
+            "url": "https://news.bjd.com.cn/2021/11/17/10006466.shtml",
+            "published_at": "2021-11-17"
+          },
+          {
+            "name": "人民网英文版报道",
+            "url": "http://en.people.cn/n3/2021/1120/c90000-9922189.html",
+            "published_at": "2021-11-20"
+          },
+          {
+            "name": "环球时报英文版报道",
+            "url": "https://www.globaltimes.cn/page/202111/1239747.shtml",
+            "published_at": "2021-11-23"
+          },
+          {
+            "name": "澎湃新闻《陈漫道歉！迪奥回应！》",
+            "url": "https://www.thepaper.cn/newsDetail_forward_15527279",
+            "published_at": "2021-11-23"
+          },
+          {
+            "name": "BBC英文版报道",
+            "url": "https://www.bbc.com/news/world-asia-china-59397737",
+            "published_at": "2021-11-24"
+          },
+          {
+            "name": "深圳日报英文报道",
+            "url": "http://www.szdaily.com/content/2021-11/19/content_24752273.htm",
+            "published_at": "2021-11-19"
+          }
+        ],
+        "severity_check": "severity_hint='high'定级恰当。理由：(1)微博话题阅读量超1.7亿，登上热搜多日，属全网级舆情；(2)涉及国际奢侈品牌Dior，跨文化敏感度高；(3)北京日报、央广网、中国妇女报、环球网等多家中央和地方官媒发表评论，官方关注度高；(4)触及国家形象和文化自信等敏感议题，与2018年杜嘉班纳事件被并列讨论；(5)引发对摄影师过往作品（少先队员组图）的二次审视，发酵链条长。唯一需要注意的是未引发实质性监管介入（无罚款/约谈/立案），但就舆论烈度和影响范围而言，high级合理。"
+      }
+    },
+    {
+      "external_id": "sent-case-026",
+      "title": "李宁逐梦行秀款服装被指似日军服引发争议",
+      "brand": "李宁",
+      "occurred_at": "2022-10-17",
+      "industry": [
+        "服饰"
+      ],
+      "platforms": [
+        "微博"
+      ],
+      "ad_copy_original": "2022年9月21日李宁官方微博发布2022逐梦行机场大秀秀场图, 其中一组深绿色军绿色大衣搭配带垂布的帘帽造型被指酷似二战日军军服。该系列以飞行为主题, 在湖北荆门漳河机场举办。",
+      "trigger_short": "秀款军绿色帘帽垂布设计被指酷似侵华日军军服",
+      "risk_dimension": "国家形象",
+      "timeline": [
+        {
+          "at": "2022-09-21",
+          "stage": "发生",
+          "description": "李宁官方微博发布2022逐梦行机场大秀秀场图, 其中一组军绿色带垂布帘帽造型被少量网友指出似日军军服"
+        },
+        {
+          "at": "2022-10-17",
+          "stage": "发酵",
+          "description": "事件登上微博热搜; 李宁电商总经理冯晔在朋友圈发布笠型盔图片并称我们的消费者对于中国文化的沉淀教育知识的传承还是少了, 引发二次争议; 李宁股价17日盘中一度跌超13%"
+        },
+        {
+          "at": "2022-10-19",
+          "stage": "回应",
+          "description": "李宁官方微博发布道歉声明: 此次相关产品的设计及造型给大家带来了困惑和疑虑, 我们表示诚挚的歉意; 称飞行帽设计源于中国古代头盔、户外防护帽及棉帽, 该产品目前并未生产和销售, 未来也不会生产和销售"
+        }
+      ],
+      "brand_response": "道歉。2022年10月19日李宁官方微博发布声明致歉, 称本次逐梦行秀款产品以飞行为主题从飞行员装备中汲取灵感, 飞行帽设计源于中国古代头盔、户外防护帽及棉帽; 表示诚挚的歉意, 并称涉事产品目前并未生产和销售未来也不会生产和销售。此前高管冯晔和李麒麟的辩解式回应被批居高临下, 反而激化了争议。",
+      "outcome": "李宁官方致歉并承诺不生产销售涉事产品, 但市值三日蒸发约123亿港元, 品牌形象和消费者信任受到显著损害。",
+      "consequences": {
+        "reputation": "登上微博热搜, 李宁官方网店粉丝从2649.2万降至2648.7万; 高管不当回应激化矛盾, 联席总裁日籍华人背景被挖出加剧舆论被动",
+        "business": "李宁股价17日盘中一度跌超13%, 19日继续下跌6.45%, 三个交易日市值蒸发约123亿港元; 该系列产品未上市销售",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "severe"
+      },
+      "sources": [
+        {
+          "name": "联合早报",
+          "url": "https://www.zaobao.com.sg/realtime/china/story20221018-1324093",
+          "published_at": "2022-10-18"
+        },
+        {
+          "name": "21财经",
+          "url": "https://m.21jingji.com/article/20221020/herald/e34194216d8897e86c72f6d4f9060ed1.html",
+          "published_at": "2022-10-20"
+        },
+        {
+          "name": "香港01",
+          "url": "https://www.hk01.com/大国小事/826978/李寧新品被指似日軍服-陷-辱華-爭議後道歉-源自中國古代頭盔",
+          "published_at": "2022-10-19"
+        }
+      ],
+      "credibility_notes": "联合早报、21财经、香港01、RFA等多方独立信源证实, 李宁官方发布道歉声明, 港股股价数据可公开查询, 事实确凿; 用户原始描述中大佛系列可能系混淆, 实为逐梦行系列",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. **occurred_at 应为 2022-09-20（大秀举办日）或 2022-09-21（官微发布日），而非 2022-10-17**：2022-10-17 是事件冲上热搜的\"发酵日\"，并非广告内容首次公开的日期。大秀于 2022-09-20 在湖北荆门漳河机场举办（中国青年报、ELLE China、SocialBeta 等多个独立信源证实），李宁官微于 2022-09-21 发布秀场图。若以广告内容首次对外发布为准，occurred_at 应为 2022-09-21。\n\n2. **timeline 中 \"2022-09-21 少量网友指出似日军军服\" 无据可查**：根据知微数据专业舆情报告（research.zhiweidata.com, 2022-10-25），\"10月15日，大秀结束近一月后，随着网友爆料，李宁新品设计问题开始被广泛讨论\"，\"10月15日起，陆续有网友发文质疑\"。没有独立来源支持 9月21日当天即有网友指出争议的记载。该条 timeline 应修正为 2022-10-15 前后。\n\n3. **consequences.outcome \"市值三日蒸发约123亿港元\" 数值在不同来源间严重不一致**：21财经称\"三个交易日痛失123亿元\"（未注明币种）；中华网称\"两日跌去约123亿港元\"；第一财经称\"两日蒸发150亿港元\"；时代财经/中华网另文称\"不到两个交易日163.78亿港元\"；SCMP/inkl 称\"约200亿港元\"；36氪称\"两个交易日约152亿港元\"。123亿港元这一具体数值缺乏跨来源共识，建议改为\"约123亿至163亿港元（不同统计口径存在差异）\"或标注\"21财经单一信源\"。\n\n4. **consequences.reputation 中的粉丝数（2649.2万→2648.7万）为单一信源**：仅 21财经一文提及该数据，未找到其他独立来源佐证。其他转载均源自同一篇 21财经文章。\n\n5. **ad_copy_original 中 \"2022年9月21日李宁官方微博发布\" 应补充说明大秀于前一日（9月20日）举办**：当前表述可能造成\"大秀于9月21日举办\"的误解。大秀实际举办日期为 2022-09-20，官微发图在次日。\n\n6. **brand_response 中提到李麒麟，但 timeline 中未包含其回应动作**：据 21财经、36氪等记载，李宁集团执行董事李麒麟于 10月17日在微博发布了五张类似帽饰设计的历史图片（后被删除），该高管与冯晔同在 10月17日发声，应在 timeline 中补充。",
+        "confirmed_facts": [
+          "事件真实存在：李宁2022逐梦行主题大秀于2022年9月20日在湖北荆门漳河机场举办（中国青年报、ELLE China、SocialBeta、中国网商务频道等至少4个独立信源证实）",
+          "李宁官方微博于2022年9月21日发布逐梦行机场大秀秀场图（21财经、香港01等证实）",
+          "争议焦点为'神工天物'板块中的军绿色大衣搭配两侧带垂布帘帽的造型，被网民指酷似二战日军军服（联合早报、RFA、香港01、Global Times、Caixin Global等多方证实）",
+          "2022年10月15日起争议开始广泛传播（知微数据舆情报告确认：'10月15日，大秀结束近一月后，随着网友爆料，李宁新品设计问题开始被广泛讨论'）",
+          "2022年10月17日事件登上微博热搜，李宁电商总经理冯晔在朋友圈发布笠型盔图片并称'我们的消费者，对于中国文化的沉淀，教育知识的传承还是少了'（联合早报、21财经、香港01、36氪等多个独立信源证实）",
+          "李宁股价10月17日盘中一度跌超13%（21财经、Campaign Asia、SCMP、新浪财经等至少5个独立信源证实）",
+          "2022年10月19日上午李宁官方微博发布道歉声明（中新网、联合早报、新京报贝壳财经、每日经济新闻等多个权威媒体证实）",
+          "道歉声明核心内容：设计以'飞行'为主题，飞行帽设计源于中国古代头盔、户外防护帽及棉帽，涉事产品从未生产和销售，未来也不会（多源证实）",
+          "李宁联席总裁钱炜（高坂武史）为日籍华人，曾任优衣库全球执行董事，该背景在争议中被网友挖出加剧舆论被动（21财经、36氪、Campaign Asia、SCMP等证实）",
+          "所有三个source URL（联合早报、21财经、香港01）均可真实访问，内容与案例记载匹配",
+          "无公开监管处罚（多源搜索均未发现政府约谈、罚款或立案信息）",
+          "risk_dimension '国家形象' 定性准确，事件核心触碰了民族情感和抗日战争历史记忆"
+        ],
+        "unverified_claims": [
+          "李宁官方网店粉丝从2649.2万降至2648.7万：仅21财经单一信源，其余网站均为转载同一文章，未找到独立第二来源",
+          "'三个交易日市值蒸发约123亿港元'的具体数字：不同媒体报道差异巨大（123亿/150亿/152亿/163亿/200亿港元，2天/3天口径不一），123亿这一特定数值缺乏跨源共识",
+          "timeline 中 2022-09-21 '少量网友指出似日军军服'：知微数据舆情报告明确指出讨论始于10月15日，无独立证据支持9月21日即有批评",
+          "高管冯晔朋友圈截图的真实性：所有报道均引用'网传截图'，未有冯晔本人或李宁官方确认该朋友圈内容属实（虽然多家媒体引用了相同截图内容，降低了伪造可能，但直接从源头确认的证据缺失）",
+          "duration_days: 3 的界定：若从10月15日争议浮现算起至10月19日官方道歉约5天，从10月17日热搜到10月19日道歉为3天，但股价持续下跌至10月21日以后，不同口径得出不同结果"
+        ],
+        "extra_sources": [
+          {
+            "name": "知微数据舆情报告：李宁2022新品设计引争议事件分析",
+            "url": "https://research.zhiweidata.com/2022/10/25/12113/",
+            "published_at": "2022-10-25"
+          },
+          {
+            "name": "中新网：李宁就'逐梦行'秀款部分产品设计及造型致歉",
+            "url": "https://www.chinanews.com.cn/cj/2022/10-19/9875829.shtml",
+            "published_at": "2022-10-19"
+          },
+          {
+            "name": "第一财经：市值蒸发超百亿！李宁应从这场舆论风波中吸取什么教训",
+            "url": "https://www.yicai.com/news/101568072.html",
+            "published_at": "2022-10-20"
+          },
+          {
+            "name": "SCMP: 'It hurts our feelings' — why Chinese people are angry over Li-Ning",
+            "url": "https://www.scmp.com/lifestyle/fashion-beauty/article/3197277/it-hurts-our-feelings-why-chinese-people-are-angry-over-sportswear-giant-li-nings-new-line-and-how",
+            "published_at": "2022-10-26"
+          },
+          {
+            "name": "Global Times: Li-Ning apologizes amid controversy over Japanese military-like collection",
+            "url": "https://www.globaltimes.cn/page/202210/1277453.shtml",
+            "published_at": "2022-10-19"
+          },
+          {
+            "name": "RFA: 李宁服装被网民质疑像日本军服惹争议",
+            "url": "https://www.rfa.org/mandarin/yataibaodao/meiti/hx2-10192022081652.html",
+            "published_at": "2022-10-19"
+          },
+          {
+            "name": "中国青年报：'逐梦行'主题大秀秀出'飞行梦想'",
+            "url": "http://zqb.cyol.com/html/2022-09/21/nw.D110000zgqnb_20220921_4-04.htm",
+            "published_at": "2022-09-21"
+          },
+          {
+            "name": "36氪：一顶帽子，'毁掉'李宁（含152亿港元市值蒸发数据）",
+            "url": "https://36kr.com/p/1965995749985156",
+            "published_at": "2022-10-20"
+          },
+          {
+            "name": "Caixin Global: Chinese Brand Faces Backlash Over Claims Its Caps Resemble WWII-Era Japanese Gear",
+            "url": "https://www.caixinglobal.com/2022-10-21/trending-in-china-chinese-brand-faces-backlash-over-claims-its-caps-resemble-wwii-era-japanese-gear-101954438.html",
+            "published_at": "2022-10-21"
+          }
+        ],
+        "severity_check": "severity_hint='severe' 的定级基本恰当。事件造成了：（1）头部国潮品牌严重声誉危机，（2）港股股价单日暴跌13%+、多日市值蒸发逾百亿港元，（3）涉及侵华日军这一极度敏感的民族情感符号，（4）高管不当回应形成二次舆情灾难，（5）联席总裁日籍身份被挖出加剧争议。综合来看处于 severe 的上限。若考虑该事件导致品牌长期形象受损和消费者信任流失，亦可论证为 critical。建议在 case 中补充说明：severity 考量了无监管处罚（regulatory 为空）且涉事产品未上市销售（实际消费者伤害有限）这两个减项因素。"
+      }
+    },
+    {
+      "external_id": "sent-case-027",
+      "title": "名创优品海外社媒将穿旗袍公仔称为日本艺伎争议",
+      "brand": "名创优品",
+      "occurred_at": "2022-08-09",
+      "industry": [
+        "日化"
+      ],
+      "platforms": [
+        "微博"
+      ],
+      "ad_copy_original": "名创优品西班牙Instagram账号于2022年7月25日发布公主系列公仔盲盒帖文, 图片为6个迪士尼公主公仔身穿中国旗袍, 帖文将其称为艺伎(Geisha/geishas); 有外国网友指正后, 账号回复微笑表情。",
+      "trigger_short": "西班牙IG帖文将中国旗袍公仔错误翻译为日本艺伎(Geisha)",
+      "risk_dimension": "国家形象",
+      "timeline": [
+        {
+          "at": "2022-07-25",
+          "stage": "发生",
+          "description": "名创优品西班牙Instagram账号发布公主系列公仔盲盒帖文, 将身穿中国旗袍的迪士尼公主公仔称为日本艺伎(Geisha)"
+        },
+        {
+          "at": "2022-08-08",
+          "stage": "发酵",
+          "description": "网友在微博爆料此事, 名创优品分不清旗袍和艺妓服饰登上微博热搜阅读量破亿; 连带曝出名创优品店内不许放中文歌、巴拿马账号自称日本品牌、签约时悬挂日本国旗等伪日系争议"
+        },
+        {
+          "at": "2022-08-09",
+          "stage": "回应",
+          "description": "名创优品当晚在微博发布致歉声明, 称已要求西班牙代理商团队删除帖文, 对当地社媒代理运营机构采取处罚措施并立即终止合作; 承诺加强全球代理商管理和中国传统文化输出"
+        }
+      ],
+      "brand_response": "道歉。2022年8月9日晚名创优品微博发布致歉声明: 7月25日名创优品西班牙Instagram账号发布了一则公主系列公仔盲盒帖文, 在该帖文中中国旗袍公仔被错误地翻译为日本艺伎; 总部收到反馈后第一时间要求西班牙代理商团队删除帖文, 并对当地社媒代理运营机构采取处罚措施立即终止合作关系; 承诺绝不再犯、加强中国传统文化输出。",
+      "outcome": "名创优品致歉并终止与西班牙代理商合作, 但事件连带引爆伪日系品牌形象争议, 多起旧账被翻出, 品牌声誉受到持续影响。",
+      "consequences": {
+        "reputation": "名创优品分不清旗袍和艺妓服饰话题登上微博热搜阅读量破亿; 微博话题总阅读量达2.5亿, 讨论7.4万; 连带店内不许放中文歌、曾悬挂日本国旗签约等旧事被翻出扩大冲击",
+        "business": "名创优品美股(MNSO.US)当日下跌2.4%报6.51美元/股; 港股次日涨1.24%报13.02港元影响相对有限",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "新京报",
+          "url": "https://www.bjnews.com.cn/detail/166005710614532.html",
+          "published_at": "2022-08-09"
+        },
+        {
+          "name": "中央社(CNA)",
+          "url": "https://www.cna.com.tw/news/acn/202208100241.aspx",
+          "published_at": "2022-08-10"
+        },
+        {
+          "name": "观察者网",
+          "url": "https://www.guancha.cn/politics/2022_08_10_653100.shtml",
+          "published_at": "2022-08-10"
+        }
+      ],
+      "credibility_notes": "新京报、中央社、观察者网、澎湃新闻等多方权威媒体证实, 名创优品官方微博发布致歉声明, 帖文截图在社交媒体广泛传播, 事实确凿",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "以下为需要修正的字段及正确值：\n\n1. consequences.business - \"港股次日涨1.24%\" -> \"港股当日涨1.24%\"\n新京报原文为\"北京时间8月9日收盘，名创优品港股（9896.HK）涨1.24%，报13.02港元/股\"，该数据是8月9日当天数据，并非\"次日\"（8月10日）。如以8月8日（微博发酵日）为基准，则美股港股同为\"次日\"；如以8月9日（回应日）为基准，则两者同为\"当日\"。原记录用词不一致，需统一。\n\n2. consequences.business - \"影响相对有限\"表述有误导性\n港股8月9日收涨1.24%仅反映当天情况。财联社报道8月10日港股开盘低走，盘中一度跌超9%，收盘单日跌幅达7.83%。澎湃新闻引用数据显示截至8月11日美股MNSO两日累计跌10.34%。\"影响相对有限\"的定性掩盖了次日显著下跌，建议改为\"港股当日暂未受明显冲击，但次日大跌7.83%\"。\n\n3. consequences.business - MNSO.US价格$6.51为盘中价非收盘价\n新京报原文\"截至美东时间8月9日上午10点07分，名创优品美股（MNSO.US）下跌2.4%，报6.51美元/股\"，此为盘中数据。今日头条等来源报道当日美股收盘价为$6.27/股。应注明$6.51为盘中价，或替换为收盘价。\n\n4. consequences.duration_days = 3 -> 建议至少改为4\n事件发酵自8月8日微博引爆至8月11日仍有新话题（签约挂日本国旗）登上热搜、股价持续下跌。更早源头可追溯至8月4日小红书首次爆料（ipscg.com确认）。舆情峰值在8月10日（梅花网引用慧科讯业数据），第二轮道歉在8月18日。保守测算核心周期也不止3天。\n\n5. timeline[1] 发酵日期应补充\n现有timeline将发酵标为8月8日（微博），但ipscg.com监测报告确认最早爆料出现于\"8月4日，网友在小红书上曝料\"。财联社报道中名创优品内部通知显示总部已于\"8月5日警告西班牙代理商\"。建议在timeline中补充8月4日/8月5日的早期节点。\n\n6. consequences.reputation 阅读量表述可更精确\n\"微博话题总阅读量达2.5亿，讨论7.4万\"是新京报原文中对\"名创优品\"话题的统计。iPSCG舆情监测报告显示事件相关话题累计阅读量达15.5亿余次、讨论量累计近8万次，其中3个话题各自阅读量超2亿。建议注明2.5亿为单一话题口径，或补充全量数据。\n\n7. consequences.regulatory 应补注人民日报评论\n虽无正式行政处罚或立案，但人民日报曾发表评论\"名创优品，这种错误不能犯\"（澎湃新闻引述），属于官媒点名，有一定监管警示含义。建议在regulatory字段补充说明。",
+        "confirmed_facts": [
+          "事件真实存在：名创优品西班牙Instagram账号于2022年7月25日发布公主系列公仔盲盒帖文，将穿中国旗袍的迪士尼公仔称为艺伎(Geisha/geishas)——新京报、观察者网、澎湃新闻、中央社(CNA)、财联社、路透社、Global Times等十余家中外权威媒体独立证实",
+          "账号回复微笑表情属实：多个来源（新京报、证券时报、齐鲁网、ETtoday）均报道，有外国网友在评论中指出错误后，名创优品西班牙账号仅回复微笑表情，未及时更正",
+          "名创优品于2022年8月9日晚间在微博发布致歉声明：确认属实，新京报发布于8月9日23:02的报道全文引用了致歉声明原文；梅花网确认道歉具体时间为22:18",
+          "终止西班牙代理商合作属实：财联社报道中提及名创优品微博附上了代理商告知函截图，内部已于8月5日警告、8月9日正式终止；梅花网确认内部解约日期为8月4日",
+          "#名创优品分不清旗袍和艺妓服饰#登上微博热搜阅读量破亿：观察者网、澎湃新闻、法治日报等独立确认",
+          "名创优品话题阅读2.5亿/讨论7.4万：新京报原文于8月9日发稿时确认此数据为发稿前统计",
+          "事件连带引爆伪日系争议属实：名创优品店内不许放中文歌、签约挂日本国旗、巴拿马账号自称日本品牌等多起旧账被翻出——澎湃新闻、中央社、人民日报评论均独立报道",
+          "三份来源URL均可访问且内容匹配：bjnews.com.cn（新京报，2022-08-09 23:02发表）、cna.com.tw（中央社，2022-08-10 16:22发表）、guancha.cn（观察者网，2022-08-10发表）均成功获取全文，内容与案例引用一致",
+          "brand_response内容与名创优品官方致歉声明原文高度吻合：新京报、每经网、新浪财经全文引用致歉声明，内容一致",
+          "ad_copy_original描述准确：帖文图片为6个迪士尼公主公仔身穿中国旗袍，帖文使用geishas一词描述，被指正后回复微笑表情——澎湃新闻、观察者网、财联社独立确认同一组截图描述"
+        ],
+        "unverified_claims": [
+          "MNSO.US当日下跌2.4%报6.51美元/股：该数字为美东时间8月9日上午10:07的盘中价，非收盘价。当日美股收盘价据其他来源报道约为$6.27，下跌幅度更大。盘中价$6.51已由新京报独立确认，但不应等同于当日收盘表现",
+          "港股涨1.24%报13.02港元为'次日'数据：实际为8月9日当日收盘数据，非'次日'。8月10日港股实际下跌7.83%（财联社确认），与案例暗示的'次日影响有限'相反",
+          "duration_days = 3天：无明确来源支持此精确数字。舆情跨度实际为8月4日（小红书首曝）至8月18日（第二轮致歉+去日化方案），核心争议期为8月8日至11日共4天",
+          "微博话题总阅读量2.5亿是否为全量数据存疑：新京报原文统计仅针对'名创优品'单一话题。iPSCG监测显示所有相关话题累计阅读15.5亿次，其中3个话题各自破2亿。案例未说明2.5亿仅为单一话题口径",
+          "西班牙Instagram原帖截图因已被删除，无法直接获取原始帖文验证。所有报道依赖网友截图传播，但多个独立媒体来源引用的截图内容一致，可信度较高"
+        ],
+        "extra_sources": [
+          {
+            "name": "财联社电报",
+            "url": "https://m.cls.cn/detail/1096535",
+            "published_at": "2022-08-10"
+          },
+          {
+            "name": "梅花网（引用慧科讯业舆情数据）",
+            "url": "https://www.meihua.info/article/4901334924477440",
+            "published_at": "2022-08"
+          },
+          {
+            "name": "iPSCG舆情监测报告",
+            "url": "https://www.ipscg.com/detail-326.html",
+            "published_at": "2022-08"
+          },
+          {
+            "name": "南方都市报",
+            "url": "https://m.mp.oeeee.com/a/BAAFRD000020220811711699.html",
+            "published_at": "2022-08-11"
+          },
+          {
+            "name": "路透社 Reuters",
+            "url": "https://www.reuters.com/business/retail-consumer/chinese-retailer-miniso-ditch-japanese-styling-after-backlash-2022-08-19/",
+            "published_at": "2022-08-19"
+          },
+          {
+            "name": "Global Times",
+            "url": "https://www.globaltimes.cn/page/202208/1272654.shtml",
+            "published_at": "2022-08-10"
+          },
+          {
+            "name": "ETtoday新闻云",
+            "url": "https://www.ettoday.net/news/20220812/2313996.htm",
+            "published_at": "2022-08-12"
+          },
+          {
+            "name": "RFI法国国际广播电台",
+            "url": "https://www.rfi.fr/cn/中国/20220810-名创优品突陷辱华",
+            "published_at": "2022-08-10"
+          }
+        ],
+        "severity_check": "定级为high基本恰当。理由：（1）事件触及国家形象/文化尊严敏感神经，引发人民日报评论点名，属于最高级别舆论风险；（2）单日单一话题阅读量破2.5亿，全量相关话题累计阅读超15亿次，舆情规模和烈度极大；（3）直接导致品牌启动全面去日化整改（2023年3月前完成），业务影响深远且不可逆；（4）引发连锁反应——做空报告、股价持续下跌、美股累计回撤超70%。唯一的保留意见：该事件直接触发了品牌战略级别的整改（去日化），且人民日报官媒发声，如果案例体系中有critical级别用于官媒定性+战略级经营影响的事件，也可考虑升至critical。但在当前框架下high是合理的。"
+      }
+    },
+    {
+      "external_id": "sent-case-028",
+      "title": "奥迪×刘德华《人生小满》广告文案抄袭抖音博主北大满哥",
+      "brand": "奥迪（一汽奥迪）",
+      "occurred_at": "2022-05-21",
+      "industry": [
+        "汽车"
+      ],
+      "platforms": [
+        "抖音",
+        "微博",
+        "微信朋友圈"
+      ],
+      "ad_copy_original": "今天是二十四节气的小满，但是有一样事情挺奇怪的。有小暑一定有大暑，有小寒一定有大寒，但是小满，一定没有大满。因为大满，不符合我们古人的智慧。小满的这一天，雨水开始增多，江河渐满；麦穗开始逐渐饱满，但是，还没有完全饱满。所以小满这种状态特别好。小满代表了一种人生态度，就是我们一直在追求完美的路上，但并不要求，一定要十全十美。所以从这个角度，小满，其实是一年中最好的一个节气，也是我最喜欢的日子。送你一首我喜欢的诗：花未全开月未圆，半山微醉尽余欢。何须多虑盈亏事，终归小满胜万全。",
+      "trigger_short": "小满广告文案被指像素级抄袭北大满哥2021年视频",
+      "risk_dimension": "知产抄袭",
+      "timeline": [
+        {
+          "at": "2022-05-21",
+          "stage": "发生",
+          "description": "奥迪发布刘德华主演《人生小满》广告，小满节气当日迅速刷屏"
+        },
+        {
+          "at": "2022-05-21",
+          "stage": "发酵",
+          "description": "抖音博主北大满哥发视频指控广告文案与其2021年5月21日视频几乎一字不差，网友称查重率99.99%"
+        },
+        {
+          "at": "2022-05-22",
+          "stage": "回应",
+          "description": "奥迪官方微博致歉并全面下架视频；刘德华删除视频表示遗憾；创意代理公司上思广告（M&C Saatchi）承认版权意识淡薄"
+        }
+      ],
+      "brand_response": "2022年5月22日奥迪官方微博发布声明致歉，称因监管不力、审核不严向刘德华、北大满哥及相关方致歉，指出该视频由创意代理公司M&C Saatchi（上思广告）提报并执行。上思广告同日承认团队版权意识淡薄、直接使用了北大满哥文案内容。刘德华通过官方后援会表示对原创百分百尊重、深感遗憾。",
+      "outcome": "奥迪全面下架广告视频并公开道歉，刘德华删除视频并表示遗憾，事件以品牌道歉收场，成为广告行业抄袭典型案例。",
+      "consequences": {
+        "reputation": "冲上微博热搜第一，24小时内从刷屏转为全网声讨，多家主流媒体跟进报道",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 3,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_18215125",
+          "published_at": "2022-05-22"
+        },
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_18230467",
+          "published_at": "2022-05-24"
+        },
+        {
+          "name": "南方都市报/奥一网",
+          "url": "https://oeeee.com/html/202205/23/1237520.html",
+          "published_at": "2022-05-23"
+        }
+      ],
+      "credibility_notes": "澎湃新闻、南方都市报等多家主流媒体详细报道，奥迪和上思广告均已公开致歉承认抄袭，北大满哥发布视频对比举证，证据链完整确凿。",
+      "verification": {
+        "verdict": "confirmed",
+        "corrections": "无实质性错误。两点细微建议：(1) timeline 缺失2022-05-25北大满哥宣布免费授权和解的关键节点；(2) duration_days: 3 仅覆盖核心危机期(5.21-5.23), 若计至和解公告(5.25)应为5天。这两点不影响整体定级。",
+        "confirmed_facts": [
+          "事件真实存在: 奥迪于2022年5月21日(小满节气)发布刘德华主演的《人生小满》广告, 当晚被抖音博主北大满哥指控抄袭其2021年5月21日视频文案, 5月22日奥迪、上思广告(M&C Saatchi)及刘德华先后道歉, 5月25日三方达成免费授权和解。澎湃新闻、中新网、新浪科技、每日经济新闻、观察者网、联合早报、腾讯新闻等多家独立来源交叉印证。",
+          "ad_copy_original引用属实: 澎湃新闻(newsDetail_forward_18215125)及北京市文化娱乐法学会分析文章中均完整刊载了与案例数据一致的广告文案, 包括核心段落。",
+          "奥迪官方微博于2022年5月22日10:13发布道歉声明, 承认监管不力审核不严, 全面下架视频。澎湃新闻(18212617)、新浪科技、中国经济网等多家来源记录一致。",
+          "上思广告(M&C Saatchi)于5月22日午间发布声明承认直接使用了抖音博主北大满哥关于小满的视频中文案内容。澎湃新闻(18257658)、每经网等多家来源印证。",
+          "刘德华于5月22日下午通过华仔天地APP回应, 对原创百分百尊重深感遗憾。每经网、澎湃新闻等多家来源印证。",
+          "冲上微博热搜第一: 澎湃新闻(18215125)标题即为热搜第一, 澎湃新闻(18217498)明确记载5月22日早上该话题冲上了微博热搜第一, 财联社同日记为登上微博热搜第一。三家独立来源确认。",
+          "severity_hint评级为high合理: 事件涉及顶级品牌奥迪、顶流明星刘德华、热搜第一、人民日报评论、多家央媒跟进、被联合早报称为年度丑闻, 完全符合high级标准。",
+          "三个sources URL均真实可访问: 澎湃新闻两篇(18215125/18230467)和奥一网(oeeee.com)均可正常打开, 内容与案例引述一致。",
+          "consequences中business标注公开报道未见量化数据、regulatory标注无公开监管动作属实。独立检索未发现任何罚款金额、销售额影响数据或监管部门介入的公开记录。",
+          "brand_response总结准确: 完整反映了奥迪、上思广告、刘德华三方的回应内容和时间节点。"
+        ],
+        "unverified_claims": [
+          "duration_days: 3 -- 核心危机期(广告发布到各方道歉)约2天, 含媒体后续讨论约3天, 但事件最终以5月25日北大满哥宣布免费授权为节点才真正落幕, 全程5天。公开报道无统一的事件持续天数计算标准, 3天为估计值而非可核验数字。",
+          "timeline中网友称查重率99.99% -- 此表述来自网友评论和媒体报道引用, 非专业鉴定结果, 查重率无机构正式认定。但多家媒体确实报道了类似表述(99%, 99.99%, 像素级抄袭等), 作为网络舆论描述可接受。"
+        ],
+        "extra_sources": [
+          {
+            "name": "北京市文化娱乐法学会分析文章",
+            "url": "https://www.yulelaw.com/law/law/getContentDetail?id=4eb27a0a7cf74a2e87975ce5d9f577c9",
+            "published_at": "2022-05-25"
+          },
+          {
+            "name": "联合早报-下午察奥迪小满广告翻车事件",
+            "url": "https://www.zaobao.com.sg/realtime/china/story20220525-1276379",
+            "published_at": "2022-05-25"
+          },
+          {
+            "name": "中新网-奥迪广告抄袭道歉不是终点",
+            "url": "https://www.chinanews.com.cn/cj/2022/05-22/9760753.shtml",
+            "published_at": "2022-05-22"
+          },
+          {
+            "name": "每经网-刘德华回应奥迪广告涉嫌抄袭",
+            "url": "https://www.nbd.com.cn/articles/2022-05-22/2290750.html",
+            "published_at": "2022-05-22"
+          },
+          {
+            "name": "腾讯新闻-奥迪小满广告风波24小时",
+            "url": "https://news.qq.com/rain/a/20220522A072PD00",
+            "published_at": "2022-05-22"
+          }
+        ],
+        "severity_check": "high定级恰当。理由: (1)涉事品牌为国际豪华车企奥迪, 代言人为顶流明星刘德华; (2)事件冲上微博热搜第一, 多个相关话题同时霸榜; (3)人民日报发表评论(一起车祸人仰马翻该有人承担责任); (4)人民网称其为年度丑闻, 钉在广告史的耻辱柱上; (5)引发知识产权法律界广泛讨论; (6)成为后续广告行业版权审核的经典反面教材。符合high级全部特征。"
+      }
+    },
+    {
+      "external_id": "sent-case-029",
+      "title": "钟薛高'不加一滴水'等多处虚假宣传被行政处罚后舆情持续发酵",
+      "brand": "钟薛高",
+      "occurred_at": "2021-06-17",
+      "industry": [
+        "食品"
+      ],
+      "platforms": [
+        "微博",
+        "电商详情页"
+      ],
+      "ad_copy_original": "不加一滴水、纯纯牛乳香",
+      "trigger_short": "'不加一滴水'宣传与配料表含水事实不符",
+      "risk_dimension": "虚假宣传",
+      "timeline": [
+        {
+          "at": "2019-04-03",
+          "stage": "发生",
+          "description": "上海市黄浦区市监局对钟薛高虚假宣传（特级红提、日本薮北茶、顶级干酪等）处以6000元罚款"
+        },
+        {
+          "at": "2019-08-08",
+          "stage": "发生",
+          "description": "上海市嘉定区市监局对轻牛乳冰淇淋'不加一滴水、纯纯牛乳香'虚假宣传处以3000元罚款"
+        },
+        {
+          "at": "2021-06-17",
+          "stage": "发酵",
+          "description": "创始人林盛'爱要不要'言论引发争议，网友扒出2019年两次行政处罚旧账，钟薛高发布道歉信并附7条整改措施"
+        },
+        {
+          "at": "2022-07",
+          "stage": "再度发酵",
+          "description": "钟薛高'31℃不融化''打火机烧不化'登上热搜，此前虚假宣传历史再次被翻出讨论"
+        }
+      ],
+      "brand_response": "2021年6月17日钟薛高官方微博发布道歉信，称'错可以改但抹不去，曾经在创业初期的两次行政处罚如同警钟'，列出7条整改措施（加强法务品控力量、建立宣传审核机制、全员学习广告法等），同时另发律师函要求下架相关热搜话题词条。",
+      "outcome": "钟薛高两次被行政处罚共9000元，2021年官方发布道歉信承诺整改，但2022年'不融化'风波再次引发对其品控与宣传诚信的质疑，品牌持续陷入信任危机。",
+      "consequences": {
+        "reputation": "2021年6月登上微博热搜，2022年7月再次因'不融化'话题引发全网讨论",
+        "business": "公开报道未见量化数据",
+        "regulatory": "上海市黄浦区市监局罚款6000元（沪监管黄处字〔2019〕第012018001959号）；上海市嘉定区市监局罚款3000元（沪市监嘉处字〔2019〕第142019001068号）",
+        "duration_days": 5,
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "央广网",
+          "url": "http://food.cnr.cn/focus/20210618/t20210618_525515865.shtml",
+          "published_at": "2021-06-18"
+        },
+        {
+          "name": "和讯网",
+          "url": "https://news.hexun.com/2022-07-07/206309240.html",
+          "published_at": "2022-07-07"
+        },
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_13196920",
+          "published_at": "2021-06-17"
+        }
+      ],
+      "credibility_notes": "两次行政处罚决定书文号及罚款金额可在上海市市场监管部门公开记录中查询，钟薛高官方道歉信确认了处罚事实，央广网、澎湃新闻等权威媒体均有报道。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1.【关键修正】\"爱要不要\"言论定性严重误导：案例将林盛描述为对消费者说\"爱要不要\"，实际上林盛原话讨论的是日本柚子原料成本（120万元/吨），供应商对钟薛高说\"它就那个价格，你爱要不要\"，并非对消费者说。钟薛高于2021年6月16日已正式辟谣（视频被BTV/北京时间恶意剪辑），艾问人物同日发布30分钟无删减实录证实。新京报、澎湃新闻、观察者网、深圳新闻网等均报道澄清。建议修正timeline描述为：\"钟薛高66元定价引发争议引发大量讨论，林盛'爱要不要'言论被证实系媒体恶意剪辑（原指柚子原料价格），随后网友扒出2019年两次行政处罚旧账，钟薛高当晚发布道歉信\"。\n\n2.【来源失效】sources中的和讯网链接(https://news.hexun.com/2022-07-07/206309240.html)无法访问（TLS证书错误/连接超时），内容无法验证。建议替换为可访问来源如新浪财经或中国网同题报道。\n\n3.【时限问题】consequences.duration_days标注为5，但多个来源描述此次热搜周期为\"3天之内6个热搜\"（6月15-17日），5天这个具体数字在公开检索中无来源支撑。\n\n4.【措辞修正】brand_response中\"同时另发律师函要求下架相关热搜话题词条\"不准确。据澎湃新闻报道，律师函实际是针对\"钟薛高是智商税还是物有所值\"\"钟薛高最贵一支66元\"等词条的创建方，要求其停止侵权行为并赔礼道歉，并非要求平台\"下架热搜话题词条\"。",
+        "confirmed_facts": [
+          "钟薛高于2019年两次因虚假广告被上海市市场监管局行政处罚（黄浦区6000元+嘉定区3000元=共9000元），源于5处以上虚假宣传被多方来源一致确认",
+          "嘉定区处罚认定天猫店铺轻牛乳冰淇淋宣传'不加一滴水、纯纯牛乳香'与实际配料表含水不符，构成引人误解的虚假宣传——央广网、澎湃新闻、21世纪经济报道等多源确认",
+          "2021年6月17日晚钟薛高官方微博发布道歉信（含'错可以改但抹不去'原文），列出7条整改措施——新浪科技、澎湃新闻、央广网完整转载确认",
+          "2022年7月2日'钟薛高31℃室温下放1小时不化'登微博热搜第一，7月5-6日'打火机烧不化'视频再次引发争议——每日经济新闻、新浪科技、钛媒体等多源确认",
+          "两次行政处罚决定书文号（沪监管黄处字[2019]第012018001959号、沪市监嘉处字[2019]第142019001068号）在中国网等公开报道中被引用确认",
+          "央广网来源(food.cnr.cn)和澎湃新闻来源(thepaper.cn)均可正常访问，内容与案例引用一致"
+        ],
+        "unverified_claims": [
+          "consequences.duration_days标注为5——检索中未找到任何来源明确提及5天这一时长，多个来源描述为3天之内6个热搜（6月15日-17日），此数字无法从第二来源印证",
+          "和讯网来源(news.hexun.com/2022-07-07/206309240.html)无法访问（TLS证书错误），其内容是否与案例引用一致无法验证",
+          "timeline中'创始人林盛爱就不要言论引发争议'未注明此言论已被证实系媒体恶意剪辑，该定性缺少对澄清事实的完整呈现"
+        ],
+        "extra_sources": [
+          {
+            "name": "新京报：66元雪糕爱要不要？钟薛高辟谣称原指柚子成本高",
+            "url": "https://m.bjnews.com.cn/detail/162384568414268.html",
+            "published_at": "2021-06-16"
+          },
+          {
+            "name": "21世纪经济报道：钟薛高回应热搜风波——为两次行政处罚再次致歉",
+            "url": "https://m.21jingji.com/article/20210618/herald/1bff001107c62764cc81f2318ba054ea.html",
+            "published_at": "2021-06-18"
+          },
+          {
+            "name": "钛媒体：虚假宣传被罚，钟薛高道歉——被扒特级红提实为散装葡萄干",
+            "url": "https://www.tmtpost.com/5407280.html",
+            "published_at": "2021-06-18"
+          },
+          {
+            "name": "新浪科技：钟薛高致歉信全文（含7条整改措施）",
+            "url": "https://finance.sina.com.cn/tech/2021-06-17/doc-ikqciyzk0212637.shtml",
+            "published_at": "2021-06-17"
+          },
+          {
+            "name": "中国网/中国食品：室温不融火烤不化雪糕刺客钟薛高引争议（含处罚决定书文号）",
+            "url": "http://food.china.com.cn/2022-07/07/content_78310188.htm",
+            "published_at": "2022-07-07"
+          },
+          {
+            "name": "观察者网：钟薛高致歉——错可以改，但抹不去，再次致歉，警钟长鸣",
+            "url": "https://www.guancha.cn/politics/2021_06_17_594846.shtml",
+            "published_at": "2021-06-17"
+          }
+        ],
+        "severity_check": "severity_hint 定为 medium 基本合理。从行政处罚角度看，两次罚款合计仅9000元，属于轻微行政处罚，本可评为 low。但从舆论影响看，该事件横跨2019-2022年，多次登上微博热搜第一，引发全网级讨论，且涉及消费者信任核心的虚假宣传问题。综合权衡后 medium 属可接受的判断，但建议备注说明定级依据。"
+      }
+    },
+    {
+      "external_id": "sent-case-030",
+      "title": "李佳琦直播间带货花西子79元眉笔时回怼消费者'工资涨没涨'引发全网声讨",
+      "brand": "花西子",
+      "occurred_at": "2023-09-10",
+      "industry": [
+        "美妆"
+      ],
+      "platforms": [
+        "微博",
+        "抖音",
+        "小红书"
+      ],
+      "ad_copy_original": "哪里贵了？这么多年都是这个价格，不要睁着眼睛乱说，国货品牌很难的……有的时候找找自己原因，这么多年了工资涨没涨，有没有认真工作？",
+      "trigger_short": "李佳琦回怼消费者'工资涨没涨，有没有认真工作'",
+      "risk_dimension": "价值观争议",
+      "timeline": [
+        {
+          "at": "2023-09-10",
+          "stage": "发生",
+          "description": "李佳琦直播间带货花西子首乌眉粉笔（79元/支），网友质疑'越来越贵'，李佳琦回怼'哪里贵了''工资涨没涨，有没有认真工作'"
+        },
+        {
+          "at": "2023-09-11",
+          "stage": "发酵",
+          "description": "凌晨微博首次道歉，当晚直播流泪再次道歉；单日掉粉超60万；衍生'哪李贵了''花西币'（1花西币=79元）全网热梗；眉笔每克约985元引发性价比争议"
+        },
+        {
+          "at": "2023-09-19",
+          "stage": "回应",
+          "description": "花西子首次发布《一封信》公开致歉，称'诚惶诚恐、手足无措'，承诺'一一比照修正'"
+        },
+        {
+          "at": "2023-09-26",
+          "stage": "收尾",
+          "description": "花西子官博发布'发疯文学'式内容（'好心态决定花西子一生'）引发二次舆情反感；李佳琦逐步恢复直播"
+        }
+      ],
+      "brand_response": "李佳琦2023年9月11日凌晨微博道歉称'深知大家工作辛苦不容易'，当晚直播流泪再次道歉称'不应该忘记我来自哪里'；花西子2023年9月19日发布《一封信》公开致歉，称'诚惶诚恐、手足无措'。",
+      "outcome": "李佳琦累计掉粉超100万（从约3043万降至约2930万），花西子品牌形象受重创，'花西币'成为网络负面热梗，事件被视为直播电商超头主播与消费者关系危机的标志性案例。",
+      "consequences": {
+        "reputation": "冲上微博热搜第一并持续在榜多日，李佳琦累计掉粉超100万，'哪李贵了'成为2023年网络流行语，全网讨论量巨大",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作",
+        "duration_days": 20,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "澎湃新闻",
+          "url": "https://m.thepaper.cn/newsDetail_forward_24563062",
+          "published_at": "2023-09-11"
+        },
+        {
+          "name": "钛媒体",
+          "url": "https://www.tmtpost.com/6701803.html",
+          "published_at": "2023-09-12"
+        },
+        {
+          "name": "华夏时报",
+          "url": "https://m.chinatimes.net.cn/article/130499.html",
+          "published_at": "2023-09-13"
+        }
+      ],
+      "credibility_notes": "澎湃新闻、钛媒体、华夏时报等多家主流媒体详细报道，李佳琦和花西子均公开发布道歉声明，微博热搜记录可查，来源确凿。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. consequences.business：「公开报道未见量化数据」错误。多家媒体（界面新闻、第一财经商业数据中心、南方都市报等）援引蝉妈妈数据报道了明确量化影响：花西子抖音日销售额从事前 100万-250万元暴跌至事发后 7.5万-10万元，跌幅超九成；9月12日-18日更是直接停播。应修正为有量化数据。\n\n2. ad_copy_original：案例中的原句是经过压缩整理的版本，与直播完整逐字稿存在以下差异：(a) 缺失两处「好不好」口头禅（\"这么多年都是这个价格，好不好\"）；(b) 缺失句末「好不」（\"有没有认真工作，好不？\"）；(c) 缺失「真的乱说，这么多年都是79块钱，哪里贵了？买一支送两个替换装」等中间段落。原句应当标注为「整理版」而非「精确逐字稿」。\n\n3. sources[0] 澎湃新闻 URL（https://m.thepaper.cn/newsDetail_forward_24563062）：经 WebFetch 直接访问返回 HTTP 502 Bad Gateway，链接疑似已失效，应替换为可访问的同源报道（如 https://www.thepaper.cn/newsDetail_forward_24570645 或 https://www.thepaper.cn/newsDetail_forward_24575422）。\n\n4. sources[2] 华夏时报 URL（https://m.chinatimes.net.cn/article/130499.html）：经 WebFetch 访问超时（>60s），无法确认内容是否匹配。应标注为链接不可访问或替换。\n\n5. occurred_at 与 timeline 中 9/10 的日期：部分报道（界面新闻、ABC 中文网等）将直播时间记录为 9月9日晚，另有大量报道记为 9月10日。日期差异源于直播跨越午夜的可能性。现有记载可接受，但建议在 credibility_notes 中注明存在 9/9 和 9/10 两种日期说法。",
+        "confirmed_facts": [
+          "事件真实存在：2023年9月李佳琦在直播间带货花西子眉笔（79元/支）时，因回怼消费者价格质疑引发全网舆论风暴（钛媒体、澎湃新闻、界面新闻、36氪等多源确认）",
+          "ad_copy_original 核心内容属实：李佳琦确实说出了「哪里贵了？这么多年都是这个价格」「有的时候找找自己原因，这么多年了工资涨没涨，有没有认真工作？」等言论（钛媒体 2023-09-12 报道原文引述 + B站直播切片逐字稿交叉验证）",
+          "李佳琦微博累计掉粉超100万：从事前约3043万降至约2918-2930万（澎湃新闻多篇连续报道追踪确认：newsDetail_forward_24570645、24575422、24576715 等）",
+          "花西子2023年9月19日发布《一封信》道歉，使用「诚惶诚恐、手足无措」措辞（澎湃新闻 newsDetail_forward_24670312 + 北京日报客户端确认）",
+          "花西子2023年9月26日发布「发疯文学」式内容，包括「好心态决定花西子一生」（南方都市报、澎湃新闻、红星新闻等多源确认）",
+          "话题冲上微博热搜第一，多个相关词条霸榜（#李佳琦带货怼网友#、#李佳琦 花西子# 等）（光明网、新民网、证券时报等确认）",
+          "衍生网络热梗「哪李贵了」「花西币」（1花西币=79元）（钛媒体、萌娘百科等确认）",
+          "眉笔每克价格引发性价比争议：不同计算口径得出每克约329-985元不等，部分口径下贵过黄金（中国网、工人网、36氪等确认）",
+          "央视网 2023年9月12日公开批评李佳琦「飘了」「吃消费者的饭，笑消费者的穷」（央视网官方微博 + 多家媒体转引确认）",
+          "severity_hint='high' 定级恰当：事件引发全网级舆论、央视网点名批评、百万级掉粉、品牌销售额暴跌九成、国际媒体（ABC Australia）亦有报道"
+        ],
+        "unverified_claims": [
+          "timeline 中 '单日掉粉超60万'：部分来源（海峡网、华商网）提到了60万这一节点数字，但更多权威报道采用的是'单日掉粉近100万/超100万'。60万为早期在途数据，非最终单日统计。建议改为'单日掉粉近100万'以与更广泛报道一致",
+          "duration_days=20 的计算依据：timeline 从 9/10 到 9/26 共16天，20天的具体截止日不明确。可能计入了余波期至9月底，但缺乏明确边界定义",
+          "sources[0] 澎湃新闻 newsDetail_forward_24563062 的具体内容无法验证（HTTP 502），无法确认该篇报道是否包含了案例所引用的全部细节",
+          "sources[2] 华夏时报 article/130499 的具体内容无法验证（连接超时），无法确认其是否支撑案例中的具体数据点",
+          "outcome 中 '花西子品牌形象受重创'：虽然舆论确实负面，但缺乏品牌健康度的量化追踪数据（如 NPS、品牌搜索指数变化曲线等），属于定性判断",
+          "brand_response 中李佳琦直播道歉原句'不应该忘记我来自哪里'：澎湃新闻、钛媒体的报道中使用了类似表述，但措辞略有出入，需视频逐字确认"
+        ],
+        "extra_sources": [
+          {
+            "name": "钛媒体「李佳琦'反噬'花西子」",
+            "url": "https://www.tmtpost.com/6701803.html",
+            "published_at": "2023-09-12"
+          },
+          {
+            "name": "澎湃新闻「'怒怼'网友事件持续延烧，李佳琦微博掉粉已超百万」",
+            "url": "https://www.thepaper.cn/newsDetail_forward_24570645",
+            "published_at": "2023-09-11"
+          },
+          {
+            "name": "澎湃新闻「一夜掉粉百万，李佳琦直播间哭着道歉」",
+            "url": "https://www.thepaper.cn/newsDetail_forward_24575422",
+            "published_at": "2023-09-12"
+          },
+          {
+            "name": "澎湃新闻「花西子道歉」",
+            "url": "https://www.thepaper.cn/newsDetail_forward_24670312",
+            "published_at": "2023-09-19"
+          },
+          {
+            "name": "界面新闻「花西子受殃大跌超九成，品牌平台重估李佳琦」",
+            "url": "https://www.jiemian.com/article/10098419.html",
+            "published_at": "2023-09-21"
+          },
+          {
+            "name": "南方都市报「回应称硬撑罢了，花西子发疯上热搜」",
+            "url": "https://m.mp.oeeee.com/a/BAAFRD000020230927852933.html",
+            "published_at": "2023-09-27"
+          },
+          {
+            "name": "萌娘百科「哪里贵了」词条（收录完整直播逐字稿）",
+            "url": "https://zh.moegirl.org.cn/哪里贵了",
+            "published_at": "2023"
+          },
+          {
+            "name": "ABC中文（澳大利亚广播公司）「李佳琦直播意外揭开中国经济现实一面」",
+            "url": "https://www.abc.net.au/chinese/2023-09-14/lijiaqi-livestream-lipstick-king-trigger-controversy/102857406",
+            "published_at": "2023-09-14"
+          }
+        ],
+        "severity_check": "severity_hint='high' 定级恰当，理由充分：(1) 微博热搜第一且多日霸榜，话题阅读量超13亿；(2) 央视网官方点名批评；(3) 李佳琦个人掉粉超100万，为其职业生涯最大危机；(4) 花西子抖音日销售额暴跌超90%；(5) 「哪李贵了」成为2023年度网络流行语；(6) 引发国际媒体（ABC Australia）报道；(7) 触发全行业对直播电商超头主播模式的反思讨论。该事件在传播广度、商业损失、品牌声誉损害、行业影响四个维度均达到高严重性标准。建议维持 high 定级。"
+      }
+    },
+    {
+      "external_id": "sent-case-031",
+      "title": "郑州特大暴雨次日康桥集团发布'让风雨只是风景'楼盘灾难营销海报",
+      "brand": "康桥集团",
+      "occurred_at": "2021-07-20",
+      "industry": [
+        "家居"
+      ],
+      "platforms": [
+        "微信朋友圈"
+      ],
+      "ad_copy_original": "入住高地，让风雨只是风景——康桥香蔓郡整体海拔高程约164.35米，高出黄帝故里约72米，高出郑州二七塔约83米。",
+      "trigger_short": "'让风雨只是风景'借暴雨灾难推销楼盘",
+      "risk_dimension": "灾难营销",
+      "timeline": [
+        {
+          "at": "2021-07-20",
+          "stage": "发生",
+          "description": "郑州遭遇历史性特大暴雨当晚，康桥集团在朋友圈发布旗下'康桥香蔓郡'楼盘海报，以'高地'为卖点串联暴雨场景"
+        },
+        {
+          "at": "2021-07-21",
+          "stage": "回应",
+          "description": "康桥集团发布致歉声明，删除广告画面，成立专项小组严格审查，对相关责任人给予免职、降薪、降职问责，另向郑州市慈善总会捐赠500万元"
+        }
+      ],
+      "brand_response": "2021年7月21日康桥集团发布致歉声明，称已第一时间将相关广告删除并成立专项小组严格审查，对相关责任人免职、降薪、降职并全员通报，另向郑州市慈善总会捐赠500万元用于抗险救灾。",
+      "outcome": "康桥集团致歉并内部问责相关人员，另捐赠500万元，事件成为中国广告行业灾难营销的典型反面案例。",
+      "consequences": {
+        "reputation": "引发全网公愤，新京报、澎湃新闻、每日经济新闻等多家主流媒体集中批评",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作（企业内部问责：免职、降薪、降职）",
+        "duration_days": 3,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "新京报",
+          "url": "https://m.bjnews.com.cn/detail/162683088314791.html",
+          "published_at": "2021-07-21"
+        },
+        {
+          "name": "每日经济新闻",
+          "url": "https://www.nbd.com.cn/articles/2021-07-21/1848778.html",
+          "published_at": "2021-07-21"
+        },
+        {
+          "name": "澎湃新闻",
+          "url": "https://www.thepaper.cn/newsDetail_forward_13677100",
+          "published_at": "2021-07-21"
+        }
+      ],
+      "credibility_notes": "新京报、澎湃新闻、每日经济新闻等多家权威媒体交叉报道，康桥集团官方公开致歉确认事实，来源可靠。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. 标题「郑州特大暴雨次日」应为「当日」而非「次日」：海报发布于2021年7月20日晚间，与郑州特大暴雨为同一天。多家媒体（新京报、澎湃新闻、观察者网）均报道「20日晚间，一张楼盘海报在网络上流传」。华夏时报引述康桥品牌负责人微信截图显示，海报于7月20日上午10时开始制作、12时左右发出，下午5时雨势才骤然加大——海报发布时间甚至早于暴雨最严重时段。「次日」表述与事实矛盾。\n\n2. industry 应为「房地产」而非「家居」：康桥集团主营房地产开发，2020年销售额逾512亿元，位列全国房企第63名。家居行业通常指家具、家纺、装修装饰等，与房地产开发是不同行业。\n\n3. sources[2] URL 不可访问：https://www.thepaper.cn/newsDetail_forward_13677100 两次抓取均超时（CRAWL_LIVECRAWL_TIMEOUT）。搜索该 news ID 也未返回任何匹配结果。澎湃新闻关于此事件的可访问文章为 https://www.thepaper.cn/newsDetail_forward_13673600（记者李晓青）及 https://www.thepaper.cn/newsDetail_forward_13673672（锋线视频），ID 均非 13677100。原 URL 疑似编号错误或已失效，应更正为 13673600。\n\n4. consequences.duration_days=3 无公开报道支撑：没有任何来源给出精确的舆情持续天数，3天仅为估算值，应标记为推断而非事实。\n\n5. ad_copy_original 措辞微小差异：新京报原文写作「居住高地，让风雨只是风景」（居住而非入住），不过澎湃新闻、中新网、华商报、每日经济新闻、观察者网、腾讯网、联合早报等6家以上媒体均使用「入住高地」，新京报的差异为个别笔误，不影响 ad_copy_original 整体准确性。",
+        "confirmed_facts": [
+          "事件真实性：康桥集团于2021年7月20日发布「康桥香蔓郡」楼盘海报，核心文案为「入住高地，让风雨只是风景」并标注海拔对比数据，引发全网公愤。新京报、澎湃新闻、每日经济新闻、中新网、联合早报、观察者网、界面新闻、华商报/北青-北京头条等至少8家独立权威媒体交叉印证，事实确凿。",
+          "ad_copy_original 原文双源印证：澎湃新闻、中新网、观察者网、华商报、腾讯网等6家以上来源均引用相同海报文案——「入住高地，让风雨只是风景——康桥香蔓郡整体海拔高程约164.35米，高出黄帝故里约72米，高出郑州二七塔约83米」（联合早报/上游新闻进一步注明黄帝故里海拔约92.35米、二七塔海拔约81.39米），双源印证成立。",
+          "occurred_at 日期准确：多个来源一致确认海报在2021年7月20日晚间在社交媒体流传（新京报：7月20日晚间；澎湃新闻：20日晚间；中新网：7月20日，就在暴雨笼罩郑州的时候）。",
+          "品牌回应逐一验证：康桥集团于2021年7月21日早间在微信公众号「康桥地产」发布致歉声明，删除广告、成立专项小组审查、对相关责任人免职/降薪/降职并全员通报——澎湃新闻、新京报、每日经济新闻、中新网、界面新闻等多源一致确认。",
+          "500万元捐赠多源确认：每经网（2021-07-22）、中房网/中国房地产业协会、天府财经网等至少3家独立来源确认康桥集团向郑州市慈善总会捐赠500万元，捐赠在致歉声明发出后数小时内宣布。",
+          "监管后果确认无公开动作：独立检索未发现市场监管部门对康桥集团的公开行政处罚、约谈或立案记录，案例记载「无公开监管动作」符合实际。中国青年报评论文章呼吁依据广告法处罚，但未见实际执法报道。",
+          "severity_hint=high 定级合理：事件获8家以上全国性主流媒体报道，引发全网公愤，被多个来源称为灾难营销典型反面案例，严重程度定级恰当。",
+          "sources[0] 新京报 URL 可访问且内容匹配。",
+          "sources[1] 每日经济新闻 URL 可访问且内容匹配。"
+        ],
+        "unverified_claims": [
+          "consequences.duration_days=3：没有任何独立来源给出精确的舆情持续天数，3天仅为估算值，无法查证。实际可从7月20日晚间（事发）计至7月22日（腾讯新闻、中国青年报等仍有跟进评论），粗略约2-3天，但缺乏权威来源明确标注。建议改为估算表述或删除具体数字。",
+          "outcome 中「成为中国广告行业灾难营销的典型反面案例」：该定性在评论文章中常见，但无法找到行业权威机构（如中国广告协会）的正式定性文件，属于事后总结性评价，并非可验证的事实陈述。",
+          "consequences.reputation 中的「全网公愤」：虽有多家媒体批评，但「公愤」为主观定性语汇，无法精确验证其覆盖面和程度。保守建议改为「多家主流媒体集中批评」即可。"
+        ],
+        "extra_sources": [
+          {
+            "name": "中新网",
+            "url": "http://www.sd.chinanews.com.cn/2/2021/0721/79659.html",
+            "published_at": "2021-07-21"
+          },
+          {
+            "name": "界面新闻",
+            "url": "https://www.jiemian.com/article/6381259.html",
+            "published_at": "2021-07-21"
+          },
+          {
+            "name": "观察者网",
+            "url": "https://www.guancha.cn/politics/2021_07_21_599307.shtml",
+            "published_at": "2021-07-21"
+          },
+          {
+            "name": "联合早报",
+            "url": "https://www.zaobao.com.sg/realtime/china/story20210721-1171970",
+            "published_at": "2021-07-21"
+          },
+          {
+            "name": "中国青年报",
+            "url": "https://s.cyol.com/articles/2021-07/22/content_Djql4GF2.html",
+            "published_at": "2021-07-22"
+          },
+          {
+            "name": "华商报/北青-北京头条",
+            "url": "http://house.hsw.cn/system/2021/0721/37608.shtml",
+            "published_at": "2021-07-21"
+          },
+          {
+            "name": "腾讯新闻",
+            "url": "https://news.qq.com/rain/a/20210722A09VL800",
+            "published_at": "2021-07-22"
+          }
+        ],
+        "severity_check": "severity_hint=high 定级合理，予以维持。理由：(1) 事件获得8家以上全国性权威媒体集中报道（新京报、澎湃新闻、每日经济新闻、中新网、联合早报、观察者网、界面新闻、华商报等），覆盖面极广；(2) 郑州特大暴雨为全国性重大灾难事件（致数百人遇难），借灾难营销触碰公众情感底线，社会影响恶劣；(3) 事件成为后续中国广告行业反灾难营销的常引用案例；(4) 媒体报道用词包括「全网公愤」「毫无底线」「发国难财」等强烈谴责性表述，与 high 等级匹配。无降级理由。"
+      }
+    },
+    {
+      "external_id": "sent-case-032",
+      "title": "桂林蛋糕店借柳州5.2级地震发布'比520先到的是地震'灾难营销被立案调查",
+      "brand": "桂林七星区某蛋糕店",
+      "occurred_at": "2026-05-19",
+      "industry": [
+        "餐饮"
+      ],
+      "platforms": [
+        "微信朋友圈"
+      ],
+      "ad_copy_original": "比520更早到来的，是柳州5.2级地震的震动",
+      "trigger_short": "借柳州地震作'520'谐音灾难营销",
+      "risk_dimension": "灾难营销",
+      "timeline": [
+        {
+          "at": "2026-05-18",
+          "stage": "发生",
+          "description": "广西柳州发生5.2级地震，造成2人遇难、5人受伤，多处房屋受损"
+        },
+        {
+          "at": "2026-05-19",
+          "stage": "发生",
+          "description": "桂林七星区某蛋糕店在朋友圈发布'比520更早到来的，是柳州5.2级地震的震动'营销文案，约10分钟后被顾客提醒后删除"
+        },
+        {
+          "at": "2026-05-20",
+          "stage": "回应",
+          "description": "桂林市七星区市场监督管理局通报已对涉事主体立案调查、依法依规处理；店主被教育并写承诺书"
+        }
+      ],
+      "brand_response": "店主发朋友圈致歉，称'我也是柳州人'，系转载他人文案；广告发布约10分钟后经顾客提醒即删除。市监局人员到店对负责人进行教育，店主写下不再犯的承诺书。",
+      "outcome": "桂林市七星区市场监督管理局已立案调查，店主接受教育并写承诺书，具体处罚决定截至报道时尚未公布。",
+      "consequences": {
+        "reputation": "多家主流媒体（新浪新闻、腾讯新闻、澎湃新闻、新华网评论）报道，引发公众对灾难营销的集中谴责",
+        "business": "公开报道未见量化数据",
+        "regulatory": "桂林市七星区市场监督管理局2026年5月20日通报已立案调查，依法依规处理（具体处罚决定尚未公布）",
+        "duration_days": 2,
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "新浪新闻",
+          "url": "https://news.sina.com.cn/o/2026-05-20/doc-inhypaet6964928.shtml",
+          "published_at": "2026-05-20"
+        },
+        {
+          "name": "腾讯新闻/新京报快评",
+          "url": "https://news.qq.com/rain/a/20260520A059GA00",
+          "published_at": "2026-05-20"
+        },
+        {
+          "name": "澎湃新闻",
+          "url": "https://m.thepaper.cn/newsDetail_forward_33203913",
+          "published_at": "2026-05-20"
+        }
+      ],
+      "credibility_notes": "桂林市七星区市监局官方通报已立案调查，新浪新闻、腾讯新闻、澎湃新闻等多家媒体交叉报道，新华网发表评论文章，来源可信。商户具体名称未在公开报道中披露。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. sources[2]（澎湃新闻）URL 错误：案例记载 https://m.thepaper.cn/newsDetail_forward_33203913 不可访问（HTTP 502），正确 URL 应为 https://m.thepaper.cn/newsDetail_forward_33203383（标题：\"用'比520更早到来的是5.2级地震'营销，涉事蛋糕店被立案调查\"，2026-05-20 09:11）。\n\n2. ad_copy_original 不完整：多数报道引用的完整文案包含第二句——\"比520更早到来的，是柳州5.2级地震的震动，别错过和重要的人吃一块蛋糕的机会。\"（末尾有促销话术）。案例只截取了前半句，丢失了商业促销的直接证据。新华网评论中引用的也是前半句，但腾讯新闻等多篇报道均包含完整第二句。\n\n3. timeline[2] 日期歧义：市监局通报日期，案例记为 2026-05-20，但澎湃新闻明确记载通报于\"5月19日\"发出；腾讯新闻/光明网称\"5月20日凌晨通报\"。有两种可能：(a) 通报落款日期为 5月19日，对外发布为 5月20日凌晨；(b) 不同来源日期标注不一致。建议标注为\"2026-05-19 至 2026-05-20\"或注明来源分歧。\n\n4. 案例未提及柳州本地还有第二家涉事店铺（鱼峰区\"乔妹家甜品店\"），该店同样因借地震营销被柳州市鱼峰区市监局立案调查。案例聚焦桂林七星区蛋糕店本身无误，但缺失此背景可能影响对事件全貌的理解。",
+        "confirmed_facts": [
+          "2026年5月18日广西柳州柳南区发生两次5.2级地震，为柳州331年来最高等级地震（国家地震台网、央视新闻、广西政府网、维基百科多源确认）",
+          "地震造成2人遇难（蓝某夫妻）、5人受伤，约9769人转移，14-16栋民房倒塌（柳州新闻发布会、柳州日报、南方都市报多源确认）",
+          "桂林七星区某蛋糕店于5月19日在微信朋友圈发布借地震的520营销文案，引发舆论强烈谴责（央视网、光明网、新浪新闻、腾讯新闻、澎湃新闻、新华网多源确认）",
+          "广告核心文案为'比520更早到来的，是柳州5.2级地震的震动'（多源交叉印证，新华网评论原文引用）",
+          "桂林市七星区市场监督管理局已查实并立案调查（官方通报原文多源印证）",
+          "店主自称柳州人，发布约10分钟后经顾客提醒删除，随后发朋友圈致歉，称文案系转载（红星新闻采访多源印证）",
+          "市监局人员到店对负责人进行教育，店主写下承诺书（多篇报道一致）",
+          "新华网于5月21日发表评论文章《灾难不是流量生意》（评论员王志艳）（新华网原文确认）",
+          "5名伤者截至6月5日已全部康复出院（柳州政府网、南方都市报确认）"
+        ],
+        "unverified_claims": [
+          "severity_hint='medium' 定级偏低——新华网发表专题评论、多家中央级媒体报道、双地市监局同时立案、律师指出可能违反《广告法》第九条（罚款20万-100万），实际影响面已达全国级别，倾向于'd medium偏high'",
+          "duration_days=2 可接受但偏短——立案调查在5月20日之后仍有后续报道，新华网评论在5月21日发出，柳州另一家店的立案通报在5月20日下午，事件热度实际持续约3-4天",
+          "consequences.reputation 中列举的媒体名单可以补充新华网、央视网、光明网、中国青年报等更具分量的来源",
+          "credibility_notes 称'新华网发表评论文章'属实，但案例未将新华网原文列入 sources 数组"
+        ],
+        "extra_sources": [
+          {
+            "name": "新华网 - 灾难不是流量生意",
+            "url": "https://www.news.cn/comments/20260521/b36076aac66d4951937ea1bd495998b6/c.html",
+            "published_at": "2026-05-21"
+          },
+          {
+            "name": "央视网 - 广西桂林通报立案调查",
+            "url": "http://news.cctv.com/2026/05/20/ARTIMX22mNmZRXmOY63DsR1o260520.shtml",
+            "published_at": "2026-05-20"
+          },
+          {
+            "name": "光明网 - 广西一蛋糕店借地震营销被立案调查",
+            "url": "https://m.gmw.cn/2026-05/20/content_1304463698.htm",
+            "published_at": "2026-05-20"
+          },
+          {
+            "name": "广西政府网 - 柳州地震搜救通报",
+            "url": "http://www.gxzf.gov.cn/hdjl/hygq_29682/t27626466.shtml",
+            "published_at": "2026-05-18"
+          },
+          {
+            "name": "柳州政府网 - 柳州地震5名伤者全部出院",
+            "url": "http://bbstxq.liuzhou.gov.cn/xwzx/lzyw/202606/t20260605_3759500.shtml",
+            "published_at": "2026-06-05"
+          },
+          {
+            "name": "澎湃新闻（正确URL） - 涉事蛋糕店被立案调查",
+            "url": "https://m.thepaper.cn/newsDetail_forward_33203383",
+            "published_at": "2026-05-20"
+          },
+          {
+            "name": "中国青年报 - 拿地震当流量密码",
+            "url": "http://news.cyol.com/gb/articles/2026-05/21/content_EAjv0Nua7Z.html",
+            "published_at": "2026-05-21"
+          }
+        ],
+        "severity_check": "severity_hint='medium' 有一定道理：广告在10分钟内删除、店主主动道歉、截至报道时仅有立案调查而无实际罚款。但综合考量：(1) 新华网发表专题评论文章（评论员署名，非简单转载）；(2) 央视网、光明网、中国青年报、央广网等中央级媒体集中报道；(3) 涉事文案将5.2级地震震级与520做谐音双关，恶意程度高于一般的灾难蹭热点；(4) 律师明确指涉嫌违反《广告法》第九条最高可罚100万；(5) 柳州本地另有一家店因同类行为同时被查，说明事件有连锁示范效应——建议评估是否需要上调至 'medium偏high' 或 'high'。如维持 medium，建议在 severity_hint 旁备注上述理由。"
+      }
+    },
+    {
+      "external_id": "sent-case-033",
+      "title": "桃李面包五仁月饼电梯广告'没饱尝过生活的毒打'爹味文案引发全网争议",
+      "brand": "桃李面包",
+      "occurred_at": "2025-09-04",
+      "industry": [
+        "食品"
+      ],
+      "platforms": [
+        "电梯广告",
+        "微博"
+      ],
+      "ad_copy_original": "有人说五仁不好吃，我们认为：那是因为你还年轻，还没饱尝过生活的毒打。桃李蛋月烧，等一个有故事的人下单！",
+      "trigger_short": "'还没饱尝过生活的毒打'爹味教育式文案",
+      "risk_dimension": "价值观争议",
+      "timeline": [
+        {
+          "at": "2025-09-03",
+          "stage": "发生",
+          "description": "桃李面包蛋月烧月饼电梯广告上线，文案将五仁月饼喜好与'是否被生活毒打'挂钩，引发消费者强烈反感"
+        },
+        {
+          "at": "2025-09-05",
+          "stage": "回应",
+          "description": "桃李面包官方发文道歉：'文案翻车了，确实是领导拍的板，这个锅只能他来背'，宣布后续宣发由年轻团队接管；广告在上线一天后已下架"
+        },
+        {
+          "at": "2025-09-06",
+          "stage": "发酵",
+          "description": "道歉文案'嘻嘻哈哈'的语气引发二次争议，网友批评'把锅甩给领导是避重就轻'"
+        }
+      ],
+      "brand_response": "2025年9月5日桃李面包官方发布道歉声明，称'文案翻车了，确实是领导拍的板，这个锅只能他来背'，表示涉事领导'正在接受现实毒打'，宣布后续宣发正式由年轻人接管。",
+      "outcome": "广告上线一天后紧急下架，品牌道歉但因道歉风格轻佻引发二次争议，被批评为'甩锅'式道歉而非正视广告价值观问题。",
+      "consequences": {
+        "reputation": "登上微博等多平台热搜，累计热搜时长超15小时，全网互动量超6.27万次",
+        "business": "桃李面包2025年上半年营收26.11亿元同比下降13.55%，净利润2.04亿元同比下降29.7%，同期广告宣传费4296万元同比增长约40%",
+        "regulatory": "无公开监管动作",
+        "duration_days": 4,
+        "severity_hint": "medium"
+      },
+      "sources": [
+        {
+          "name": "杭州网",
+          "url": "https://news.hangzhou.com.cn/shxw/content/2025-09/06/content_9077263_0.htm",
+          "published_at": "2025-09-06"
+        },
+        {
+          "name": "封面新闻",
+          "url": "https://www.thecover.cn/news/3MVpvoZ5dTKH90qSdq8Jkw==",
+          "published_at": "2025-09-05"
+        },
+        {
+          "name": "北京商报",
+          "url": "https://www.bbtnews.com.cn/2025/0908/569053.shtml",
+          "published_at": "2025-09-08"
+        }
+      ],
+      "credibility_notes": "桃李面包官方公开道歉确认事件属实，杭州网、封面新闻、北京商报等多家媒体报道，热搜数据有具体量化来源。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. occurred_at 应从 \"2025-09-04\" 修正为 \"2025-09-01\"（或 \"2025-09-01前后\"）。9月4日是桃李面包负责人向媒体确认广告已下架的日期（部分来源称9月2日已撤下），并非事件发生日。广告实际于9月1日前后在辽宁等地电梯间上线，8月31日已有抖音用户首次曝光广告图片。\n\n2. timeline 中「发生」阶段日期应从 \"2025-09-03\" 修正为 \"2025-09-01\"。广告约9月1日上线，约9月2日（上线约24小时后）下架。9月3日处于舆情升温期，并非上线日。\n\n3. timeline 中缺失关键节点「2025-09-04」——桃李面包负责人首次向媒体（南方都市报等）回应，解释内部共创机制并确认广告已下架。应将此节点补入。\n\n4. consequences 中「累计热搜时长超15小时」「全网互动量超6.27万次」两项数据仅来源于第三方舆情监测机构（苗建信息），未见主流新闻媒体独立核实或引用原始平台（微博/百度）数据，应标注为「据第三方监测」的估算值，不宜作为确凿事实陈述。\n\n5. sources 中北京商报 URL（https://www.bbtnews.com.cn/2025/0908/569053.shtml）及其移动端 URL 均返回 HTTP 403 Forbidden，无法公开访问验证。该报道标题为「桃李面包广告翻车背后：上半年营收净利双降，研发投入缩减超三成」，内容确实存在但URL被反爬保护阻断。建议替换为可访问的替代来源或标注访问受限。\n\n6. brand_response 中引用的道歉措辞「这个锅只能他来背」与部分来源中的「全是领导的责任」存在措辞差异——不同来源对同一道歉的引用略有不同，属于正常报道措辞变化，不影响核心事实。",
+        "confirmed_facts": [
+          "事件真实存在：桃李面包于2025年9月初在电梯媒体投放蛋月烧五仁月饼广告，因文案引发全网争议，获央视网、光明网、新京报、工人日报、封面新闻、证券时报、澎湃新闻、羊城晚报等数十家权威媒体独立报道，品牌方官方道歉确认事件属实。",
+          "广告文案核心内容属实：争议核心句「有人说五仁不好吃，我们认为：那是因为你还年轻，还没饱尝过生活的毒打」在央视网、光明网、封面新闻、证券时报、新京报、工人日报等多个独立来源中得到一致引用。后半句「桃李蛋月烧，等一个有故事的人下单！」在中新经纬、南方都市报、界面新闻、闪电新闻等来源中得到印证。",
+          "品牌道歉属实：2025年9月5日桃李面包官方社交账号发布道歉声明，核心表述「文案翻车了，确实是领导拍的板」「正在接受现实毒打」「后续宣发由年轻人接管」在封面新闻、重庆日报、证券时报、光明网等多个来源中一致印证。",
+          "广告一天内下架属实：多个独立来源一致确认广告「上线仅一天后已下架」，9月4日品牌方向媒体正式确认下架。",
+          "财务数据属实：2025年上半年营收26.11亿元（同比-13.55%）、净利润2.04亿元（同比-29.7%）、广告宣传费4296万元（同比约+40%），在证券时报、每日经济新闻、北京商报、南方都市报等多个来源中一致引用，源自上市公司财务报告。",
+          "无监管处罚属实：独立检索未发现任何市场监管部门对此事件的立案、约谈或处罚记录。",
+          "杭州网报道 URL 可访问且内容匹配：https://news.hangzhou.com.cn/shxw/content/2025-09/06/content_9077263_0.htm",
+          "封面新闻报道 URL 可访问且内容匹配：https://www.thecover.cn/news/3MVpvoZ5dTKH90qSdq8Jkw=="
+        ],
+        "unverified_claims": [
+          "热搜时长15小时：该数据仅见于第三方舆情监测机构苗建信息的统计报告，未被央视网、新京报、光明网、封面新闻等主流新闻媒体独立采集或引用，缺乏微博/百度官方平台数据的直接佐证。建议改为「据第三方监测，累计在榜约15小时」等保守表述。",
+          "全网互动量6.27万次：同上，仅见于苗建信息舆情监测数据，未见主流媒体独立核实。建议改为「据第三方监测，全网互动量约6.27万次」。",
+          "广告上线的精确日期2025-09-03：各来源说法不完全一致，有称9月1日、9月初、8月底至9月初等，未见单一权威来源明确锁定为9月3日。部分第三方舆情复盘称8月31日抖音首次曝光，此节点亦需交叉验证。",
+          "北京商报报道 URL 可访问性：该 URL（https://www.bbtnews.com.cn/2025/0908/569053.shtml）在核查时返回 HTTP 403 Forbidden，无法确认当前是否仍可公开访问。报道本身确实存在（可通过搜索引擎缓存验证），但URL的直接可访问性存疑。"
+        ],
+        "extra_sources": [
+          {
+            "name": "光明网/央视网转载",
+            "url": "https://m.gmw.cn/2025-09/06/content_1304137774.htm",
+            "published_at": "2025-09-06"
+          },
+          {
+            "name": "证券时报",
+            "url": "https://www.stcn.com/article/detail/3322984.html",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "工人日报",
+            "url": "https://www.workercn.cn/c/2025-09-06/8598751.shtml",
+            "published_at": "2025-09-06"
+          },
+          {
+            "name": "新京报",
+            "url": "https://www.bjnews.com.cn/detail/1757064029168750.html",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "重庆日报",
+            "url": "https://cqrb.cn/24xiaoshiredian/2025-09-05/2404076_pc.html",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "每日经济新闻",
+            "url": "https://m.nbd.com.cn/articles/2025-09-05/4049659.html",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "海报新闻/大众网",
+            "url": "https://sdxw.iqilu.com/share/dmlkZW8tMjEtMTY3MzA4MjU.html",
+            "published_at": "2025-09-05"
+          },
+          {
+            "name": "界面新闻",
+            "url": "https://m.jiemian.com/article/13303282.html",
+            "published_at": "2025-09-06"
+          }
+        ],
+        "severity_check": "severity_hint 定为 medium 基本合理。该事件属于典型的营销文案价值观争议，未触发监管介入、未造成人身伤害、未导致产品召回。但考虑到以下因素，medium 属于保守下限：(1) 央视网、工人日报等中央级媒体刊发评论批评；(2) 微博热搜最高第2名，话题阅读量过亿；(3) 品牌好感度出现断崖式下滑；(4) 直接导致产品从电商旗舰店下架。若综合品牌声誉实际损伤程度，部分分析人士可能倾向于 high。但严格按监管后果和实际业务损失衡量，medium 可接受。"
+      }
+    },
+    {
+      "external_id": "sent-case-034",
+      "title": "滴露衣物消毒液广告'没被别的男人污染过'物化女性文案引发全网声讨",
+      "brand": "滴露（Dettol）",
+      "occurred_at": "2026-06-20",
+      "industry": [
+        "日化"
+      ],
+      "platforms": [
+        "微信朋友圈",
+        "微博"
+      ],
+      "ad_copy_original": "我可以不是第一次，但我未来的老婆可不行……干干净净没被别的男人污染过……真是不自爱，跟别人同居那么久……好不容易找到一个纯的",
+      "trigger_short": "'没被别的男人污染过'物化女性、宣扬贞洁观",
+      "risk_dimension": "性别争议",
+      "timeline": [
+        {
+          "at": "2026-05-24",
+          "stage": "发生",
+          "description": "滴露衣物消毒液微短剧广告在微信视频号首次发布，剧中男性主角以'寻找纯洁伴侣'为叙事线"
+        },
+        {
+          "at": "2026-06-11",
+          "stage": "发酵",
+          "description": "滴露另一则马桶消毒液广告被指'侮辱男性'引发争议，9天内连续两次翻车引发集中关注"
+        },
+        {
+          "at": "2026-06-20",
+          "stage": "爆发",
+          "description": "衣物消毒液广告被新浪等多家媒体集中曝光，物化女性台词引爆全网舆论"
+        },
+        {
+          "at": "2026-06-22",
+          "stage": "回应",
+          "description": "滴露官方微博致歉，称由第三方达人创作、本意为批判性别偏见，承认存在内容表达缺陷与审核失职，已将视频下架"
+        }
+      ],
+      "brand_response": "2026年6月22日滴露官方微博发布致歉声明，称该视频由第三方达人为滴露品牌创作，本意为'先抑后扬、批判性别偏见'，承认存在内容表达缺陷与审核失职，责任不容推脱，已第一时间下架该视频。",
+      "outcome": "广告被下架，滴露发布道歉声明但被指将责任推给第三方达人，道歉诚意受质疑。滴露在2025-2026年已多次因性别议题广告翻车，品牌形象持续受损。",
+      "consequences": {
+        "reputation": "BBC中文、中国新闻网、每日经济新闻等多家权威媒体报道，消费者发起退货抵制行动",
+        "business": "公开报道未见量化数据",
+        "regulatory": "无公开监管动作（媒体引述法律专家指出涉嫌违反《广告法》第九条，可能面临20万-100万元罚款，截至报道时未见实际处罚）",
+        "duration_days": 5,
+        "severity_hint": "high"
+      },
+      "sources": [
+        {
+          "name": "解放日报/申工社",
+          "url": "https://www.jfdaily.com/sgh/detail?id=4009240",
+          "published_at": "2026-06-22"
+        },
+        {
+          "name": "中国新闻网",
+          "url": "https://www.chinanews.com.cn/m/cj/2026/06-23/10645605.shtml",
+          "published_at": "2026-06-23"
+        },
+        {
+          "name": "新浪新闻",
+          "url": "https://news.sina.com.cn/s/2026-06-21/doc-inieeaqu1080859.shtml",
+          "published_at": "2026-06-21"
+        }
+      ],
+      "credibility_notes": "BBC中文、中国新闻网、解放日报等多家权威媒体详细报道，滴露官方公开致歉确认广告内容存在缺陷，多次性别争议翻车记录可交叉验证，来源确凿。",
+      "verification": {
+        "verdict": "corrected",
+        "corrections": "1. consequences.business 字段错误：案例称「公开报道未见量化数据」，但公开报道中实际存在多项量化业务影响数据：(a) 滴露电商直播销售额从事发前日均400万-600万元降至6月20-21日的300万元以下（来源：新浪新闻引用第三方平台数据）；(b) 微博话题阅读量超12.7亿、讨论量超89万；(c) 替代品牌销量周环比增长180%；(d) 全网相关信息扩散量1.96万篇（6/20-6/23）。应修正为列出上述具体量化指标，而非声称无量化数据。\n\n2. consequences.duration_days: 5 无法独立验证。搜索结果中明确提到「热搜总在榜时长约72小时（约3天）」，未找到任何来源给出「5天」的具体数字。建议改为约3天（热搜在榜）或标注为估算值并说明计算口径。\n\n3. ad_copy_original 引用格式存在误导风险：案例将多条分散在不同场景的台词用省略号拼接为一段连续引文，可能让读者误以为是单一连贯独白。实际上这些是5分钟短剧中不同场景的台词。其中「干干净净没被别的男人污染过」在原文完整表述为「还好我遇到现在这个她，干干净净没被别的男人污染过」。建议逐句标注为「多条台词选摘」或明确标注各句之间的省略。\n\n4. consequences.regulatory 中「截至报道时未见实际处罚」准确，但遗漏了「市场监管部门已受理相关举报」这一公开信息。\n\n5. 案例遗漏了其他已确认争议台词：「你知道怎么分辨女朋友是否同居过吗？」「我说你怎么那么会呢，原来都是别人调教过的」，以及视频标题/简介中的「同居污点」「二手服务」等关键词。",
+        "confirmed_facts": [
+          "滴露（Dettol）衣物消毒液广告争议事件真实存在，发生于2026年5-6月，由BBC中文、中国新闻网、解放日报、每日经济新闻、联合早报、新浪新闻等多家权威媒体交叉证实",
+          "广告于2026年5月24日在微信视频号「滴露衣物消毒液」首次发布",
+          "广告台词含「我可以不是第一次，但我未来的老婆可不行」「干干净净没被别的男人污染过」「真是不自爱，跟别人同居那么久」「好不容易找到一个纯的」等已确认原句",
+          "2026年6月20日多家媒体集中报道，舆论大规模爆发，话题冲上微博热搜第一",
+          "2026年6月22日滴露母公司利洁时中国通过官方微博发布致歉声明，承认审核失职并下架视频，称视频由第三方达人创作、本意为批判性别偏见",
+          "滴露并非首次翻车：2025年有类似文案争议（结婚前被退货，肯定身子不干净），2026年6月11日马桶消毒液广告被指侮辱男性（移动的细菌培养皿），9天内两次翻车",
+          "广告被指涉嫌违反《广告法》第九条禁止性别歧视和违背社会良好风尚的规定，律师称可能面临20万-100万元罚款，但未见实际监管处罚",
+          "三个来源URL均真实可访问，内容与案例描述匹配：jfdaily.com（解放日报/申工社）、chinanews.com.cn（中国新闻网）、news.sina.com.cn（新浪新闻）",
+          "品牌回应被舆论批评为将责任推给第三方达人，道歉诚意受质疑",
+          "risk_dimension 定性为「性别争议」准确，severity_hint 定级为 high 合理（多平台多日热搜、多家权威媒体报道、消费者抵制、法律风险、屡犯模式）"
+        ],
+        "unverified_claims": [
+          "consequences.duration_days: 5 —— 搜索结果中未找到任何给出「5天」的独立来源，有一个搜索结果明确给出「热搜总在榜时长约72小时（约3天）」。5天的计算口径不明（是从6/20算到6/24？是所有相关话题在榜时长合计？），无法独立确认",
+          "消费者「退货抵制」的具体规模 —— 确认社交媒体上有抵制呼声和弃购行为，但「退货」的具体数量和金额未在任何搜索结果中找到独立数据支撑，建议降级表述为「社交媒体出现抵制和弃购呼吁」",
+          "12315投诉超1.2万件 —— 此数字仅出现在疑似聚合类/AI生成文章中，无法在独立来源中交叉验证",
+          "京东/天猫搜索量下降42% —— 此数字出处不明，未在独立可靠来源中确认",
+          "替代品牌销量周环比增长180% —— 缺乏第二独立来源交叉证实"
+        ],
+        "extra_sources": [
+          {
+            "name": "BBC中文：滴露中国「没被别的男人污染过」广告引众怒 英国厂商道歉",
+            "url": "https://www.bbc.com/zhongwen/articles/c1dyq7evdv4o/simp",
+            "published_at": "2026-06-22"
+          },
+          {
+            "name": "联合早报：中国市场广告方案被指物化女性 清洁护理品牌滴露致歉",
+            "url": "https://www.zaobao.com/news/china/story20260621-9240454",
+            "published_at": "2026-06-21"
+          },
+          {
+            "name": "每日经济新闻：岂能靠贩卖偏见博流量！滴露迟来的道歉还差我错了三个字",
+            "url": "http://www.nbd.com.cn/articles/2026-06-22/4433341.html",
+            "published_at": "2026-06-22"
+          },
+          {
+            "name": "新华社/新华网：洗护大战争流量，滴露涉险",
+            "url": "http://www.news.cn/fashion/20260623/9e4d5eeecac147bd82b74b1b639b1f42/c.html",
+            "published_at": "2026-06-23"
+          },
+          {
+            "name": "新京报：滴露消毒了衣物，谁来消毒滴露的审核？",
+            "url": "https://www.bjnews.com.cn/detail/1782123932129678.html",
+            "published_at": "2026-06-22"
+          },
+          {
+            "name": "澎湃新闻：滴露公开道歉",
+            "url": "https://m.thepaper.cn/newsDetail_forward_33429226",
+            "published_at": "2026-06-22"
+          },
+          {
+            "name": "新浪新闻/第三方平台：滴露直播销售额下滑（含量化业务数据）",
+            "url": "https://www.sina.cn/news/detail/5312643801812856.html",
+            "published_at": "2026-06-23"
+          },
+          {
+            "name": "上游新闻/人民网：屡犯的滴露，该长长记性了",
+            "url": "https://www.cqcb.com/yulunchang2022/2026-06-24/6166999_pc.html",
+            "published_at": "2026-06-24"
+          }
+        ],
+        "severity_check": "severity_hint 定级为 high 合理。理由：(1) 事件在微博等多平台登上热搜第一，话题阅读量超12.7亿；(2) BBC中文、中国新闻网、新华社、联合早报、每日经济新闻等多家国内外权威媒体密集报道；(3) 引发大规模消费者抵制和弃购行为，电商直播销售额出现可量化下滑；(4) 9天内连续两次性别争议翻车，叠加2025年前科，构成系统性营销价值观失守；(5) 被多位法律专家指出涉嫌违反《广告法》第九条，存在20万-100万元罚款的法律风险。唯一可商榷的是未见实际监管处罚，无法升级到 critical 级别。high 定级恰当。"
+      }
+    }
+  ]
+}
