@@ -33,6 +33,7 @@ def explain_public_opinion_risk(
     material_text: str,
     deterministic_hits: list[dict[str, Any]],
     similar_events: list[dict[str, Any]],
+    trigger_word_hits: list[dict[str, Any]],
 ) -> dict[str, Any]:
     try:
         return deepseek_gateway.explain_public_opinion_risk(
@@ -40,6 +41,7 @@ def explain_public_opinion_risk(
             material_text=material_text,
             deterministic_hits=deterministic_hits,
             similar_events=similar_events,
+            trigger_word_hits=trigger_word_hits,
         )
     except deepseek_gateway.DeepSeekGatewayError as exc:
         raise ModelServiceError(str(exc)) from exc

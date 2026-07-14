@@ -71,6 +71,11 @@ const publicOpinionRiskClass = computed(() => {
   return 'text-gray-600 bg-gray-50 border-gray-200'
 })
 
+const publicOpinionSourceLabel = computed(() => {
+  const map: Record<string, string> = { local: '本地证据', ai: 'AI 语义', hybrid: '本地 + AI' }
+  return map[publicOpinion.value.assessment_source] || '证据不足'
+})
+
 function statusText(status?: string | null) {
   const map: Record<string, string> = {
     pending: '等待中',
@@ -268,7 +273,9 @@ onUnmounted(() => {
                   <p class="text-3xl font-bold mt-2" :class="publicOpinionRiskLabel === '低' ? 'text-green-600' : publicOpinionRiskLabel === '高' || publicOpinionRiskLabel === '严重' ? 'text-red-600' : 'text-amber-600'">
                     {{ publicOpinionRiskLabel }}
                   </p>
-                  <p class="text-xs text-gray-400 mt-1">不计入法律合规分</p>
+                  <p class="text-xs text-gray-400 mt-1">
+                    {{ publicOpinion.risk_score ?? '-' }}/100 · {{ publicOpinionSourceLabel }} · 不计入法律合规分
+                  </p>
                 </div>
                 <StatusBadge :variant="publicOpinionStatus === 'succeeded' ? 'success' : publicOpinionStatus === 'unavailable' ? 'gray' : publicOpinionStatus === 'failed' ? 'danger' : 'warning'">
                   {{ statusText(publicOpinionStatus) }}
@@ -311,10 +318,17 @@ onUnmounted(() => {
 
           <section class="card">
             <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-4">舆情风险详情</h3>
-            <div v-if="publicOpinion.status === 'knowledge_base_empty'" class="rounded-xl bg-yellow-50 text-yellow-700 p-4 text-sm">
-              {{ publicOpinion.message }}。这不是低风险结论，只表示资料库还不能支撑案例化判断。
+            <div v-if="publicOpinion.requires_manual_review" class="rounded-xl bg-orange-50 text-orange-700 border border-orange-200 p-4 text-sm mb-4">
+              <p class="font-semibold">建议人工复核</p>
+              <p class="mt-1">{{ publicOpinion.disagreement_reason || '当前有效证据不足，不能直接作为低风险结论。' }}</p>
             </div>
-            <div v-else class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div v-if="publicOpinion.model_available === false" class="rounded-xl bg-yellow-50 text-yellow-700 p-3 text-sm mb-4">
+              AI 语义判断暂不可用，当前结果来自本地规则与真实案例。
+            </div>
+            <div v-if="publicOpinion.knowledge_base_available === false" class="rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 p-3 text-sm mb-4">
+              当前没有可用本地舆情案例；系统仍会执行 AI 开放式语义判断。
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                 <p class="text-xs text-gray-400">风险议题</p>
                 <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.risk_topics?.join('、') || '暂无' }}</p>
@@ -329,7 +343,13 @@ onUnmounted(() => {
               </div>
               <div class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                 <p class="text-xs text-gray-400">置信度</p>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.confidence ?? '-' }}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mt-2">{{ publicOpinion.confidence ?? '-' }}<span v-if="publicOpinion.confidence !== undefined">%</span></p>
+              </div>
+            </div>
+            <div v-if="publicOpinion.evidence_quotes?.length" class="mt-5">
+              <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">判断证据</h4>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="quote in publicOpinion.evidence_quotes" :key="quote" class="rounded-lg bg-purple-50 dark:bg-purple-950/30 text-purple-700 dark:text-purple-300 px-3 py-1.5 text-sm">“{{ quote }}”</span>
               </div>
             </div>
             <div v-if="publicOpinion.similar_events?.length" class="mt-5">
@@ -338,11 +358,18 @@ onUnmounted(() => {
                 <div v-for="event in publicOpinion.similar_events" :key="event.event_id" class="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
                   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <span class="font-medium text-gray-800 dark:text-gray-200">{{ event.title }}</span>
-                    <span class="text-xs text-gray-400">相似度 {{ event.similarity }}</span>
+                    <span class="text-xs text-gray-400">匹配分 {{ event.similarity }} · {{ event.verification_status || '待核验' }}</span>
                   </div>
+                  <p v-if="event.matched_text" class="mt-2 text-xs text-purple-600">匹配依据：{{ event.matched_text }}</p>
                   <pre class="mt-2 text-xs text-gray-500 whitespace-pre-wrap">{{ JSON.stringify(event.historical_consequence || {}, null, 2) }}</pre>
                 </div>
               </div>
+            </div>
+            <div v-if="publicOpinion.suggestions?.length" class="mt-5">
+              <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">舆情修改建议</h4>
+              <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                <li v-for="suggestion in publicOpinion.suggestions" :key="suggestion" class="flex gap-2"><span class="text-purple-500">•</span><span>{{ suggestion }}</span></li>
+              </ul>
             </div>
           </section>
 

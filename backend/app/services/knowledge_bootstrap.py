@@ -8,7 +8,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.knowledge import (
@@ -17,17 +16,14 @@ from app.models.knowledge import (
     PlatformRuleSet,
     PlatformRuleStatus,
     PlatformRuleVersion,
-    PublicOpinionEvent,
-    PublicOpinionEventStatus,
-    PublicOpinionEventVersion,
-    PublicOpinionLibraryVersion,
 )
 from app.models.user import User, UserRole
+from app.services.public_opinion_case_service import sync_case_file
 
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _L4_ROOT = _REPO_ROOT / "knowledge" / "L4_platforms"
-_L3_ROOT = _REPO_ROOT / "knowledge" / "L3_cases"
+_SENTIMENT_CASES_PATH = _REPO_ROOT / "data" / "sentiment_cases.json"
 _NORMATIVE_MARKERS = ("不得", "禁止", "严禁", "不应", "违规", "虚假", "夸大", "欺诈", "限制")
 _PLATFORM_KEYS = {
     "拼多多": "pinduoduo",
@@ -59,10 +55,15 @@ def bootstrap_builtin_knowledge(db: Session) -> dict[str, Any]:
             summary["failures"].append({"source": _relative(directory), "error": str(exc)[:180]})
 
     try:
-        summary["cases"] = _bootstrap_public_opinion_cases(db, admin)
+        case_summary = sync_case_file(db, admin, _SENTIMENT_CASES_PATH)
+        summary["cases"] = (
+            int(case_summary["created"])
+            + int(case_summary["updated"])
+            + (1 if case_summary["snapshot_changed"] and not case_summary["created"] and not case_summary["updated"] else 0)
+        )
     except Exception as exc:
         db.rollback()
-        summary["failures"].append({"source": _relative(_L3_ROOT), "error": str(exc)[:180]})
+        summary["failures"].append({"source": _relative(_SENTIMENT_CASES_PATH), "error": str(exc)[:180]})
 
     if summary["platforms"] == 0 and summary["cases"] == 0 and not summary["failures"]:
         summary["status"] = "skipped"
@@ -70,7 +71,7 @@ def bootstrap_builtin_knowledge(db: Session) -> dict[str, Any]:
 
     job = KnowledgeImportJob(
         import_type="builtin_baseline",
-        file_name="knowledge/L3_cases + knowledge/L4_platforms",
+        file_name="data/sentiment_cases.json + knowledge/L4_platforms",
         status=KnowledgeImportJobStatus.completed if not summary["failures"] else KnowledgeImportJobStatus.failed,
         total_items=summary["platforms"] + summary["cases"],
         valid_items=summary["rules"] + summary["cases"],
@@ -129,73 +130,6 @@ def _bootstrap_platform(db: Session, admin: User, directory: Path) -> int | None
     db.add(version)
     db.commit()
     return len(rules)
-
-
-def _bootstrap_public_opinion_cases(db: Session, admin: User) -> int:
-    existing_library = db.query(PublicOpinionLibraryVersion).filter(PublicOpinionLibraryVersion.event_count > 0).first()
-    if existing_library or not _L3_ROOT.exists():
-        return 0
-
-    created = 0
-    for file_path in sorted(_L3_ROOT.rglob("*.txt"))[:80]:
-        source_text = _read_text(file_path)
-        if len(source_text.strip()) < 30:
-            continue
-        external_id = f"builtin:{_relative(file_path)}"
-        if db.query(PublicOpinionEvent).filter(PublicOpinionEvent.external_id == external_id).first():
-            continue
-        title = file_path.stem[:190]
-        tokens = _keywords(source_text)[:12]
-        event = PublicOpinionEvent(
-            external_id=external_id,
-            title=title,
-            source_text=source_text[:100_000],
-            source_meta={"source_path": _relative(file_path), "source_hash": _hash(source_text)},
-            status=PublicOpinionEventStatus.published,
-            created_by_id=admin.id,
-            updated_by_id=admin.id,
-            published_by_id=admin.id,
-            published_at=datetime.now(timezone.utc),
-        )
-        db.add(event)
-        db.flush()
-        db.add(PublicOpinionEventVersion(
-            event_id=event.id,
-            version=1,
-            title=title,
-            source_text=source_text[:100_000],
-            sources=[{"path": _relative(file_path)}],
-            event_process={"trigger": tokens[0] if tokens else ""},
-            consequences={"summary": source_text[:300]},
-            risk_topics=tokens[:6],
-            trigger_patterns=tokens,
-            affected_groups=[],
-            propagation_drivers=[],
-            normalized_tags={"source": "builtin"},
-            severity_level="medium",
-            summary=source_text[:500],
-            confidence=50,
-            model_name="builtin-parser",
-            generated_at=datetime.now(timezone.utc),
-        ))
-        created += 1
-
-    db.flush()
-    events = db.query(PublicOpinionEvent).filter(
-        PublicOpinionEvent.status == PublicOpinionEventStatus.published,
-        PublicOpinionEvent.deleted_at.is_(None),
-    ).all()
-    if events:
-        next_version = (db.query(func.max(PublicOpinionLibraryVersion.version)).scalar() or 0) + 1
-        db.add(PublicOpinionLibraryVersion(
-            version=next_version,
-            event_ids=[event.id for event in events],
-            event_count=len(events),
-            notes="内置舆情案例基线",
-            created_by_id=admin.id,
-        ))
-    db.commit()
-    return created
 
 
 def _parse_platform_rules(text: str, file_path: Path) -> list[dict[str, Any]]:

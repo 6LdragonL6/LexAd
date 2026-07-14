@@ -129,6 +129,70 @@ def test_gateway_retries_an_empty_json_response(monkeypatch):
     assert calls == 2
 
 
+def test_gateway_retries_a_length_truncated_response(monkeypatch):
+    responses = iter([
+        SimpleNamespace(finish_reason="length", message=SimpleNamespace(content='{"ok":')),
+        SimpleNamespace(finish_reason="stop", message=SimpleNamespace(content='{"ok": true}')),
+    ])
+    calls = 0
+
+    class FakeCompletions:
+        def create(self, **_kwargs):
+            nonlocal calls
+            calls += 1
+            return SimpleNamespace(choices=[next(responses)])
+
+    class FakeClient:
+        def __init__(self, **_kwargs):
+            self.chat = SimpleNamespace(completions=FakeCompletions())
+
+    monkeypatch.setattr(deepseek_gateway, "OpenAI", FakeClient)
+    monkeypatch.setattr(deepseek_gateway.time, "sleep", lambda _seconds: None)
+
+    deepseek_gateway.validate_api_key("unit-test-key")
+
+    assert calls == 2
+
+
+def test_public_opinion_business_request_contains_json_contract_and_trigger_evidence(monkeypatch):
+    captured = {}
+
+    class FakeCompletions:
+        def create(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(
+                    finish_reason="stop",
+                    message=SimpleNamespace(content=(
+                        '{"risk_level":"medium","risk_score":48,"risk_topics":["苦难营销"],'
+                        '"affected_groups":[],"propagation_drivers":[],"evidence_quotes":["生活毒打"],'
+                        '"counter_signals":[],"suggestions":["改写"],"explanation":"存在风险",'
+                        '"confidence":80,"matched_case_ids":[]}'
+                    )),
+                )]
+            )
+
+    class FakeClient:
+        def __init__(self, **_kwargs):
+            self.chat = SimpleNamespace(completions=FakeCompletions())
+
+    monkeypatch.setattr(deepseek_gateway, "OpenAI", FakeClient)
+    monkeypatch.setattr(deepseek_gateway, "get_api_key", lambda _db: "unit-test-key")
+
+    result = deepseek_gateway.explain_public_opinion_risk(
+        object(),
+        material_text="生活毒打",
+        deterministic_hits=[],
+        similar_events=[],
+        trigger_word_hits=[{"category": "价值观偏差", "matched_word": "毒打"}],
+    )
+
+    assert result["risk_score"] == 48
+    assert "JSON" in captured["messages"][0]["content"]
+    request_payload = __import__("json").loads(captured["messages"][1]["content"])
+    assert request_payload["trigger_word_hits"][0]["matched_word"] == "毒打"
+
+
 def test_test_endpoint_prefers_candidate_key_without_saving(monkeypatch):
     factory = _session_factory()
     db = factory()

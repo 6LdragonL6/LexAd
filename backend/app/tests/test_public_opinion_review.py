@@ -20,6 +20,7 @@ from app.models.review import Review
 from app.models.user import User, UserRole
 from app.schemas.review import EngineResult, LayerResult
 from app.services import review_service
+from app.services.public_opinion_case_service import sync_case_file
 
 
 def _session_factory():
@@ -86,7 +87,14 @@ def _seed_public_opinion_case(db, user_id: str):
     return event
 
 
-def test_public_opinion_empty_library_does_not_return_low_risk():
+def test_public_opinion_empty_library_does_not_return_low_risk(monkeypatch):
+    import app.engine.public_opinion as public_opinion_engine
+
+    monkeypatch.setattr(
+        public_opinion_engine.model_service,
+        "explain_public_opinion_risk",
+        lambda **_kwargs: (_ for _ in ()).throw(public_opinion_engine.model_service.ModelServiceError("no api key")),
+    )
     factory = _session_factory()
     db = factory()
     try:
@@ -96,10 +104,10 @@ def test_public_opinion_empty_library_does_not_return_low_risk():
             platforms=["抖音"],
             db=db,
         )
-        assert result.status == "unavailable"
-        assert result.result["status"] == "knowledge_base_empty"
-        assert result.result["risk_level"] == "unavailable"
-        assert "待补充" in result.result["message"]
+        assert result.status == "succeeded"
+        assert result.result["status"] == "uncertain"
+        assert result.result["risk_level"] == "uncertain"
+        assert result.result["knowledge_base_available"] is False
     finally:
         db.close()
 
@@ -166,6 +174,140 @@ def test_public_opinion_review_does_not_show_context_only_case(monkeypatch):
         assert result.result["deterministic_hits"] == []
         assert result.result["similar_events"] == []
         assert result.result["risk_level"] == "uncertain"
+    finally:
+        db.close()
+
+
+def test_real_cases_flag_suffering_marketing_and_recall_taoli_when_model_is_down(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    user = _seed_user(db)
+    db.commit()
+    sync_case_file(db, user)
+    db.commit()
+
+    import app.engine.public_opinion as public_opinion_engine
+
+    monkeypatch.setattr(
+        public_opinion_engine.model_service,
+        "explain_public_opinion_risk",
+        lambda **_kwargs: (_ for _ in ()).throw(public_opinion_engine.model_service.ModelServiceError("model down")),
+    )
+    try:
+        result = run_public_opinion_review(
+            material_text="被生活毒打过，才懂这盒月饼的甜。成年人的世界没有容易二字，咬咬牙，把苦咽下去，把甜留给自己。",
+            industry="食品",
+            platforms=["电梯广告"],
+            db=db,
+        )
+        assert result.result["risk_level"] in {"medium", "high", "severe"}
+        assert "价值观争议" in result.result["risk_topics"]
+        assert "苦难营销" in result.result["risk_topics"]
+        assert any("桃李面包" in item["title"] for item in result.result["similar_events"])
+        assert result.result["assessment_source"] == "local"
+    finally:
+        db.close()
+
+
+def test_ai_can_find_new_risk_without_local_cases(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    import app.engine.public_opinion as public_opinion_engine
+
+    monkeypatch.setattr(
+        public_opinion_engine.model_service,
+        "explain_public_opinion_risk",
+        lambda **_kwargs: {
+            "risk_level": "high",
+            "risk_score": 68,
+            "risk_topics": ["焦虑营销"],
+            "affected_groups": ["职场人"],
+            "propagation_drivers": ["情绪共鸣"],
+            "evidence_quotes": ["三十岁还没成功就是失败"],
+            "counter_signals": [],
+            "suggestions": ["删除年龄焦虑表达"],
+            "explanation": "将年龄与失败强绑定。",
+            "confidence": 90,
+            "matched_case_ids": [],
+        },
+    )
+    try:
+        result = run_public_opinion_review(
+            material_text="三十岁还没成功就是失败，现在下单改变命运。",
+            industry="通用",
+            platforms=[],
+            db=db,
+        )
+        assert result.result["risk_level"] == "high"
+        assert result.result["assessment_source"] == "ai"
+        assert result.result["knowledge_base_available"] is False
+        assert "焦虑营销" in result.result["risk_topics"]
+    finally:
+        db.close()
+
+
+def test_single_trigger_in_game_context_does_not_recall_taoli(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    user = _seed_user(db)
+    db.commit()
+    sync_case_file(db, user)
+    db.commit()
+    import app.engine.public_opinion as public_opinion_engine
+
+    monkeypatch.setattr(
+        public_opinion_engine.model_service,
+        "explain_public_opinion_risk",
+        lambda **_kwargs: (_ for _ in ()).throw(public_opinion_engine.model_service.ModelServiceError("model down")),
+    )
+    try:
+        result = run_public_opinion_review(
+            material_text="今晚排位被对面毒打，继续练技术明天再战。",
+            industry="游戏",
+            platforms=[],
+            db=db,
+        )
+        assert result.result["risk_level"] in {"low", "uncertain"}
+        assert not any("桃李面包" in item["title"] for item in result.result["similar_events"])
+    finally:
+        db.close()
+
+
+def test_high_confidence_local_ai_disagreement_requires_manual_review(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    user = _seed_user(db)
+    _seed_public_opinion_case(db, user.id)
+    db.commit()
+    import app.engine.public_opinion as public_opinion_engine
+
+    monkeypatch.setattr(
+        public_opinion_engine.model_service,
+        "explain_public_opinion_risk",
+        lambda **_kwargs: {
+            "risk_level": "low",
+            "risk_score": 10,
+            "risk_topics": [],
+            "affected_groups": [],
+            "propagation_drivers": [],
+            "evidence_quotes": ["不尊重消费者"],
+            "counter_signals": ["模型认为语境温和"],
+            "suggestions": [],
+            "explanation": "模型判断风险较低。",
+            "confidence": 95,
+            "matched_case_ids": [],
+        },
+    )
+    try:
+        result = run_public_opinion_review(
+            material_text="这句文案不尊重消费者",
+            industry="食品",
+            platforms=["抖音"],
+            db=db,
+        )
+        assert result.result["risk_level"] == "high"
+        assert result.result["requires_manual_review"] is True
+        assert result.result["disagreement_reason"]
     finally:
         db.close()
 

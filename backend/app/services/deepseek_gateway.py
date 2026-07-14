@@ -55,12 +55,16 @@ class PublicOpinionCaseOutput(BaseModel):
 
 class PublicOpinionRiskOutput(BaseModel):
     risk_level: str = Field(pattern="^(low|medium|high|severe|uncertain)$")
+    risk_score: int = Field(default=0, ge=0, le=100)
     risk_topics: list[str] = Field(default_factory=list, max_length=30)
     affected_groups: list[str] = Field(default_factory=list, max_length=30)
     propagation_drivers: list[str] = Field(default_factory=list, max_length=30)
+    evidence_quotes: list[str] = Field(default_factory=list, max_length=30)
+    counter_signals: list[str] = Field(default_factory=list, max_length=30)
     suggestions: list[str] = Field(default_factory=list, max_length=30)
-    explanation: str = Field(max_length=4000)
+    explanation: str = Field(default="", max_length=4000)
     confidence: int = Field(default=0, ge=0, le=100)
+    matched_case_ids: list[str] = Field(default_factory=list, max_length=10)
 
 
 class SemanticViolation(BaseModel):
@@ -98,7 +102,11 @@ def structure_public_opinion_case(
         db=db,
         system_prompt=(
             "你是企业品牌舆情案例整理助手。只根据输入事实整理结构化结果，不得编造。"
-            "不确定字段使用空字符串、空数组或 null。"
+            "不确定字段使用空字符串、空数组或 null。必须只返回 JSON 对象，格式示例："
+            '{"industry":[],"platforms":[],"event_process":{},"consequences":{},'
+            '"risk_topics":[],"trigger_patterns":[],"affected_groups":[],'
+            '"propagation_drivers":[],"normalized_tags":{},"severity_level":null,'
+            '"summary":"","confidence":0}'
         ),
         payload={
             "task": "structure_public_opinion_case",
@@ -123,19 +131,33 @@ def explain_public_opinion_risk(
     material_text: str,
     deterministic_hits: list[dict[str, Any]],
     similar_events: list[dict[str, Any]],
+    trigger_word_hits: list[dict[str, Any]],
 ) -> dict[str, Any]:
     result = _request_json(
         db=db,
         system_prompt=(
-            "你是企业品牌舆情风险审查助手。只根据输入物料、确定性命中和相似历史事件解释风险。"
-            "不得虚构历史事件；依据不足时 risk_level 必须为 uncertain。"
+            "你是企业品牌舆情风险审查助手。请独立阅读完整物料，识别价值观偏差、苦难营销、"
+            "焦虑营销、群体冒犯、歧视、低俗擦边、灾难营销、社会伦理和情绪操纵等开放风险。"
+            "舆情风险与是否违法无关，不能因为没有法律违规就判为低风险。"
+            "如果商业文案把消费者经历的痛苦、失败、年龄压力、职场困境或社会焦虑与商品价值、"
+            "口味理解、身份资格或购买行为绑定，形成说教、消费苦难或情绪操纵，通常至少为 medium；"
+            "只有原文存在明确的批判、反讽、公益倡导或非商业语境时，才能用 counter_signals 说明降级。"
+            "本地触发词只是不确定线索，不得仅凭单个词直接判定中高风险。"
+            "相似历史事件只能引用输入中的 event_id，不得虚构事件。evidence_quotes 必须逐字来自物料原文。"
+            "必须只返回 JSON 对象，格式示例："
+            '{"risk_level":"medium","risk_score":45,"risk_topics":["价值观争议"],'
+            '"affected_groups":[],"propagation_drivers":[],"evidence_quotes":["原文片段"],'
+            '"counter_signals":[],"suggestions":["修改建议"],"explanation":"判断理由",'
+            '"confidence":70,"matched_case_ids":["输入中的事件ID"]}'
         ),
         payload={
             "task": "explain_public_opinion_risk",
             "material_text": _normalize_text(material_text, 20000),
             "deterministic_hits": deterministic_hits[:20],
             "similar_events": similar_events[:10],
+            "trigger_word_hits": trigger_word_hits[:30],
             "required_risk_levels": ["low", "medium", "high", "severe", "uncertain"],
+            "risk_score_range": [0, 100],
         },
         output_model=PublicOpinionRiskOutput,
         max_tokens=1536,
@@ -155,7 +177,9 @@ def semantic_review(
         db=db,
         system_prompt=(
             "你是广告合规审查助手。仅依据输入法规和案例识别语义违规。"
-            "每项必须引用输入中存在的依据；无法确认时不要编造。"
+            "每项必须引用输入中存在的依据；无法确认时不要编造。必须只返回 JSON 对象，格式示例："
+            '{"violations":[{"text":"违规原文","reason":"原因","law_ref":"输入中的依据",'
+            '"risk_level":"medium","suggestion":"修改建议"}],"overall_assessment":"整体评估"}'
         ),
         payload={
             "task": "semantic_ad_review",
@@ -204,7 +228,24 @@ def _request_json(
                 max_tokens=max_tokens,
                 extra_body={"thinking": {"type": "disabled"}},
             )
-            content = response.choices[0].message.content
+            choice = response.choices[0]
+            finish_reason = getattr(choice, "finish_reason", None) or "stop"
+            if finish_reason == "length":
+                last_error = DeepSeekGatewayError(
+                    "模型响应被长度限制截断，请重试",
+                    category="truncated_response",
+                    retryable=True,
+                )
+                if attempt < 2:
+                    time.sleep((0.25 * (2**attempt)) + random.uniform(0, 0.1))
+                    continue
+                raise last_error
+            if finish_reason not in {"stop", "tool_calls"}:
+                raise DeepSeekGatewayError(
+                    f"模型未正常完成响应（{finish_reason}）",
+                    category="incomplete_response",
+                )
+            content = choice.message.content
             if not content:
                 last_error = DeepSeekGatewayError(
                     "模型返回空响应，请重试",
@@ -231,7 +272,12 @@ def _request_json(
         except PermissionDeniedError as exc:
             raise DeepSeekGatewayError("当前 API Key 无权使用固定模型（HTTP 403）", category="permission") from exc
         except BadRequestError as exc:
-            raise DeepSeekGatewayError("模型请求格式或固定模型不可用", category="bad_request") from exc
+            logger.warning(
+                "DeepSeek request rejected task=%s status=400 request_id=%s",
+                payload.get("task", "unknown"),
+                getattr(exc, "request_id", None) or "unknown",
+            )
+            raise DeepSeekGatewayError("审查请求不符合模型接口要求（HTTP 400）", category="bad_request") from exc
         except (APITimeoutError, APIConnectionError, RateLimitError) as exc:
             last_error = DeepSeekGatewayError("模型服务暂时不可用", category="transient", retryable=True)
         except APIStatusError as exc:
@@ -244,7 +290,17 @@ def _request_json(
             else:
                 raise DeepSeekGatewayError("模型服务拒绝请求", category="upstream_request") from exc
         except (json.JSONDecodeError, ValidationError, KeyError, IndexError, TypeError) as exc:
-            raise DeepSeekGatewayError("模型响应未通过结构校验", category="invalid_response") from exc
+            last_error = DeepSeekGatewayError(
+                "模型响应未通过结构校验",
+                category="invalid_response",
+                retryable=True,
+            )
+            logger.warning(
+                "DeepSeek response validation failed task=%s attempt=%s error_type=%s",
+                payload.get("task", "unknown"),
+                attempt + 1,
+                type(exc).__name__,
+            )
 
         if last_error and attempt < 2:
             time.sleep((0.25 * (2**attempt)) + random.uniform(0, 0.1))

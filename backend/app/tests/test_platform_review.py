@@ -196,7 +196,8 @@ def test_review_task_snapshots_platform_rule_versions(monkeypatch):
         assert stored.task_status == "completed"
         assert stored.platform_rule_version_ids == ["platform-version-1"]
         assert stored.legal_module_status == ReviewModuleStatus.succeeded
-        assert stored.public_opinion_module_status == ReviewModuleStatus.unavailable
+        assert stored.public_opinion_module_status == ReviewModuleStatus.succeeded
+        assert stored.public_opinion_result["risk_level"] == "uncertain"
         assert stored.ai_result["layer4"]["matched_rules"][0]["rule_id"] == "L4-platform-version-1-price-001"
         assert material.status == MaterialStatus.pending_legal
     finally:

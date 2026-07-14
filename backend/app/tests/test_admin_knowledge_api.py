@@ -1,5 +1,7 @@
 """Admin knowledge center API tests for v0.4.2."""
 
+import json
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,9 +11,10 @@ from app.api.deps import get_current_user
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
-from app.models.knowledge import PublicOpinionEvent
+from app.models.knowledge import PublicOpinionEvent, PublicOpinionEventVersion
 from app.models.user import User, UserRole
 from app.services import admin_knowledge_service
+from app.services.public_opinion_case_service import BUILTIN_CASES_PATH
 
 
 def _session_factory():
@@ -260,6 +263,39 @@ def test_public_opinion_import_preview_and_confirm_creates_drafts():
         assert events["total"] == 1
         assert events["items"][0]["external_id"] == "case-import-001"
         assert events["items"][0]["status"] == "draft"
+    finally:
+        _clear_overrides()
+
+
+def test_public_opinion_import_accepts_real_team_case_schema_and_merges_duplicates():
+    client, factory = _client(UserRole.admin)
+    payload = json.loads(BUILTIN_CASES_PATH.read_text(encoding="utf-8"))
+    try:
+        preview = client.post(
+            "/api/v1/admin/knowledge/public-opinion/import/preview",
+            json={"payload": payload, "file_name": "sentiment_cases.json"},
+        )
+        assert preview.status_code == 201
+        job = preview.json()
+        assert job["status"] == "validated"
+        assert job["total_items"] == 34
+        assert job["valid_items"] == 33
+        assert job["invalid_items"] == 0
+
+        confirmed = client.post(
+            f"/api/v1/admin/knowledge/public-opinion/imports/{job['id']}/confirm",
+            json={},
+        )
+        assert confirmed.status_code == 200
+        assert len(confirmed.json()["created_event_ids"]) == 33
+        db = factory()
+        try:
+            assert db.query(PublicOpinionEvent).count() == 33
+            assert db.query(PublicOpinionEventVersion).count() == 33
+            assert db.query(PublicOpinionEvent).filter_by(external_id="sent-case-018").count() == 1
+            assert db.query(PublicOpinionEvent).filter_by(external_id="sent-case-033").count() == 0
+        finally:
+            db.close()
     finally:
         _clear_overrides()
 

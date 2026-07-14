@@ -26,6 +26,11 @@ from app.schemas.admin_knowledge import (
     PublicOpinionEventUpdate,
 )
 from app.services import model_service
+from app.services.public_opinion_case_service import (
+    active_public_opinion_event_ids,
+    create_structured_version,
+    normalize_public_opinion_payload,
+)
 
 
 def list_public_opinion_events(
@@ -469,7 +474,9 @@ def confirm_public_opinion_import(
                 existing.source_meta = item["source_meta"]
                 existing.updated_by_id = actor.id
                 updated_event_ids.append(existing.id)
-                if data.run_structure:
+                if item.get("structured"):
+                    create_structured_version(db, existing, item, actor)
+                elif data.run_structure:
                     structure_public_opinion_event(db, existing, actor)
                 continue
             if action != "create":
@@ -488,7 +495,9 @@ def confirm_public_opinion_import(
         db.add(event)
         db.flush()
         created_event_ids.append(event.id)
-        if data.run_structure:
+        if item.get("structured"):
+            create_structured_version(db, event, item, actor)
+        elif data.run_structure:
             structure_public_opinion_event(db, event, actor)
 
     job.status = KnowledgeImportJobStatus.completed
@@ -590,18 +599,7 @@ def _next_event_version(db: Session, event_id: str) -> int:
 
 
 def _create_public_opinion_library_version(db: Session, actor: User) -> PublicOpinionLibraryVersion:
-    published_ids = [
-        row[0]
-        for row in (
-            db.query(PublicOpinionEvent.id)
-            .filter(
-                PublicOpinionEvent.status == PublicOpinionEventStatus.published,
-                PublicOpinionEvent.deleted_at.is_(None),
-            )
-            .order_by(PublicOpinionEvent.updated_at.asc())
-            .all()
-        )
-    ]
+    published_ids = active_public_opinion_event_ids(db)
     latest = db.query(func.max(PublicOpinionLibraryVersion.version)).scalar()
     library_version = PublicOpinionLibraryVersion(
         version=int(latest or 0) + 1,
@@ -707,89 +705,13 @@ def _deterministic_public_opinion_structure(event: PublicOpinionEvent) -> dict[s
 
 
 def _validate_public_opinion_import_payload(db: Session, payload: dict[str, Any]) -> dict[str, Any]:
-    schema_errors: list[str] = []
-    item_errors: list[dict[str, Any]] = []
+    validation = normalize_public_opinion_payload(payload)
     duplicate_external_ids: list[str] = []
-    valid_events: list[dict[str, Any]] = []
-
-    if payload.get("schema_version") != "1.0":
-        schema_errors.append("schema_version 必须为 1.0")
-    events = payload.get("events")
-    if not isinstance(events, list):
-        schema_errors.append("events 必须是事件数组")
-        events = []
-
-    seen_external_ids: set[str] = set()
-    for index, event in enumerate(events):
-        errors = _validate_public_opinion_import_event(event)
-        external_id = event.get("external_id") if isinstance(event, dict) else None
-        if external_id:
-            if external_id in seen_external_ids:
-                errors.append("同一文件中 external_id 重复")
-            seen_external_ids.add(external_id)
-            if db.query(PublicOpinionEvent).filter(PublicOpinionEvent.external_id == external_id).first():
-                duplicate_external_ids.append(external_id)
-        if errors:
-            item_errors.append({"index": index, "external_id": external_id, "errors": errors})
-            continue
-        valid_events.append(_normalize_import_event(event))
-
-    return {
-        "total_items": len(events),
-        "valid_items": len(valid_events),
-        "invalid_items": len(item_errors) + len(schema_errors),
-        "schema_errors": schema_errors,
-        "item_errors": item_errors,
-        "duplicate_external_ids": duplicate_external_ids,
-        "valid_events": valid_events,
-    }
-
-
-def _validate_public_opinion_import_event(event: Any) -> list[str]:
-    if not isinstance(event, dict):
-        return ["事件必须是对象"]
-    errors = []
-    if not str(event.get("title") or "").strip():
-        errors.append("缺少标题 title")
-    if not str(event.get("source_text") or "").strip():
-        errors.append("缺少事件材料 source_text")
-    event_process = event.get("event_process")
-    if not isinstance(event_process, dict):
-        errors.append("缺少事件过程 event_process")
-    else:
-        if not str(event_process.get("trigger") or "").strip():
-            errors.append("缺少触发原因 event_process.trigger")
-        if not str(event_process.get("outcome") or "").strip():
-            errors.append("缺少事件结果 event_process.outcome")
-    return errors
-
-
-def _normalize_import_event(event: dict[str, Any]) -> dict[str, Any]:
-    event_process = event.get("event_process") or {}
-    consequences = event.get("consequences") or {}
-    consequence_text = (
-        event_process.get("outcome")
-        or consequences.get("reputation")
-        or consequences.get("business")
-        or consequences.get("regulatory")
-        or ""
-    )
-    return {
-        "external_id": event.get("external_id"),
-        "title": event.get("title", ""),
-        "source_text": event.get("source_text", ""),
-        "consequence_text": consequence_text,
-        "source_meta": {
-            "industry": event.get("industry", []),
-            "platforms": event.get("platforms", []),
-            "occurred_at": event.get("occurred_at"),
-            "sources": event.get("sources", []),
-            "event_process": event_process,
-            "consequences": consequences,
-            "notes": event.get("notes", ""),
-            "raw_import_event": event,
-        },
-    }
+    for item in validation["valid_events"]:
+        external_id = item.get("external_id")
+        if external_id and db.query(PublicOpinionEvent).filter(PublicOpinionEvent.external_id == external_id).first():
+            duplicate_external_ids.append(external_id)
+    return {**validation, "duplicate_external_ids": duplicate_external_ids}
 
 
 def _event_state(event: PublicOpinionEvent) -> dict[str, Any]:
