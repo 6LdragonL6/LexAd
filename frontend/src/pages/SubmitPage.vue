@@ -9,9 +9,11 @@ import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import { brandsApi } from '@/api/brands'
 import { knowledgeApi } from '@/api/knowledge'
 import type { Brand, BrandProfile } from '@/types'
+import { useReturnNavigation } from '@/composables/useReturnNavigation'
 
 const route = useRoute()
 const router = useRouter()
+const { source, returnLabel, returnToSource } = useReturnNavigation()
 const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 const defaultIndustries = ['食品', '医疗', '教育', '汽车', '金融', '美妆', '直播电商']
@@ -340,7 +342,7 @@ async function handleSubmit() {
         priority: form.value.priority,
         deadline: form.value.priority === 'normal' ? undefined : form.value.deadline || undefined,
       })
-      router.push(`/result/${reviewResponse.data.id}`)
+      router.push({ name: 'result', params: { id: reviewResponse.data.id }, query: { from: source.value } })
     } else {
       // New submission
       const fd = new FormData()
@@ -357,7 +359,7 @@ async function handleSubmit() {
 
       const materialResponse = await materialsApi.submit(fd)
       const reviewResponse = await reviewsApi.aiReview(materialResponse.data.id)
-      router.push(`/result/${reviewResponse.data.id}`)
+      router.push({ name: 'result', params: { id: reviewResponse.data.id }, query: { from: source.value } })
     }
   } catch (requestError: any) {
     error.value = requestError.response?.data?.detail || '提交失败'
@@ -373,21 +375,22 @@ async function handleSubmit() {
       <div class="responsive-toolbar mb-6">
         <div>
           <h2 class="page-heading !mb-1">提交广告物料</h2>
-          <p class="text-sm text-gray-500">只需提供物料内容、行业和投放平台即可开始法律与舆情双轴风险审查。</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">只需提供物料内容、行业和投放平台即可开始法规与舆情双轴审查。</p>
         </div>
+        <button type="button" class="btn-outline text-sm shrink-0" @click="returnToSource()">{{ returnLabel }}</button>
       </div>
 
         <div v-if="loadingEdit" class="text-gray-400 py-4 text-center">加载物料中...</div>
-        <div v-else-if="isResubmit" class="bg-orange-50 border border-orange-200 rounded-lg px-4 py-3 mb-4">
-          <p class="text-orange-800 font-medium">将作为第 {{ resubmitVersion + 1 }} 次提交重新进入审查</p>
-          <p class="text-orange-600 text-sm mt-1">修改后重新提交，系统会使用新版本号进行审查。</p>
+        <div v-else-if="isResubmit" class="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-lg px-4 py-3 mb-4">
+          <p class="text-orange-800 dark:text-orange-200 font-medium">将作为第 {{ resubmitVersion + 1 }} 次提交重新进入审查</p>
+          <p class="text-orange-600 dark:text-orange-300 text-sm mt-1">修改后重新提交，系统会使用新版本号进行审查。</p>
         </div>
 
         <form v-if="!loadingEdit" class="space-y-5" @submit.prevent="handleSubmit">
         <section class="card">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <h3 class="font-semibold text-gray-800">1. 物料内容</h3>
+              <h3 class="font-semibold text-gray-800 dark:text-gray-100">1. 物料内容</h3>
               <p class="text-xs text-gray-400 mt-1">可以上传文件，也可以直接粘贴文案。</p>
             </div>
             <span class="text-xs text-gray-400">支持最大 10MB</span>
@@ -395,18 +398,18 @@ async function handleSubmit() {
 
           <div
             class="mt-4 border-2 border-dashed rounded-xl p-6 text-center transition-colors min-w-0"
-            :class="isDragOver ? 'border-sky-500 bg-sky-50' : 'border-gray-300 bg-gray-50'"
+            :class="isDragOver ? 'border-sky-500 bg-sky-50 dark:bg-sky-950/30' : 'border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/60'"
             @dragover.prevent="isDragOver = true"
             @dragleave.prevent="isDragOver = false"
             @drop.prevent="handleDrop"
           >
             <template v-if="!selectedFile">
-              <p class="text-gray-700 font-medium">拖拽文件到这里，或点击选择文件</p>
+              <p class="text-gray-700 dark:text-gray-200 font-medium">拖拽文件到这里，或点击选择文件</p>
               <p class="text-gray-400 text-xs mt-1">JPG / PNG / GIF / BMP / PDF / DOCX / PPTX / XLSX / TXT</p>
               <input type="file" :accept="allowedExtensions" class="mt-4 text-sm" @change="handleFileSelect" />
             </template>
             <template v-else>
-              <p class="text-sm font-medium text-gray-800">{{ selectedFile.name }}</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-gray-100">{{ selectedFile.name }}</p>
               <p class="text-xs text-gray-400 mt-1">{{ fileSizeDisplay(selectedFile.size) }} · {{ form.material_type }}</p>
               <div class="flex items-center justify-center gap-3 mt-4">
                 <button type="button" class="btn-outline text-sm" :disabled="previewing" @click="handlePreview">
@@ -458,7 +461,7 @@ async function handleSubmit() {
         </section>
 
         <section class="card">
-          <h3 class="font-semibold text-gray-800">2. 行业（可多选）</h3>
+          <h3 class="font-semibold text-gray-800 dark:text-gray-100">2. 行业（可多选）</h3>
           <p class="text-xs text-gray-400 mt-1">可选择多个相关行业。系统会按多行业匹配法律规则、行业规则和舆情案例。</p>
           <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             <button
@@ -476,7 +479,7 @@ async function handleSubmit() {
         </section>
 
         <section class="card">
-          <h3 class="font-semibold text-gray-800">3. 投放平台</h3>
+          <h3 class="font-semibold text-gray-800 dark:text-gray-100">3. 投放平台</h3>
           <p class="text-xs text-gray-400 mt-1">系统会按平台规则版本执行 L4 审核，并固定本次审核快照。</p>
           <div class="mt-4 flex flex-wrap gap-2">
             <button
@@ -491,14 +494,14 @@ async function handleSubmit() {
           </div>
         </section>
 
-        <section class="rounded-xl border border-gray-200 bg-white">
+        <section class="rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <button
             type="button"
             class="w-full px-5 py-4 flex items-center justify-between text-left"
             @click="showMoreSettings = !showMoreSettings"
           >
             <span>
-              <span class="block font-semibold text-gray-800">更多设置</span>
+              <span class="block font-semibold text-gray-800 dark:text-gray-100">更多设置</span>
               <span class="block text-xs text-gray-400 mt-1">物料名称、类型、优先级和截止时间。可不填写。</span>
             </span>
             <span class="text-sm text-sky-600">{{ showMoreSettings ? '收起' : '展开' }}</span>
@@ -532,7 +535,7 @@ async function handleSubmit() {
         <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
 
         <button type="submit" :disabled="!canSubmit" class="btn-primary w-full min-h-12">
-          {{ submitting ? (isResubmit ? '重新提交并审查中…' : '提交并审查中…') : (isResubmit ? '修改并重新审查' : '开始风险审查') }}
+          {{ submitting ? (isResubmit ? '重新提交并审查中…' : '提交并审查中…') : (isResubmit ? '修改并重新审查' : '开始自动审查') }}
         </button>
       </form>
     </div>

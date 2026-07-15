@@ -109,6 +109,6 @@ watch(() => props.modelValue, (val) => {
         </template>
       </div>
     </div>
-    <p class="text-xs text-gray-400 mt-1">选择品牌后可查看历史合规记录。品牌信息不参与本次 AI 风险评分。</p>
+    <p class="text-xs text-gray-400 mt-1">选择品牌后可查看历史合规记录。品牌信息不参与本次自动审查评分。</p>
   </div>
 </template>

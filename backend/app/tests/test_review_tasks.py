@@ -56,11 +56,11 @@ def test_background_review_completes_and_prevents_duplicate(monkeypatch):
 
     def fake_pipeline(text, industry, platforms, _db):
         seen["legal_text"] = text
-        return EngineResult(risk_score=95, summary="测试完成")
+        return EngineResult(compliance_score=95, summary="测试完成")
 
     def fake_public_opinion(**kwargs):
         seen["public_opinion_text"] = kwargs["material_text"]
-        return PublicOpinionReview(status="completed", result={"risk_level": "low"})
+        return PublicOpinionReview(status="completed", result={"risk_level": "low"}, safety_score=90)
 
     monkeypatch.setattr(review_service, "run_review_pipeline", fake_pipeline)
     monkeypatch.setattr(review_service, "run_public_opinion_review", fake_public_opinion)
@@ -86,7 +86,8 @@ def test_background_review_completes_and_prevents_duplicate(monkeypatch):
     stored = db.query(Review).filter(Review.id == review_id).one()
     material = db.query(Material).filter(Material.id == "material-1").one()
     assert stored.task_status == "completed"
-    assert stored.ai_risk_score == 95
+    assert stored.legal_compliance_score == 95
+    assert stored.public_opinion_safety_score == 90
     assert seen == {"legal_text": "普通广告文案", "public_opinion_text": "普通广告文案"}
     assert material.status == MaterialStatus.pending_legal
     legal = User(
@@ -138,7 +139,9 @@ def test_legal_failure_is_not_completed_when_public_opinion_succeeds(monkeypatch
     monkeypatch.setattr(
         review_service,
         "run_public_opinion_review",
-        lambda **_kwargs: PublicOpinionReview(status="completed", result={"risk_level": "low"}),
+        lambda **_kwargs: PublicOpinionReview(
+            status="completed", result={"risk_level": "low"}, safety_score=90
+        ),
     )
 
     db = factory()

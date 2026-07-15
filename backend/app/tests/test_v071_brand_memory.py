@@ -52,7 +52,8 @@ def _add_decided_review(
         material_id=material.id,
         version=material.current_version,
         task_status="completed",
-        ai_risk_score=88 if decision == LegalDecision.approved else 42,
+        legal_compliance_score=88 if decision == LegalDecision.approved else 42,
+        public_opinion_safety_score=90 if decision == LegalDecision.approved else 45,
         ai_result={
             "layer1": {
                 "matched_rules": [

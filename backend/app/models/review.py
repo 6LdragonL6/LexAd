@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import String, Text, Integer, DateTime, Enum as SAEnum, ForeignKey, JSON
+from sqlalchemy import CheckConstraint, String, Text, Integer, DateTime, Enum as SAEnum, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.models.knowledge import ReviewModuleStatus
@@ -15,12 +15,24 @@ class LegalDecision(str, enum.Enum):
 
 class Review(Base):
     __tablename__ = "reviews"
+    __table_args__ = (
+        CheckConstraint(
+            "legal_compliance_score >= 0 AND legal_compliance_score <= 100",
+            name="ck_reviews_legal_compliance_score_range",
+        ),
+        CheckConstraint(
+            "public_opinion_safety_score IS NULL OR "
+            "(public_opinion_safety_score >= 0 AND public_opinion_safety_score <= 100)",
+            name="ck_reviews_public_opinion_safety_score_range",
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     material_id: Mapped[str] = mapped_column(String(36), ForeignKey("materials.id"), nullable=False, index=True)
     submission_snapshot_id: Mapped[str | None] = mapped_column(String(36), ForeignKey("material_submission_snapshots.id"), nullable=True, index=True)
     version: Mapped[int] = mapped_column(Integer, default=1)
-    ai_risk_score: Mapped[int] = mapped_column(Integer, default=0)
+    legal_compliance_score: Mapped[int] = mapped_column(Integer, default=0)
+    public_opinion_safety_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     ai_result: Mapped[dict] = mapped_column(JSON, default=dict)
     task_status: Mapped[str] = mapped_column(String(20), default="processing", index=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)

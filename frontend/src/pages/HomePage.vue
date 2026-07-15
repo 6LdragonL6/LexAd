@@ -55,7 +55,7 @@ async function openMaterial(material: Material) {
   navigationError.value = ''
   try {
     const response = await reviewsApi.byMaterial(material.id)
-    router.push(`/result/${response.data.id}`)
+    router.push({ name: 'result', params: { id: response.data.id }, query: { from: 'workbench' } })
   } catch (error: any) {
     navigationError.value = error.response?.status === 404
       ? '该物料还没有审查记录'
@@ -172,7 +172,7 @@ async function handleAdminDelete(material: Material) {
             </div>
             <div>
               <p class="text-[15px] font-semibold text-gray-800 dark:text-gray-200">查看审查结果</p>
-              <p class="text-xs text-gray-400">查看风险评分和合规详情</p>
+              <p class="text-xs text-gray-400">查看法规与舆情评分及审查详情</p>
             </div>
           </div>
         </router-link>
@@ -210,7 +210,7 @@ async function handleAdminDelete(material: Material) {
                 法务已退回
                 <template v-if="getQueueInfo(m.id)?.return_reasons">：{{ getQueueInfo(m.id)?.return_reasons }}</template>
               </span>
-              <router-link :to="`/submit?edit=${m.id}`" class="text-sky-600 hover:underline shrink-0">修改并重新提交</router-link>
+              <router-link :to="{ name: 'submit', query: { edit: m.id, from: 'workbench' } }" class="text-sky-600 hover:underline shrink-0">修改并重新提交</router-link>
               <button @click.stop="handleArchive(m)" :disabled="archiving[m.id]" class="text-gray-500 hover:text-gray-700 hover:underline shrink-0">归档</button>
             </div>
           </div>

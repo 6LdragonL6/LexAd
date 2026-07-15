@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { materialsApi } from '@/api/materials'
 import { reviewsApi } from '@/api/reviews'
 import { useUserStore } from '@/stores/user'
 import ReviewLayout from '@/layouts/ReviewLayout.vue'
+import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
 import EngineReport from '@/components/review/EngineReport.vue'
 import PublicOpinionReport from '@/components/review/PublicOpinionReport.vue'
+import RiskApprovalDialog from '@/components/review/RiskApprovalDialog.vue'
 import { brandsApi } from '@/api/brands'
+import { useReturnNavigation } from '@/composables/useReturnNavigation'
+import { confirmedRiskIssues, highestRiskLabel, requiresRiskApproval } from '@/utils/review'
 import type { Material, Review, MatchedRule, BrandProfile, MaterialVersion } from '@/types'
 
 const route = useRoute()
-const router = useRouter()
 const store = useUserStore()
+const { returnLabel, returnToSource } = useReturnNavigation()
 const material = ref<Material | null>(null)
 const review = ref<Review | null>(null)
 const loading = ref(true)
@@ -33,6 +37,8 @@ const decisionError = ref('')
 const brandProfile = ref<BrandProfile | null>(null)
 const brandProfileLoading = ref(false)
 const publicOpinionManuallyReviewed = ref(false)
+const showRiskApproval = ref(false)
+const pageError = ref('')
 
 const publicOpinionPending = computed(() => ['pending', 'running'].includes(review.value?.public_opinion_module_status || ''))
 const publicOpinionNeedsManualReview = computed(() => {
@@ -47,15 +53,10 @@ const publicOpinionNeedsManualReview = computed(() => {
 const canSubmitDecision = computed(() => !publicOpinionPending.value && (!publicOpinionNeedsManualReview.value || publicOpinionManuallyReviewed.value))
 
 function getAllIssues(): MatchedRule[] {
-  if (!review.value) return []
-  const r = review.value.ai_result
-  return [
-    ...(r.layer1?.matched_rules ?? []),
-    ...(r.layer2?.matched_rules ?? []),
-    ...(r.layer3?.matched_rules ?? []),
-    ...(r.layer4?.matched_rules ?? []),
-  ]
+  return confirmedRiskIssues(review.value?.ai_result)
 }
+
+const highestConfirmedRisk = computed(() => highestRiskLabel(getAllIssues()))
 
 function riskLabel(issue: MatchedRule) {
   if (issue.risk_level_label) return issue.risk_level_label
@@ -67,18 +68,25 @@ function riskTypeLabel(value?: string) {
 }
 
 onMounted(async () => {
-  const reviewId = route.params.id as string
-  const rRes = await reviewsApi.get(reviewId)
-  review.value = rRes.data
-  const mRes = await materialsApi.get(rRes.data.material_id)
-  material.value = mRes.data
   try {
-    const vRes = await materialsApi.versions(rRes.data.material_id)
+    const reviewId = route.params.id as string
+    const rRes = await reviewsApi.get(reviewId)
+    review.value = rRes.data
+    const mRes = await materialsApi.get(rRes.data.material_id)
+    material.value = mRes.data
+  } catch (error: any) {
+    pageError.value = error.response?.data?.detail || '无法加载审核详情'
+  } finally {
+    loading.value = false
+  }
+
+  if (!review.value || !material.value) return
+  try {
+    const vRes = await materialsApi.versions(review.value.material_id)
     versions.value = vRes.data.versions || []
   } catch {
     versions.value = []
   }
-  loading.value = false
 
   if (material.value?.brand_id) {
     brandProfileLoading.value = true
@@ -94,6 +102,15 @@ onMounted(async () => {
 })
 
 async function handleDecision() {
+  if (requiresRiskApproval(decision.value, review.value?.ai_result)) {
+    decisionError.value = ''
+    showRiskApproval.value = true
+    return
+  }
+  await submitDecision()
+}
+
+async function submitDecision() {
   if (!review.value) return
   submitting.value = true
   decisionError.value = ''
@@ -104,12 +121,19 @@ async function handleDecision() {
       return_reasons: returnReasons.value,
       public_opinion_manually_reviewed: publicOpinionManuallyReviewed.value,
     })
-    router.push('/legal')
+    showRiskApproval.value = false
+    await returnToSource(true)
   } catch (error: any) {
     decisionError.value = error.response?.data?.detail || '法务决定提交失败'
   } finally {
     submitting.value = false
   }
+}
+
+function cancelRiskApproval() {
+  if (submitting.value) return
+  showRiskApproval.value = false
+  decisionError.value = ''
 }
 
 async function openHistory(version: MaterialVersion) {
@@ -132,17 +156,17 @@ async function openHistory(version: MaterialVersion) {
     <template #left>
       <div class="text-center mb-6">
         <div class="text-5xl font-bold" :class="{
-          'text-green-500': review.ai_risk_score >= 80,
-          'text-yellow-500': review.ai_risk_score >= 50 && review.ai_risk_score < 80,
-          'text-red-500': review.ai_risk_score < 50,
-        }">{{ review.ai_risk_score }}</div>
-        <p class="text-sm text-gray-400 mt-1">风险评分 / 100</p>
+          'text-green-500': review.legal_compliance_score >= 80,
+          'text-yellow-500': review.legal_compliance_score >= 60 && review.legal_compliance_score < 80,
+          'text-red-500': review.legal_compliance_score < 60,
+        }">{{ review.legal_compliance_score }}</div>
+        <p class="text-sm text-gray-400 mt-1">法规合规分 / 100 · 越高越合规</p>
         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-3">
           <div class="h-2 rounded-full transition-all" :class="{
-            'bg-green-500': review.ai_risk_score >= 80,
-            'bg-yellow-500': review.ai_risk_score >= 50 && review.ai_risk_score < 80,
-            'bg-red-500': review.ai_risk_score < 50,
-          }" :style="{ width: review.ai_risk_score + '%' }" />
+            'bg-green-500': review.legal_compliance_score >= 80,
+            'bg-yellow-500': review.legal_compliance_score >= 60 && review.legal_compliance_score < 80,
+            'bg-red-500': review.legal_compliance_score < 60,
+          }" :style="{ width: review.legal_compliance_score + '%' }" />
         </div>
       </div>
       <div class="space-y-2">
@@ -167,6 +191,10 @@ async function openHistory(version: MaterialVersion) {
     </template>
 
     <template #center>
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">法务审核详情</h2>
+        <button type="button" class="btn-outline text-sm" @click="returnToSource()">{{ returnLabel }}</button>
+      </div>
       <div class="card mb-4">
         <div class="flex items-center justify-between mb-2">
           <h3 class="font-semibold text-gray-800 dark:text-gray-200">{{ review.submission?.name || '历史快照缺失' }}</h3>
@@ -202,7 +230,7 @@ async function openHistory(version: MaterialVersion) {
               <span class="font-medium text-gray-700 dark:text-gray-200">{{ v.version_label }}</span>
               <span v-if="v.version === review?.version" class="text-xs text-sky-600 dark:text-sky-400">当前</span>
             </div>
-            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ v.legal_review_label }} · 风险分 {{ v.risk_score }}</p>
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">{{ v.legal_review_label }} · 合规分 {{ v.legal_compliance_score }}</p>
           </button>
         </div>
       </div>
@@ -255,7 +283,14 @@ async function openHistory(version: MaterialVersion) {
       </div>
     </template>
   </ReviewLayout>
-  <div v-else class="flex items-center justify-center min-h-[60vh] text-gray-500">加载中...</div>
+  <DefaultLayout v-else>
+    <div class="page-container max-w-lg min-h-[60vh] flex items-center justify-center">
+      <div class="card w-full text-center">
+        <p :class="pageError ? 'text-red-500' : 'text-gray-500'">{{ pageError || '加载中...' }}</p>
+        <button type="button" class="btn-outline w-full mt-5" @click="returnToSource()">{{ returnLabel }}</button>
+      </div>
+    </div>
+  </DefaultLayout>
   <ReviewHistoryDrawer
     :open="Boolean(selectedVersion)"
     :version="selectedVersion"
@@ -263,5 +298,14 @@ async function openHistory(version: MaterialVersion) {
     :loading="historyLoading"
     :error="historyError"
     @close="selectedVersion = null"
+  />
+  <RiskApprovalDialog
+    :open="showRiskApproval"
+    :issue-count="getAllIssues().length"
+    :highest-risk="highestConfirmedRisk"
+    :submitting="submitting"
+    :error="decisionError"
+    @cancel="cancelRiskApproval"
+    @confirm="submitDecision"
   />
 </template>

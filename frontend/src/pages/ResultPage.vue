@@ -8,11 +8,15 @@ import StatusBadge from '@/components/common/StatusBadge.vue'
 import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import ReviewHistoryDrawer from '@/components/review/ReviewHistoryDrawer.vue'
 import PublicOpinionReport from '@/components/review/PublicOpinionReport.vue'
+import ReviewProgress from '@/components/review/ReviewProgress.vue'
 import { brandsApi } from '@/api/brands'
+import { useReturnNavigation } from '@/composables/useReturnNavigation'
+import { confirmedRiskIssues, scoreRiskLabel, scoreVariant } from '@/utils/review'
 import type { Material, MatchedRule, Review, BrandProfile, MaterialVersion, VerificationItem } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
+const { returnLabel, returnToSource } = useReturnNavigation()
 
 const material = ref<Material | null>(null)
 const review = ref<Review | null>(null)
@@ -39,48 +43,8 @@ const longRunning = computed(() => isProcessing.value && Date.now() - pollStarte
 const legalStatus = computed(() => review.value?.ai_result?.requires_manual_review
   ? 'manual_review'
   : review.value?.legal_module_status || (review.value?.task_status === 'completed' ? 'succeeded' : 'pending'))
-const publicOpinionStatus = computed(() => review.value?.public_opinion_result?.status === 'manual_review'
-  ? 'manual_review'
-  : review.value?.public_opinion_module_status || 'pending')
-const publicOpinion = computed(() => review.value?.public_opinion_result || {})
-
-const legalIssues = computed<MatchedRule[]>(() => {
-  const result = review.value?.ai_result
-  if (!result) return []
-  return [
-    ...(result.layer1?.matched_rules ?? []),
-    ...(result.layer2?.matched_rules ?? []),
-    ...(result.layer3?.matched_rules ?? []),
-    ...(result.layer4?.matched_rules ?? []),
-  ]
-})
+const legalIssues = computed<MatchedRule[]>(() => confirmedRiskIssues(review.value?.ai_result))
 const verificationItems = computed<VerificationItem[]>(() => review.value?.ai_result?.verification_items ?? [])
-
-const publicOpinionRiskLabel = computed(() => {
-  const level = publicOpinion.value.risk_level || 'unavailable'
-  const map: Record<string, string> = {
-    low: '低',
-    medium: '中',
-    high: '高',
-    severe: '严重',
-    uncertain: '不确定',
-    unavailable: '资料库待补充',
-  }
-  return map[level] || '不确定'
-})
-
-const publicOpinionRiskClass = computed(() => {
-  const level = publicOpinion.value.risk_level
-  if (level === 'severe' || level === 'high') return 'text-red-600 bg-red-50 border-red-200'
-  if (level === 'medium') return 'text-orange-600 bg-orange-50 border-orange-200'
-  if (level === 'low') return 'text-green-700 bg-green-50 border-green-200'
-  return 'text-gray-600 bg-gray-50 border-gray-200'
-})
-
-const publicOpinionSourceLabel = computed(() => {
-  const map: Record<string, string> = { local: '资料候选', ai: 'AI 语义裁决', hybrid: 'AI 与资料库' }
-  return map[publicOpinion.value.assessment_source] || '证据不足'
-})
 
 function statusText(status?: string | null) {
   const map: Record<string, string> = {
@@ -237,7 +201,7 @@ async function retryReview() {
     const response = await reviewsApi.aiReview(material.value.id)
     review.value = response.data
     pollStartedAt.value = Date.now()
-    await router.replace(`/result/${response.data.id}`)
+    await router.replace({ name: 'result', params: { id: response.data.id }, query: route.query })
     schedulePoll(500)
   } catch (error: any) {
     pageError.value = error.response?.data?.detail || '重新发起审查失败'
@@ -259,14 +223,14 @@ onUnmounted(() => {
         <div class="min-w-0">
           <div class="flex items-center gap-3 mb-2 flex-wrap">
             <h2 class="page-heading !mb-0">审查结果</h2>
-            <StatusBadge :variant="review.ai_risk_score >= 80 ? 'success' : review.ai_risk_score >= 60 ? 'warning' : 'danger'">
-              {{ review.ai_risk_score >= 80 ? '低风险' : review.ai_risk_score >= 60 ? '中风险' : '高风险' }}
+            <StatusBadge :variant="scoreVariant(review.legal_compliance_score)">
+              {{ scoreRiskLabel(review.legal_compliance_score) }}
             </StatusBadge>
             <span class="text-sm text-gray-400">{{ formatDate(review.completed_at) }}</span>
           </div>
           <p class="text-sm text-gray-500 break-words">{{ review.submission?.name || '历史快照缺失' }} · {{ review.submission?.industry || '-' }} · {{ review.submission?.platforms.join('、') || '未指定平台' }}</p>
         </div>
-        <button class="btn-outline text-sm shrink-0" @click="router.push('/')">返回工作台</button>
+        <button class="btn-outline text-sm shrink-0" @click="returnToSource()">{{ returnLabel }}</button>
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6">
@@ -275,9 +239,9 @@ onUnmounted(() => {
             <div class="card border-l-4 border-l-sky-500">
               <div class="flex items-start justify-between gap-3">
                 <div>
-                  <p class="text-sm text-gray-400">法律合规风险</p>
-                  <p class="text-4xl font-bold text-gray-800 dark:text-gray-200 mt-2">{{ review.ai_risk_score }}</p>
-                  <p class="text-xs text-gray-400 mt-1">/100，分数越高风险越低</p>
+                  <p class="text-sm text-gray-400">法规合规分</p>
+                  <p class="text-4xl font-bold text-gray-800 dark:text-gray-200 mt-2">{{ review.legal_compliance_score }}</p>
+                  <p class="text-xs text-gray-400 mt-1">/100，分数越高越合规</p>
                 </div>
                 <StatusBadge :variant="legalStatus === 'succeeded' ? 'success' : legalStatus === 'failed' ? 'danger' : 'warning'">
                   {{ statusText(legalStatus) }}
@@ -418,7 +382,8 @@ onUnmounted(() => {
           </p>
           <p v-if="networkWarning" class="text-xs text-orange-600 mt-3">{{ networkWarning }}</p>
           <p v-if="pageError" class="text-xs text-red-500 mt-3">{{ pageError }}</p>
-          <button class="btn-outline w-full mt-6" @click="router.push('/')">返回工作台</button>
+          <ReviewProgress v-if="review?.stages?.length" :stages="review.stages" class="mt-5" />
+          <button class="btn-outline w-full mt-6" @click="returnToSource()">{{ returnLabel }}</button>
         </template>
 
         <template v-else-if="isFailed">
@@ -426,7 +391,7 @@ onUnmounted(() => {
           <h2 class="text-lg font-semibold text-gray-800">审查未能完成</h2>
           <p class="text-sm text-gray-500 mt-2">{{ review?.error_message || '审查服务暂时不可用，请稍后重试。' }}</p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-            <button class="btn-outline" @click="router.push('/')">返回工作台</button>
+            <button class="btn-outline" @click="returnToSource()">{{ returnLabel }}</button>
             <button class="btn-primary" :disabled="retrying" @click="retryReview">
               {{ retrying ? '正在重新提交…' : '重新审查' }}
             </button>
@@ -436,7 +401,7 @@ onUnmounted(() => {
         <template v-else>
           <h2 class="text-lg font-semibold text-gray-800">无法显示审查结果</h2>
           <p class="text-sm text-red-500 mt-2">{{ pageError || '审查状态异常' }}</p>
-          <button class="btn-outline w-full mt-6" @click="router.push('/')">返回工作台</button>
+          <button class="btn-outline w-full mt-6" @click="returnToSource()">{{ returnLabel }}</button>
         </template>
       </div>
     </div>

@@ -44,7 +44,8 @@ class TopViolation(BaseModel):
 class RecentReview(BaseModel):
     id: str
     version: int
-    ai_risk_score: int
+    legal_compliance_score: int
+    public_opinion_safety_score: int | None = None
     legal_decision: str | None
     created_at: str
 

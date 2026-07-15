@@ -67,7 +67,8 @@ def create_ai_review(db: Session, material_id: str) -> tuple[Review, bool]:
         material_id=material_id,
         submission_snapshot_id=snapshot.id,
         version=material.current_version,
-        ai_risk_score=0,
+        legal_compliance_score=0,
+        public_opinion_safety_score=None,
         ai_result={},
         task_status="processing",
         legal_module_status=ReviewModuleStatus.pending,
@@ -188,7 +189,7 @@ def _execute_legal_branch(db: Session, review_id: str, material_id: str) -> bool
         ).first()
         if not review or review.task_status != "processing" or material is None:
             return False
-        review.ai_risk_score = engine_result.risk_score
+        review.legal_compliance_score = engine_result.compliance_score
         review.ai_result = engine_result.model_dump()
         review.platform_rule_version_ids = engine_result.platform_rule_version_ids
         review.legal_module_status = ReviewModuleStatus.succeeded
@@ -236,6 +237,7 @@ def _execute_public_opinion_branch(db: Session, review_id: str, material_id: str
         if not review or review.task_status != "processing" or material is None:
             return False
         review.public_opinion_result = public_opinion.result
+        review.public_opinion_safety_score = public_opinion.safety_score
         review.public_opinion_library_version_id = public_opinion.library_version_id
         if public_opinion.status == "unavailable":
             review.public_opinion_module_status = ReviewModuleStatus.unavailable
@@ -374,7 +376,8 @@ def get_legal_queue(db: Session, user: User) -> list[dict]:
                 "material_name": material.display_name or material.name,
                 "submitter_name": submitter.display_name if submitter else "",
                 "industry": snapshot.industry if snapshot else material.industry,
-                "ai_risk_score": review.ai_risk_score,
+                "legal_compliance_score": review.legal_compliance_score,
+                "public_opinion_safety_score": review.public_opinion_safety_score,
                 "priority": snapshot.priority if snapshot else material.priority.value,
                 "status": material.status.value,
                 "created_at": review.created_at,

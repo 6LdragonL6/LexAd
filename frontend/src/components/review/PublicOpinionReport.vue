@@ -35,6 +35,13 @@ const badgeVariant = computed<'success' | 'warning' | 'danger' | 'info' | 'gray'
 })
 
 const sourceLabel = computed(() => ({ local: '资料候选', ai: 'AI 语义裁决', hybrid: 'AI 与资料库' } as Record<string, string>)[result.value.assessment_source] || '证据不足')
+const safetyScore = computed(() => props.review.public_opinion_safety_score)
+const scoreClass = computed(() => {
+  if (safetyScore.value === null || safetyScore.value === undefined) return 'text-gray-500 dark:text-gray-400'
+  if (safetyScore.value >= 80) return 'text-emerald-600 dark:text-emerald-400'
+  if (safetyScore.value >= 60) return 'text-amber-600 dark:text-amber-400'
+  return 'text-red-600 dark:text-red-400'
+})
 const verificationLabel = (value?: string) => ({ verified: '已核验', needs_review: '待复核', unverified: '未核验' } as Record<string, string>)[value || ''] || value || '待复核'
 </script>
 
@@ -42,9 +49,9 @@ const verificationLabel = (value?: string) => ({ verified: '已核验', needs_re
   <section v-if="mode === 'summary'" class="card border-l-4 border-l-purple-500">
     <div class="flex items-start justify-between gap-3">
       <div>
-        <p class="text-sm text-gray-500 dark:text-gray-400">舆情风险</p>
-        <p class="mt-2 text-3xl font-bold" :class="riskLabel === '低' ? 'text-emerald-600 dark:text-emerald-400' : riskLabel === '高' || riskLabel === '严重' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'">{{ riskLabel }}</p>
-        <p class="mt-1 text-xs text-gray-400">{{ result.risk_score ?? '-' }}/100 · {{ sourceLabel }} · 不计入法律合规分</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">舆情安全分</p>
+        <p class="mt-2 text-3xl font-bold" :class="scoreClass">{{ safetyScore ?? '待复核' }}</p>
+        <p class="mt-1 text-xs text-gray-400">{{ safetyScore === null ? '无可靠自动分' : '/100，越高越安全' }} · {{ riskLabel }}风险 · {{ sourceLabel }}</p>
       </div>
       <StatusBadge :variant="badgeVariant">{{ statusLabel }}</StatusBadge>
     </div>
@@ -58,7 +65,7 @@ const verificationLabel = (value?: string) => ({ verified: '已核验', needs_re
       <div>
         <p class="text-xs font-semibold uppercase tracking-wider text-purple-500 dark:text-purple-300">Public opinion</p>
         <h3 class="mt-1 font-semibold text-gray-800 dark:text-gray-100">舆情审核</h3>
-        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">独立风险轴，不计入法律合规分</p>
+        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">舆情安全分：{{ safetyScore ?? '待人工复核' }}{{ safetyScore !== null ? '/100，越高越安全' : '' }} · 独立维度</p>
       </div>
       <div class="flex items-center gap-2">
         <span class="rounded-full border px-2.5 py-1 text-sm font-semibold" :class="riskClass">{{ riskLabel }}风险</span>

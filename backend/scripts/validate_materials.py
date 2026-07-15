@@ -114,7 +114,7 @@ def submit_material(token: str, case: dict[str, Any]) -> str:
 
 
 def trigger_review(token: str, material_id: str) -> dict[str, Any]:
-    """触发 AI 审查，返回审查结果 dict（含 ai_risk_score, ai_result）。"""
+    """触发 AI 审查，返回审查结果 dict（含 legal_compliance_score, ai_result）。"""
     resp = requests.post(
         f"{API_BASE}/reviews/ai-review",
         json={"material_id": material_id},
@@ -140,7 +140,7 @@ def get_review_result(token: str, material_id: str) -> dict[str, Any]:
 
 def classify_compliance(ai_result: dict) -> str:
     """从 AI 审查结果判定合规状态：违规 / 合规。"""
-    ai_risk_score = ai_result.get("ai_risk_score", 100)
+    compliance_score = ai_result.get("legal_compliance_score", 100)
     engine_result = ai_result.get("ai_result", {})
 
     # 任一层有命中违规项即判违规
@@ -149,16 +149,16 @@ def classify_compliance(ai_result: dict) -> str:
         if layer.get("matched_rules"):
             return "违规"
 
-    if ai_risk_score < 80:
+    if compliance_score < 80:
         return "违规"
     return "合规"
 
 
-def classify_risk(ai_risk_score: int) -> str:
-    """risk_score 映射到风险等级：高 / 中 / 低。"""
-    if ai_risk_score < 50:
+def classify_risk(compliance_score: int) -> str:
+    """法规合规分映射到风险等级：高 / 中 / 低。"""
+    if compliance_score < 50:
         return "高"
-    elif ai_risk_score < 80:
+    elif compliance_score < 80:
         return "中"
     else:
         return "低"
@@ -168,7 +168,7 @@ def compare_result(case: dict[str, Any], review: dict[str, Any]) -> dict[str, An
     """对比期望 vs 实际，返回带偏差标记的结果记录。"""
     expected_compliance = case["expected_compliance"]
     expected_risk = case["expected_risk"]
-    actual_score = review.get("ai_risk_score", -1)
+    actual_score = review.get("legal_compliance_score", -1)
     actual_compliance = classify_compliance(review)
     actual_risk = classify_risk(actual_score)
 

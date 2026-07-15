@@ -208,6 +208,7 @@ def test_real_cases_flag_suffering_marketing_and_recall_taoli_when_model_is_down
         assert result.result["similar_events"] == []
         assert result.result["assessment_source"] == "ai"
         assert result.result["requires_manual_review"] is True
+        assert result.safety_score is None
     finally:
         db.close()
 
@@ -222,7 +223,7 @@ def test_ai_can_find_new_risk_without_local_cases(monkeypatch):
         "explain_public_opinion_risk",
         lambda **_kwargs: {
             "risk_level": "high",
-            "risk_score": 68,
+            "safety_score": 92,
             "risk_topics": ["焦虑营销"],
             "affected_groups": ["职场人"],
             "propagation_drivers": ["情绪共鸣"],
@@ -245,6 +246,8 @@ def test_ai_can_find_new_risk_without_local_cases(monkeypatch):
         assert result.result["assessment_source"] == "ai"
         assert result.result["knowledge_base_available"] is False
         assert "焦虑营销" in result.result["risk_topics"]
+        assert result.safety_score == 59
+        assert "safety_score" not in result.result
     finally:
         db.close()
 
@@ -289,7 +292,7 @@ def test_high_confidence_local_ai_disagreement_requires_manual_review(monkeypatc
         "explain_public_opinion_risk",
         lambda **_kwargs: {
             "risk_level": "low",
-            "risk_score": 10,
+            "safety_score": 90,
             "risk_topics": [],
             "affected_groups": [],
             "propagation_drivers": [],
@@ -311,6 +314,7 @@ def test_high_confidence_local_ai_disagreement_requires_manual_review(monkeypatc
         assert result.result["risk_level"] == "low"
         assert result.result["requires_manual_review"] is False
         assert result.result["disagreement_reason"] is None
+        assert result.safety_score == 90
     finally:
         db.close()
 
@@ -336,7 +340,7 @@ def test_review_task_aggregates_legal_and_public_opinion(monkeypatch):
 
     def fake_pipeline(_text, _industry, _platforms, _db):
         return EngineResult(
-            risk_score=92,
+            compliance_score=92,
             layer1=LayerResult(layer="硬规则"),
             layer2=LayerResult(layer="语义"),
             layer3=LayerResult(layer="证明材料"),
@@ -378,6 +382,8 @@ def test_review_task_aggregates_legal_and_public_opinion(monkeypatch):
         assert stored.public_opinion_library_version_id == "po-lib-1"
         assert stored.public_opinion_result["risk_level"] == "high"
         assert stored.public_opinion_result["model_available"] is True
+        assert stored.public_opinion_safety_score == 40
+        assert "safety_score" not in stored.public_opinion_result
         assert material.status == MaterialStatus.pending_legal
     finally:
         db.close()
@@ -403,7 +409,7 @@ def test_review_task_keeps_legal_result_when_public_opinion_fails(monkeypatch):
     monkeypatch.setattr(
         review_service,
         "run_review_pipeline",
-        lambda *_args: EngineResult(risk_score=90, summary="法律完成"),
+        lambda *_args: EngineResult(compliance_score=90, summary="法律完成"),
     )
 
     def fail_public_opinion(**_kwargs):

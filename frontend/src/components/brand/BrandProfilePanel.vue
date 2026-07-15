@@ -39,7 +39,7 @@ defineProps<{ profile: BrandProfile | null; loading: boolean }>()
         <div class="space-y-2">
           <div v-for="r in profile.recent_reviews" :key="r.id"
                class="flex justify-between items-center text-sm py-1.5 border-b border-gray-50 dark:border-gray-700 last:border-0">
-            <span class="text-gray-700 dark:text-gray-300">第{{ r.version }}次 · 风险{{ r.ai_risk_score }}</span>
+            <span class="text-gray-700 dark:text-gray-300">第{{ r.version }}次 · 法规 {{ r.legal_compliance_score }} · 舆情 {{ r.public_opinion_safety_score ?? '待复核' }}</span>
             <StatusBadge v-if="r.legal_decision" :variant="r.legal_decision === 'approved' ? 'success' : r.legal_decision === 'returned' ? 'danger' : 'warning'">
               {{ r.legal_decision === 'approved' ? '通过' : r.legal_decision === 'returned' ? '退回' : '条件通过' }}
             </StatusBadge>

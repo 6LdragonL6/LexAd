@@ -79,7 +79,7 @@ export interface LayerResult {
 }
 
 export interface EngineResult {
-  risk_score: number
+  compliance_score: number
   layer1: LayerResult
   layer2: LayerResult
   layer3: LayerResult
@@ -97,11 +97,20 @@ export interface EngineResult {
   review_status?: 'completed' | 'confirmed_risk' | 'needs_verification' | 'manual_review' | 'no_clear_risk'
 }
 
+export type ReviewStageStatus = 'pending' | 'running' | 'completed' | 'manual_review' | 'failed'
+
+export interface ReviewStage {
+  key: 'accepted' | 'legal_review' | 'public_opinion_review' | 'finalizing'
+  label: string
+  status: ReviewStageStatus
+}
+
 export interface Review {
   id: string
   material_id: string
   version: number
-  ai_risk_score: number
+  legal_compliance_score: number
+  public_opinion_safety_score: number | null
   ai_result: EngineResult
   task_status: 'processing' | 'completed' | 'failed'
   error_message: string | null
@@ -127,6 +136,7 @@ export interface Review {
   reviewed_at: string | null
   created_at: string
   submission?: SubmissionSnapshot | null
+  stages: ReviewStage[]
 }
 
 export interface ReviewQueueItem {
@@ -135,7 +145,8 @@ export interface ReviewQueueItem {
   material_name: string
   submitter_name: string
   industry: string
-  ai_risk_score: number
+  legal_compliance_score: number
+  public_opinion_safety_score: number | null
   priority: string
   status: string
   created_at: string
@@ -160,7 +171,8 @@ export interface SubmissionSnapshot {
 export interface MaterialVersion {
   review_id: string
   version: number
-  risk_score: number
+  legal_compliance_score: number
+  public_opinion_safety_score: number | null
   task_status: string
   legal_decision: 'approved' | 'returned' | 'conditional' | null
   return_reasons: string | null
@@ -225,7 +237,14 @@ export interface BrandProfile {
   pass_rate: number | null
   avg_versions: number | null
   top_violations: { rule_id: string; rule_text: string; count: number }[]
-  recent_reviews: { id: string; version: number; ai_risk_score: number; legal_decision: string | null; created_at: string }[]
+  recent_reviews: {
+    id: string
+    version: number
+    legal_compliance_score: number
+    public_opinion_safety_score: number | null
+    legal_decision: string | null
+    created_at: string
+  }[]
   approved_materials: { id: string; name: string; raw_text_preview: string }[]
   industry_suggestions: BrandIndustrySuggestion[]
   memory_impression: BrandMemoryImpression

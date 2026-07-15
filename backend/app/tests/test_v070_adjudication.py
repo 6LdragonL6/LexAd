@@ -100,7 +100,7 @@ def test_pipeline_never_exposes_hard_rule_candidates_or_deducts_for_verification
 
     assert result.layer1.matched_rules == []
     assert result.hit_count == 0
-    assert result.risk_score == 100
+    assert result.compliance_score == 100
     assert result.review_status == "needs_verification"
     assert result.verification_items[0].evidence_quote.startswith("累计售出100万盒")
 
@@ -171,7 +171,7 @@ def test_public_opinion_exposes_only_ai_validated_evidence(monkeypatch):
         "explain_public_opinion_risk",
         lambda **_kwargs: {
             "risk_level": "low",
-            "risk_score": 10,
+            "safety_score": 90,
             "risk_topics": [],
             "affected_groups": [],
             "propagation_drivers": [],

@@ -164,7 +164,7 @@ def test_public_opinion_business_request_contains_json_contract_and_trigger_evid
                 choices=[SimpleNamespace(
                     finish_reason="stop",
                     message=SimpleNamespace(content=(
-                        '{"risk_level":"medium","risk_score":48,"risk_topics":["苦难营销"],'
+                        '{"risk_level":"medium","safety_score":65,"risk_topics":["苦难营销"],'
                         '"affected_groups":[],"propagation_drivers":[],"evidence_quotes":["生活毒打"],'
                         '"counter_signals":[],"suggestions":["改写"],"explanation":"存在风险",'
                         '"confidence":80,"matched_case_ids":[]}'
@@ -187,7 +187,7 @@ def test_public_opinion_business_request_contains_json_contract_and_trigger_evid
         trigger_word_hits=[{"category": "价值观偏差", "matched_word": "毒打"}],
     )
 
-    assert result["risk_score"] == 48
+    assert result["safety_score"] == 65
     assert "JSON" in captured["messages"][0]["content"]
     request_payload = __import__("json").loads(captured["messages"][1]["content"])
     assert request_payload["trigger_word_hits"][0]["matched_word"] == "毒打"
@@ -203,7 +203,7 @@ def test_public_opinion_business_request_accepts_legacy_call_without_trigger_evi
                 choices=[SimpleNamespace(
                     finish_reason="stop",
                     message=SimpleNamespace(content=(
-                        '{"risk_level":"low","risk_score":10,"risk_topics":[],'
+                        '{"risk_level":"low","safety_score":90,"risk_topics":[],'
                         '"affected_groups":[],"propagation_drivers":[],"evidence_quotes":[],'
                         '"counter_signals":[],"suggestions":[],"explanation":"低风险",'
                         '"confidence":70,"matched_case_ids":[]}'

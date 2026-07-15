@@ -19,7 +19,14 @@ from app.services import model_service
 
 
 _TRIGGER_WORDS_PATH = Path(__file__).resolve().parents[3] / "data" / "trigger_words.json"
-_RISK_SCORES = {"low": 15, "medium": 45, "high": 70, "severe": 90, "uncertain": 0}
+_SAFETY_SCORES = {"low": 85, "medium": 70, "high": 40, "severe": 10, "uncertain": 0}
+_SAFETY_RANGES = {
+    "low": (80, 100),
+    "medium": (60, 79),
+    "high": (20, 59),
+    "severe": (0, 19),
+    "uncertain": (0, 0),
+}
 _GENERIC_BIGRAMS = {"这个", "一种", "可以", "可能", "我们", "你们", "他们", "没有", "不是", "广告", "文案"}
 
 
@@ -27,6 +34,7 @@ _GENERIC_BIGRAMS = {"这个", "一种", "可以", "可能", "我们", "你们", 
 class PublicOpinionReview:
     status: str
     result: dict[str, Any]
+    safety_score: int | None = None
     library_version_id: str | None = None
     error: str | None = None
 
@@ -69,6 +77,7 @@ def run_public_opinion_review(
         selected_events = []
         model_available = False
 
+    safety_score = result.pop("safety_score", None)
     result.update({
         "status": "succeeded" if model_available and not result.get("requires_manual_review") else "manual_review",
         "model_available": model_available,
@@ -82,6 +91,7 @@ def run_public_opinion_review(
         status="succeeded",
         library_version_id=library_version.id if library_version else None,
         result=result,
+        safety_score=safety_score,
     )
 
 
@@ -261,9 +271,14 @@ def _validated_ai_assessment(
     self_confidence = max(0, min(int(model_result.get("confidence") or 0), 100)) / 100
     structure_factor = 1.0 if str(model_result.get("explanation") or "").strip() else 0.6
     effective_confidence = self_confidence * quote_factor * case_factor * structure_factor
-    risk_score = int(model_result.get("risk_score") or _RISK_SCORES.get(risk_level, 0))
+    raw_safety_score = model_result.get("safety_score")
+    safety_score = int(
+        raw_safety_score if raw_safety_score is not None else _SAFETY_SCORES.get(risk_level, 0)
+    )
+    minimum, maximum = _SAFETY_RANGES.get(risk_level, (0, 100))
+    safety_score = max(minimum, min(safety_score, maximum))
     return {
-        "risk_score": max(0, min(risk_score, 100)),
+        "safety_score": max(0, min(safety_score, 100)),
         "risk_level": risk_level,
         "confidence": round(effective_confidence, 3),
         "self_reported_confidence": int(model_result.get("confidence") or 0),
@@ -282,11 +297,11 @@ def _validated_ai_assessment(
 def _ai_only_result(ai: dict[str, Any]) -> dict[str, Any]:
     confidence = float(ai.get("confidence") or 0)
     risk_level = str(ai.get("risk_level") or "uncertain")
-    if risk_level not in _RISK_SCORES or confidence <= 0:
+    if risk_level not in _SAFETY_SCORES or confidence <= 0:
         return _manual_review_result("AI 输出缺少可验证的完整原文证据，需人工复核", ai)
     requires_manual_review = confidence < 0.35 or risk_level == "uncertain"
     return {
-        "risk_score": int(ai.get("risk_score") or 0),
+        "safety_score": None if requires_manual_review else int(ai.get("safety_score") or 0),
         "risk_level": risk_level,
         "confidence": round(confidence * 100),
         "assessment_source": "ai",
@@ -304,7 +319,7 @@ def _ai_only_result(ai: dict[str, Any]) -> dict[str, Any]:
 
 def _manual_review_result(reason: str, ai: dict[str, Any] | None = None) -> dict[str, Any]:
     return {
-        "risk_score": 0,
+        "safety_score": None,
         "risk_level": "uncertain",
         "confidence": 0,
         "assessment_source": "ai",

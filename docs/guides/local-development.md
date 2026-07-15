@@ -1,4 +1,4 @@
-# LexAd v0.7.1 本地开发指南
+# LexAd v0.7.2 本地开发指南
 
 本文提供可直接执行的安装、启动、验证和排错步骤。默认使用本地 SQLite，不需要连接云数据库。
 
@@ -183,10 +183,11 @@ cd backend
 python -m pytest app/tests -q
 ```
 
-前端生产构建：
+前端单元测试与生产构建：
 
 ```bash
 cd frontend
+npm test
 npm run build
 ```
 
@@ -197,6 +198,8 @@ cd backend
 alembic current
 alembic heads
 ```
+
+v0.7.2 会重命名法规评分列、增加舆情安全分列并回填历史数据。升级目标数据库前必须备份；应用代码回退时必须同时执行对应 Alembic 降级，不能只回退前后端文件。
 
 ## 10. 常见问题
 

@@ -292,7 +292,8 @@ def get_brand_profile(db: Session, brand_id: str, *, include_suggestions: bool =
         RecentReview(
             id=r.id,
             version=r.version,
-            ai_risk_score=r.ai_risk_score,
+            legal_compliance_score=r.legal_compliance_score,
+            public_opinion_safety_score=r.public_opinion_safety_score,
             legal_decision=r.legal_decision.value if r.legal_decision else None,
             created_at=(r.created_at.isoformat() if r.created_at else ""),
         )

@@ -55,7 +55,7 @@ class PublicOpinionCaseOutput(BaseModel):
 
 class PublicOpinionRiskOutput(BaseModel):
     risk_level: str = Field(pattern="^(low|medium|high|severe|uncertain)$")
-    risk_score: int = Field(default=0, ge=0, le=100)
+    safety_score: int | None = Field(default=None, ge=0, le=100)
     risk_topics: list[str] = Field(default_factory=list, max_length=30)
     affected_groups: list[str] = Field(default_factory=list, max_length=30)
     propagation_drivers: list[str] = Field(default_factory=list, max_length=30)
@@ -160,7 +160,8 @@ def explain_public_opinion_risk(
             "相似历史事件只能引用输入中的 event_id，不得虚构事件。evidence_quotes 必须逐字来自物料原文，"
             "应为语义完整片段，不得输出数字切片、关键词列表、内部匹配分或思维过程。"
             "必须只返回 JSON 对象，格式示例："
-            '{"risk_level":"medium","risk_score":45,"risk_topics":["价值观争议"],'
+            'safety_score 表示舆情安全程度，0 到 100，越高越安全。必须与 risk_level 方向一致。'
+            '{"risk_level":"medium","safety_score":70,"risk_topics":["价值观争议"],'
             '"affected_groups":[],"propagation_drivers":[],"evidence_quotes":["原文片段"],'
             '"counter_signals":[],"suggestions":["修改建议"],"explanation":"判断理由",'
             '"confidence":70,"matched_case_ids":["输入中的事件ID"]}'
@@ -172,7 +173,8 @@ def explain_public_opinion_risk(
             "similar_events": similar_events[:10],
             "trigger_word_hits": (trigger_word_hits or [])[:30],
             "required_risk_levels": ["low", "medium", "high", "severe", "uncertain"],
-            "risk_score_range": [0, 100],
+            "safety_score_range": [0, 100],
+            "score_direction": "higher_is_safer",
         },
         output_model=PublicOpinionRiskOutput,
         max_tokens=1536,

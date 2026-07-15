@@ -50,7 +50,7 @@ class LayerResult(BaseModel):
 
 
 class EngineResult(BaseModel):
-    risk_score: int = 100
+    compliance_score: int = Field(default=100, ge=0, le=100)
     layer1: LayerResult = Field(default_factory=lambda: LayerResult(layer="硬规则匹配"))
     layer2: LayerResult = Field(default_factory=lambda: LayerResult(layer="语义推理"))
     layer3: LayerResult = Field(default_factory=lambda: LayerResult(layer="证明材料检查"))
@@ -71,11 +71,18 @@ class EngineResult(BaseModel):
 class AIReviewRequest(BaseModel):
     material_id: str
 
+
+class ReviewStageOut(BaseModel):
+    key: str
+    label: str
+    status: str = Field(pattern="^(pending|running|completed|manual_review|failed)$")
+
 class ReviewOut(BaseModel):
     id: str
     material_id: str
     version: int
-    ai_risk_score: int
+    legal_compliance_score: int = Field(ge=0, le=100)
+    public_opinion_safety_score: int | None = Field(default=None, ge=0, le=100)
     ai_result: dict
     task_status: str
     error_message: str | None
@@ -101,6 +108,20 @@ class ReviewOut(BaseModel):
     reviewed_at: datetime | None
     created_at: datetime
     submission: SubmissionSnapshotOut | None = None
+    stages: list[ReviewStageOut] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def populate_stages(self):
+        from app.schemas.review_progress import build_review_stages
+
+        self.stages = [ReviewStageOut(**stage) for stage in build_review_stages(
+            task_status=self.task_status,
+            legal_module_status=self.legal_module_status,
+            public_opinion_module_status=self.public_opinion_module_status,
+            ai_result=self.ai_result,
+            public_opinion_result=self.public_opinion_result,
+        )]
+        return self
 
     model_config = {"from_attributes": True}
 
@@ -122,7 +143,8 @@ class ReviewQueueItem(BaseModel):
     material_name: str
     submitter_name: str
     industry: str
-    ai_risk_score: int
+    legal_compliance_score: int = Field(ge=0, le=100)
+    public_opinion_safety_score: int | None = Field(default=None, ge=0, le=100)
     priority: str
     status: str
     created_at: datetime

@@ -32,7 +32,7 @@ const summaryClass = computed(() => ({
         <svg class="mt-0.5 shrink-0" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" stroke-width="2"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <div>
           <p class="text-xs font-semibold text-gray-500 dark:text-gray-400">品牌现有记忆印象</p>
-          <p class="mt-1 text-[11px] text-gray-400">历史参考 · 不参与本次 AI 风险评分</p>
+          <p class="mt-1 text-[11px] text-gray-400">历史参考 · 不参与本次自动审查评分</p>
         </div>
       </div>
       <StatusBadge v-if="profile && memory" :variant="statusVariant">{{ memory.headline }}</StatusBadge>

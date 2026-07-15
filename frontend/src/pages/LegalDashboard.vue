@@ -8,6 +8,7 @@ import { useUserStore } from '@/stores/user'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import type { ReviewQueueItem } from '@/types'
+import type { RouteLocationRaw } from 'vue-router'
 
 const store = useUserStore()
 const router = useRouter()
@@ -30,10 +31,6 @@ async function loadQueue() {
   }
 }
 
-function priorityColor(p: string) {
-  return p === 'extreme' ? 'text-red-600 bg-red-50' : p === 'urgent' ? 'text-orange-600 bg-orange-50' : 'text-gray-600 bg-gray-100'
-}
-
 function statusLabel(status: string) {
   const map: Record<string, string> = {
     pending_legal: '待审核',
@@ -47,15 +44,6 @@ function statusLabel(status: string) {
   return map[status] || status
 }
 
-function statusClass(status: string) {
-  if (status === 'approved') return 'bg-green-100 text-green-700'
-  if (status === 'conditional_approved') return 'bg-blue-100 text-blue-700'
-  if (status === 'pending_legal' || status === 'ai_reviewing') return 'bg-yellow-100 text-yellow-700'
-  if (status === 'returned') return 'bg-red-100 text-red-700'
-  if (status === 'archived') return 'bg-gray-100 text-gray-500'
-  return 'bg-gray-100 text-gray-600'
-}
-
 function statusVariant(status: string): 'success' | 'warning' | 'danger' | 'info' | 'gray' {
   if (status === 'approved' || status === 'conditional_approved') return 'success'
   if (status === 'pending_legal' || status === 'ai_reviewing') return 'warning'
@@ -63,12 +51,23 @@ function statusVariant(status: string): 'success' | 'warning' | 'danger' | 'info
   return 'gray'
 }
 
-function goResubmit(item: ReviewQueueItem) {
-  router.push({ path: '/submit', query: { edit: item.material_id } })
+function scoreClass(score: number | null) {
+  if (score === null) return 'text-gray-400'
+  if (score >= 80) return 'text-green-500'
+  if (score >= 60) return 'text-yellow-500'
+  return 'text-red-500'
 }
 
-function detailLink(item: ReviewQueueItem): string {
-  return store.isMarketing ? `/result/${item.id}` : `/legal/${item.id}`
+function goResubmit(item: ReviewQueueItem) {
+  router.push({ path: '/submit', query: { edit: item.material_id, from: 'legal-dashboard' } })
+}
+
+function detailLink(item: ReviewQueueItem): RouteLocationRaw {
+  return {
+    name: store.isMarketing ? 'result' : 'legal-detail',
+    params: { id: item.id },
+    query: { from: 'legal-dashboard' },
+  }
 }
 
 async function handleArchive(item: ReviewQueueItem) {
@@ -153,7 +152,7 @@ async function handleAdminDelete(item: ReviewQueueItem) {
           <span>物料名称</span>
           <span>提交人</span>
           <span>行业</span>
-          <span>风险分</span>
+          <span>法规 / 舆情</span>
           <span>优先级</span>
           <span>等待时间</span>
           <span>状态</span>
@@ -167,7 +166,11 @@ async function handleAdminDelete(item: ReviewQueueItem) {
               <span class="text-sky-600 truncate">{{ item.material_name }}</span>
               <span class="text-gray-600 dark:text-gray-300">{{ item.submitter_name }}</span>
               <span class="text-gray-500">{{ item.industry }}</span>
-              <span class="font-bold" :class="{ 'text-red-500': item.ai_risk_score < 60, 'text-yellow-500': item.ai_risk_score >= 60 && item.ai_risk_score < 80, 'text-green-500': item.ai_risk_score >= 80 }">{{ item.ai_risk_score }}</span>
+              <span class="font-bold" title="两项分数均为越高越好">
+                <span :class="scoreClass(item.legal_compliance_score)">{{ item.legal_compliance_score }}</span>
+                <span class="text-gray-400"> / </span>
+                <span :class="scoreClass(item.public_opinion_safety_score)">{{ item.public_opinion_safety_score ?? '待复核' }}</span>
+              </span>
               <span><StatusBadge :variant="item.priority === 'extreme' ? 'danger' : item.priority === 'urgent' ? 'warning' : 'gray'">{{ item.priority === 'extreme' ? '极速' : item.priority === 'urgent' ? '加急' : '普通' }}</StatusBadge></span>
               <span class="text-gray-400">{{ item.waiting_hours ?? 0 }}h</span>
               <span><StatusBadge :variant="statusVariant(item.status)">{{ statusLabel(item.status) }}</StatusBadge></span>
@@ -204,7 +207,8 @@ async function handleAdminDelete(item: ReviewQueueItem) {
               <div class="flex gap-3 text-xs text-gray-500">
                 <span>{{ item.submitter_name }}</span>
                 <span>{{ item.industry }}</span>
-                <span>风险: {{ item.ai_risk_score }}</span>
+                <span :class="scoreClass(item.legal_compliance_score)">法规: {{ item.legal_compliance_score }}</span>
+                <span :class="scoreClass(item.public_opinion_safety_score)">舆情: {{ item.public_opinion_safety_score ?? '待复核' }}</span>
                 <span>{{ item.waiting_hours ?? 0 }}h</span>
               </div>
             </router-link>

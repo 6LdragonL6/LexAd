@@ -53,7 +53,7 @@ def run_review_pipeline(
 
     confirmed = _dedupe_findings([*l2_result.matched_rules, *l4_result.matched_rules])
     total_deduction = sum(_DEDUCTION_BY_LEVEL.get(item.risk_level, 15) for item in confirmed)
-    risk_score = max(0, 100 - min(total_deduction, 100))
+    compliance_score = max(0, 100 - min(total_deduction, 100))
     requires_manual_review = l2_result.requires_manual_review or l4_result.requires_manual_review
 
     if requires_manual_review:
@@ -70,7 +70,7 @@ def run_review_pipeline(
         recommendation = "未发现明确风险，仍建议按实际投放场景复核"
 
     summary_lines = [
-        f"法律合规评分 {risk_score}/100",
+        f"法律合规评分 {compliance_score}/100",
         f"已确认 {len(confirmed)} 项风险，{len(verification_items)} 项资料待核验",
         recommendation,
     ]
@@ -79,7 +79,7 @@ def run_review_pipeline(
         suggestions.append("请补充并核验相关数据来源、统计口径、资质或证明材料")
 
     return EngineResult(
-        risk_score=risk_score,
+        compliance_score=compliance_score,
         layer1=l1_result,
         layer2=l2_result,
         layer3=l3_result,
