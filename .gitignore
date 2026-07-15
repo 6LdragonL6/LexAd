@@ -34,4 +34,5 @@ chroma_data/
 
 # Local development launcher state
 scripts/.dev-pids.json
+scripts/.dev-backend-exit.json
 .tmp-tests/

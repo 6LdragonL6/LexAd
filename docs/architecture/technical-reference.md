@@ -104,7 +104,7 @@ LexAd/
 - `materials`：当前工作副本、稳定展示名、行业、平台、优先级、品牌和状态；
 - `material_submission_snapshots`：每次提交时的不可变输入快照；
 - `reviews`：AI 结果、分模块状态、资料版本标识和法务决定；
-- `brands` / `brand_industries`：品牌档案、正式多行业与物料关联；
+- `brands` / `brand_industries`：品牌档案、正式多行业与物料关联；品牌档案响应会从现有审核确定性生成 `memory_impression`，不持久化新表；
 - `brand_industry_suggestions`：物料产生、由管理员接受或忽略的品牌行业候选；
 - `public_opinion_events` / `public_opinion_event_versions`：舆情事件及结构化版本；
 - `public_opinion_library_versions`：已发布事件集合的版本快照；

@@ -55,6 +55,14 @@ start-dev.bat
 4. 启动后端 `8000` 端口和前端 `5173` 端口；
 5. 记录本次启动的进程，供安全停止使用。
 
+为提高 Windows 启动稳定性，一键启动默认关闭 Uvicorn 后端热重载，前端 Vite 热更新不受影响。开发后端并需要自动重载时可显式运行：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\start-dev.ps1 -DatabaseMode local -BackendReload
+```
+
+脚本最多等待服务健康状态 60 秒。后端命令提前退出时会显示退出码并提示查看后端窗口；进程未退出但健康检查超时时，会显示最后一次连接错误，避免只报告笼统的 healthy 失败。
+
 访问地址：
 
 - Web 界面：<http://localhost:5173>
@@ -124,6 +132,8 @@ Windows 可显式启动：
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\start-dev.ps1 -DatabaseMode local
 ```
+
+该命令默认使用稳定模式。只有明确需要后端热重载时才增加 `-BackendReload`。
 
 ### Neon PostgreSQL
 

@@ -1,6 +1,7 @@
 param(
     [ValidateSet("local", "neon")]
-    [string]$DatabaseMode = "local"
+    [string]$DatabaseMode = "local",
+    [switch]$BackendReload
 )
 
 $ErrorActionPreference = "Stop"
@@ -11,6 +12,7 @@ $RootDir = Split-Path -Parent $ScriptDir
 $BackendDir = Join-Path $RootDir "backend"
 $FrontendDir = Join-Path $RootDir "frontend"
 $PidFile = Join-Path $ScriptDir ".dev-pids.json"
+$BackendExitFile = Join-Path $ScriptDir ".dev-backend-exit.json"
 $ExpectedServices = @{
     backend = 8000
     frontend = 5173
@@ -473,11 +475,34 @@ if (-not (Test-Path -LiteralPath (Join-Path $FrontendDir "node_modules") -PathTy
     Write-Host "Warning: frontend\node_modules was not found. If Vite fails, run npm install in frontend first."
 }
 
-$backendCommand = "`$env:DATABASE_MODE = $(Quote-PowerShellString $DatabaseMode); & $(Quote-PowerShellString $pythonCommand) -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+$startupId = [guid]::NewGuid().ToString()
+if (Test-Path -LiteralPath $BackendExitFile) {
+    Remove-Item -LiteralPath $BackendExitFile -Force
+}
+$reloadArgument = if ($BackendReload) { " --reload" } else { "" }
+$backendCommand = @"
+`$env:DATABASE_MODE = $(Quote-PowerShellString $DatabaseMode)
+`$exitCode = 1
+try {
+    & $(Quote-PowerShellString $pythonCommand) -m uvicorn app.main:app --host 0.0.0.0 --port 8000$reloadArgument
+    if (`$null -ne `$LASTEXITCODE) { `$exitCode = `$LASTEXITCODE }
+}
+catch {
+    Write-Error `$_
+}
+finally {
+    [pscustomobject]@{
+        startupId = $(Quote-PowerShellString $startupId)
+        exitCode = `$exitCode
+        exitedAt = (Get-Date).ToString('o')
+    } | ConvertTo-Json | Set-Content -LiteralPath $(Quote-PowerShellString $BackendExitFile) -Encoding utf8
+}
+"@
 $frontendCommand = "& $(Quote-PowerShellString $npmCommand) run dev -- --host 0.0.0.0 --port 5173 --strictPort"
 
 Write-Host "Starting LexAd backend and frontend..."
 Write-Host ("Database mode: {0}" -f $DatabaseMode)
+Write-Host ("Backend reload: {0}" -f $(if ($BackendReload) { "enabled" } else { "disabled (stable mode)" }))
 $startedAt = (Get-Date).ToString("o")
 $records = @()
 
@@ -501,13 +526,29 @@ $records += [pscustomobject]@{
 }
 Write-PidRecords -Records $records
 
-# Wait for both services to become healthy, for at most 30 seconds.
-$timeout = (Get-Date).AddSeconds(30)
+# Wait for both services to become healthy, for at most 60 seconds.
+$timeout = (Get-Date).AddSeconds(60)
 $backendOk = $false
 $frontendOk = $false
+$backendExit = $null
+$backendHealthError = "No response received yet."
+$frontendHealthError = "No response received yet."
 
 while ((Get-Date) -lt $timeout) {
     Start-Sleep -Milliseconds 1500
+
+    if (Test-Path -LiteralPath $BackendExitFile) {
+        try {
+            $candidateExit = Get-Content -LiteralPath $BackendExitFile -Raw -Encoding utf8 | ConvertFrom-Json
+            if ([string]$candidateExit.startupId -eq $startupId) {
+                $backendExit = $candidateExit
+                break
+            }
+        }
+        catch {
+            # The backend may still be finishing the status file; retry on the next poll.
+        }
+    }
 
     $backendProcess.Refresh()
     $frontendProcess.Refresh()
@@ -517,32 +558,46 @@ while ((Get-Date) -lt $timeout) {
 
     if (-not $backendOk) {
         try {
-            $b = Invoke-WebRequest -Uri "http://localhost:8000/health" -TimeoutSec 2 -UseBasicParsing
+            $b = Invoke-WebRequest -Uri "http://127.0.0.1:8000/health" -TimeoutSec 2 -UseBasicParsing
             if ($b.StatusCode -eq 200 -and ($b.Content | ConvertFrom-Json).status -eq "ok") {
                 $backendOk = $true
                 Write-Host "  Backend health check: OK"
             }
-        } catch {}
+        }
+        catch {
+            $backendHealthError = $_.Exception.Message
+        }
     }
 
     if (-not $frontendOk) {
         try {
-            $f = Invoke-WebRequest -Uri "http://localhost:5173" -TimeoutSec 2 -UseBasicParsing
+            $f = Invoke-WebRequest -Uri "http://127.0.0.1:5173" -TimeoutSec 2 -UseBasicParsing
             if ($f.StatusCode -eq 200) {
                 $frontendOk = $true
                 Write-Host "  Frontend health check: OK"
             }
-        } catch {}
+        }
+        catch {
+            $frontendHealthError = $_.Exception.Message
+        }
     }
 
     if ($backendOk -and $frontendOk) { break }
 }
 
 if (-not $backendOk) {
-    Write-Host "  Backend health check: FAILED (port 8000 not responding)"
+    if ($null -ne $backendExit) {
+        Write-Host ("  Backend health check: FAILED (backend command exited with code {0})" -f $backendExit.exitCode)
+        Write-Host "  Review the LexAd Backend window for the original error."
+    }
+    else {
+        Write-Host "  Backend health check: FAILED after 60 seconds"
+        Write-Host ("  Last backend health error: {0}" -f $backendHealthError)
+    }
 }
 if (-not $frontendOk) {
-    Write-Host "  Frontend health check: FAILED (port 5173 not responding)"
+    Write-Host "  Frontend health check: FAILED after 60 seconds"
+    Write-Host ("  Last frontend health error: {0}" -f $frontendHealthError)
 }
 
 if (-not ($backendOk -and $frontendOk)) {

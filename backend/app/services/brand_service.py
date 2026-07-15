@@ -24,6 +24,9 @@ from app.schemas.brand import (
     RecentReview,
     ApprovedMaterial,
     BrandIndustrySuggestionOut,
+    BrandMemoryImpression,
+    BrandMemoryItem,
+    BrandRecentDecisions,
 )
 
 
@@ -157,6 +160,84 @@ def _raw_text_preview(text: str, max_len: int = 100) -> str:
     return clean[:max_len] + "…"
 
 
+def _rank_memory_items(counter: Counter, limit: int = 5) -> list[BrandMemoryItem]:
+    ranked = sorted(counter.items(), key=lambda item: (-item[1], item[0]))[:limit]
+    return [BrandMemoryItem(text=text, count=count) for text, count in ranked]
+
+
+def _build_brand_memory(
+    *,
+    brand: Brand,
+    reviews: list[Review],
+    decided: list[Review],
+    pass_rate: float | None,
+    avg_versions: float | None,
+    frequent_risks: list[TopViolation],
+) -> BrandMemoryImpression:
+    sorted_decided = sorted(
+        decided,
+        key=lambda review: review.reviewed_at or review.completed_at or review.created_at,
+        reverse=True,
+    )[:5]
+    recent_decisions = BrandRecentDecisions(
+        approved=sum(review.legal_decision == LegalDecision.approved for review in sorted_decided),
+        conditional=sum(review.legal_decision == LegalDecision.conditional for review in sorted_decided),
+        returned=sum(review.legal_decision == LegalDecision.returned for review in sorted_decided),
+    )
+
+    if len(decided) < 3:
+        status = "collecting"
+        headline = "样本积累中"
+        summary = f"已积累 {len(reviews)} 次完成审核、{len(decided)} 次法务决定，暂不足以形成稳定品牌评价。"
+    elif (pass_rate or 0) >= 80 and recent_decisions.returned <= 1:
+        status = "stable"
+        headline = "整体较稳定"
+        summary = "历史审核整体通过表现较稳定，近期退回较少，仍应按本次文案和投放场景独立复核。"
+    elif (pass_rate or 0) < 50 or recent_decisions.returned >= 3:
+        status = "attention"
+        headline = "需要重点关注"
+        summary = "历史审核中退回或未直接通过的比例较高，建议优先检查高频风险和常见修改要求。"
+    else:
+        status = "mixed"
+        headline = "表现存在波动"
+        summary = "历史审核表现存在波动，近期结论并不完全一致，需要结合当前物料逐项判断。"
+
+    if avg_versions is None:
+        revision_tendency = "暂无修改轮次参考"
+    elif avg_versions <= 1.5:
+        revision_tendency = "修改轮次较少"
+    elif avg_versions <= 2.5:
+        revision_tendency = "通常需要一轮以上调整"
+    else:
+        revision_tendency = "经常需要多轮修改"
+
+    suggestion_counter: Counter = Counter()
+    for review in reviews:
+        raw_suggestions = (review.ai_result or {}).get("suggestions", [])
+        if not isinstance(raw_suggestions, list):
+            continue
+        unique_suggestions: set[str] = set()
+        for suggestion in raw_suggestions:
+            normalized = re.sub(r"\s+", " ", str(suggestion)).strip()
+            if normalized:
+                unique_suggestions.add(normalized)
+        suggestion_counter.update(unique_suggestions)
+
+    return BrandMemoryImpression(
+        status=status,
+        headline=headline,
+        summary=summary,
+        completed_review_count=len(reviews),
+        decided_review_count=len(decided),
+        recent_decisions=recent_decisions,
+        avg_versions=round(avg_versions, 2) if avg_versions is not None else None,
+        revision_tendency=revision_tendency,
+        frequent_risks=[BrandMemoryItem(text=item.rule_text, count=item.count) for item in frequent_risks[:5]],
+        common_suggestions=_rank_memory_items(suggestion_counter),
+        industries=brand.industries,
+    )
+
+
 def get_brand_profile(db: Session, brand_id: str, *, include_suggestions: bool = False) -> BrandProfile:
     brand = db.query(Brand).filter(Brand.id == brand_id, Brand.deleted_at.is_(None)).first()
     if not brand:
@@ -188,10 +269,17 @@ def get_brand_profile(db: Session, brand_id: str, *, include_suggestions: bool =
         for layer_key in ("layer1", "layer2", "layer3", "layer4"):
             layer = ai.get(layer_key, {})
             for rule in layer.get("matched_rules", []):
-                key = (rule.get("rule_id", ""), rule.get("rule_text", ""))
+                rule_id = str(rule.get("rule_id", "")).strip()
+                rule_text = str(rule.get("rule_text", "")).strip()
+                if not rule_text:
+                    continue
+                key = (rule_id, rule_text)
                 violation_counter[key] += weight
 
-    top_10 = violation_counter.most_common(10)
+    top_10 = sorted(
+        violation_counter.items(),
+        key=lambda item: (-item[1], item[0][1], item[0][0]),
+    )[:10]
     top_violations = [
         TopViolation(rule_id=rid, rule_text=rtext, count=cnt)
         for (rid, rtext), cnt in top_10
@@ -252,6 +340,15 @@ def get_brand_profile(db: Session, brand_id: str, *, include_suggestions: bool =
             for item in suggestions
         ]
 
+    memory_impression = _build_brand_memory(
+        brand=brand,
+        reviews=reviews,
+        decided=decided,
+        pass_rate=pass_rate,
+        avg_versions=avg_versions,
+        frequent_risks=top_violations,
+    )
+
     return BrandProfile(
         brand=BrandOut.model_validate(brand),
         total_materials=total_materials,
@@ -264,6 +361,7 @@ def get_brand_profile(db: Session, brand_id: str, *, include_suggestions: bool =
         recent_reviews=recent_reviews,
         approved_materials=approved_materials,
         industry_suggestions=industry_suggestions,
+        memory_impression=memory_impression,
     )
 
 

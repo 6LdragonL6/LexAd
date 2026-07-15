@@ -1391,6 +1391,10 @@ textarea.input {
   border-radius: var(--radius-lg);
 }
 
+.brand-memory-card-full {
+  padding: clamp(16px, 2vw, 24px);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Dark Mode — UnoCSS Overrides
    ═══════════════════════════════════════════════════════════════════════════ */

@@ -7,6 +7,8 @@ const props = defineProps<{
   brands: Brand[]
   loading: boolean
   error: string
+  creating?: boolean
+  createError?: string
 }>()
 
 const emit = defineEmits<{
@@ -17,7 +19,6 @@ const emit = defineEmits<{
 
 const searchText = ref('')
 const showDropdown = ref(false)
-const creating = ref(false)
 
 const filteredBrands = computed(() => {
   if (!searchText.value.trim()) return props.brands.slice(0, 20)
@@ -46,20 +47,14 @@ function clearBrand() {
   searchText.value = ''
 }
 
-async function handleCreate() {
-  if (!searchText.value.trim() || creating.value) return
-  creating.value = true
-  try {
-    emit('create', searchText.value.trim())
-    searchText.value = ''
-    showDropdown.value = false
-  } finally {
-    creating.value = false
-  }
+function handleCreate() {
+  if (!searchText.value.trim() || props.creating) return
+  emit('create', searchText.value.trim())
 }
 
 watch(() => props.modelValue, (val) => {
-  if (!val) searchText.value = ''
+  searchText.value = ''
+  if (val) showDropdown.value = false
 })
 </script>
 
@@ -86,8 +81,8 @@ watch(() => props.modelValue, (val) => {
       />
       <div v-if="showDropdown && (searchText || brands.length)" class="brand-dropdown">
         <p v-if="loading" class="px-4 py-3 text-sm text-gray-400">搜索中...</p>
-        <p v-else-if="error" class="px-4 py-3 text-sm text-red-500">{{ error }}</p>
         <template v-else>
+          <p v-if="error" class="px-4 py-2 text-sm text-red-500">搜索品牌失败：{{ error }}</p>
           <button
             v-for="brand in filteredBrands"
             :key="brand.id"
@@ -108,6 +103,7 @@ watch(() => props.modelValue, (val) => {
               >
                 {{ creating ? '创建中...' : `创建品牌「${searchText.trim()}」` }}
               </button>
+              <p v-if="createError" class="px-4 pb-2 text-xs text-red-500">{{ createError }}，可保留当前名称后重试。</p>
             </div>
           </template>
         </template>

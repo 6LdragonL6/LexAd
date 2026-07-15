@@ -8,6 +8,8 @@
 
 - [版本一致性、品牌行业与法务工作台设计](specs/2026-07-15-lexad-v0.7.1-review-version-brand-industry-design.md)
 - [v0.7.1 实施计划](plans/2026-07-15-lexad-v0.7.1-implementation.md)
+- [品牌创建、启动稳定性与品牌记忆补充设计](specs/2026-07-15-lexad-v0.7.1-brand-creation-startup-memory-followup-design.md)
+- [v0.7.1 补充修复实施计划](plans/2026-07-15-lexad-v0.7.1-followup-fixes-implementation.md)
 
 ## v0.7.0 可信审查核心
 

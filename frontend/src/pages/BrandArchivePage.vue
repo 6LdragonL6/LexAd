@@ -6,6 +6,7 @@ import { brandsApi } from '@/api/brands'
 import { knowledgeApi } from '@/api/knowledge'
 import { adminSettingsApi } from '@/api/adminSettings'
 import DefaultLayout from '@/layouts/DefaultLayout.vue'
+import BrandMemoryCard from '@/components/brand/BrandMemoryCard.vue'
 import BrandProfilePanel from '@/components/brand/BrandProfilePanel.vue'
 import StatusBadge from '@/components/common/StatusBadge.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
@@ -297,6 +298,14 @@ async function handleAdminDelete() {
 
         <!-- Right: Profile panel -->
         <div class="space-y-5">
+          <BrandMemoryCard
+            v-if="selectedBrand"
+            :profile="profile"
+            :loading="profileLoading"
+            mode="full"
+            class="!mt-0"
+          />
+
           <!-- Admin actions -->
           <div v-if="canEdit() && selectedBrand" class="card">
             <div class="flex items-center justify-between gap-3">

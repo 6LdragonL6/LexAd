@@ -228,6 +228,26 @@ export interface BrandProfile {
   recent_reviews: { id: string; version: number; ai_risk_score: number; legal_decision: string | null; created_at: string }[]
   approved_materials: { id: string; name: string; raw_text_preview: string }[]
   industry_suggestions: BrandIndustrySuggestion[]
+  memory_impression: BrandMemoryImpression
+}
+
+export interface BrandMemoryItem {
+  text: string
+  count: number
+}
+
+export interface BrandMemoryImpression {
+  status: 'collecting' | 'stable' | 'mixed' | 'attention'
+  headline: string
+  summary: string
+  completed_review_count: number
+  decided_review_count: number
+  recent_decisions: { approved: number; conditional: number; returned: number }
+  avg_versions: number | null
+  revision_tendency: string
+  frequent_risks: BrandMemoryItem[]
+  common_suggestions: BrandMemoryItem[]
+  industries: string[]
 }
 
 export interface BrandIndustrySuggestion {

@@ -34,44 +34,6 @@ defineProps<{ profile: BrandProfile | null; loading: boolean }>()
         </div>
       </div>
 
-      <div class="card">
-        <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">审核指标</h3>
-        <div class="grid grid-cols-2 gap-4">
-          <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <p class="text-2xl font-bold text-gray-800 dark:text-gray-200">{{ profile.total_reviews }}</p>
-            <p class="text-xs text-gray-400">总审核数</p>
-          </div>
-          <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <p class="text-2xl font-bold" :class="profile.pass_rate !== null && profile.pass_rate >= 80 ? 'text-green-600' : 'text-amber-600'">
-              {{ profile.pass_rate !== null ? profile.pass_rate.toFixed(0) + '%' : '-' }}
-            </p>
-            <p class="text-xs text-gray-400">通过率</p>
-          </div>
-          <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <p class="text-2xl font-bold text-gray-800 dark:text-gray-200">{{ profile.decided_reviews }}</p>
-            <p class="text-xs text-gray-400">已决定</p>
-          </div>
-          <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <p class="text-2xl font-bold text-gray-800 dark:text-gray-200">{{ profile.approved_count }}</p>
-            <p class="text-xs text-gray-400">已通过</p>
-          </div>
-        </div>
-        <div v-if="profile.avg_versions !== null" class="mt-3 text-sm text-gray-500 text-center">
-          平均 {{ profile.avg_versions.toFixed(1) }} 次提交
-        </div>
-      </div>
-
-      <div v-if="profile.top_violations?.length" class="card">
-        <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">高频违规</h3>
-        <div class="space-y-2">
-          <div v-for="v in profile.top_violations" :key="v.rule_id"
-               class="flex justify-between items-center text-sm py-1.5 border-b border-gray-50 dark:border-gray-700 last:border-0">
-            <span class="text-gray-700 dark:text-gray-300">{{ v.rule_text }}</span>
-            <span class="text-xs text-gray-400">{{ v.count }}次</span>
-          </div>
-        </div>
-      </div>
-
       <div v-if="profile.recent_reviews?.length" class="card">
         <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-3">最近审核</h3>
         <div class="space-y-2">

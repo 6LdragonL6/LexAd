@@ -78,6 +78,31 @@ class BrandIndustrySuggestionAction(BaseModel):
     action: str = Field(..., pattern="^(accept|ignore|restore)$")
 
 
+class BrandMemoryItem(BaseModel):
+    text: str
+    count: int
+
+
+class BrandRecentDecisions(BaseModel):
+    approved: int = 0
+    conditional: int = 0
+    returned: int = 0
+
+
+class BrandMemoryImpression(BaseModel):
+    status: str = Field(default="collecting", pattern="^(collecting|stable|mixed|attention)$")
+    headline: str = "样本积累中"
+    summary: str = "尚无足够历史审核形成稳定品牌印象。"
+    completed_review_count: int = 0
+    decided_review_count: int = 0
+    recent_decisions: BrandRecentDecisions = Field(default_factory=BrandRecentDecisions)
+    avg_versions: float | None = None
+    revision_tendency: str = "暂无修改轮次参考"
+    frequent_risks: list[BrandMemoryItem] = Field(default_factory=list)
+    common_suggestions: list[BrandMemoryItem] = Field(default_factory=list)
+    industries: list[str] = Field(default_factory=list)
+
+
 class BrandProfile(BaseModel):
     brand: BrandOut
     total_materials: int
@@ -90,3 +115,4 @@ class BrandProfile(BaseModel):
     recent_reviews: list[RecentReview]
     approved_materials: list[ApprovedMaterial]
     industry_suggestions: list[BrandIndustrySuggestionOut] = Field(default_factory=list)
+    memory_impression: BrandMemoryImpression = Field(default_factory=BrandMemoryImpression)

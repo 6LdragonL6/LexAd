@@ -49,6 +49,8 @@ const selectedBrand = ref<Brand | null>(null)
 const brands = ref<Brand[]>([])
 const brandSearchLoading = ref(false)
 const brandSearchError = ref('')
+const brandCreating = ref(false)
+const brandCreateError = ref('')
 const brandProfile = ref<BrandProfile | null>(null)
 const brandProfileLoading = ref(false)
 const BRAND_STORAGE_KEY = 'lexad-last-brand'
@@ -216,6 +218,7 @@ function persistBrand(brand: Brand | null) {
 async function searchBrands(query: string) {
   brandSearchLoading.value = true
   brandSearchError.value = ''
+  brandCreateError.value = ''
   try {
     const res = await brandsApi.search(query)
     brands.value = res.data
@@ -227,7 +230,9 @@ async function searchBrands(query: string) {
 }
 
 async function createBrand(name: string) {
-  brandSearchError.value = ''
+  if (brandCreating.value) return
+  brandCreating.value = true
+  brandCreateError.value = ''
   try {
     const res = await brandsApi.create({ name })
     if (res.data.brand) {
@@ -236,7 +241,9 @@ async function createBrand(name: string) {
       await loadBrandProfile(res.data.brand.id)
     }
   } catch (e: any) {
-    brandSearchError.value = e.response?.data?.detail || '创建品牌失败'
+    brandCreateError.value = e.response?.data?.detail || '创建品牌失败'
+  } finally {
+    brandCreating.value = false
   }
 }
 
@@ -438,6 +445,8 @@ async function handleSubmit() {
             :brands="brands"
             :loading="brandSearchLoading"
             :error="brandSearchError"
+            :creating="brandCreating"
+            :create-error="brandCreateError"
             @update:model-value="(b: Brand | null) => { if (b) selectBrand(b); else clearBrand(); }"
             @search="searchBrands"
             @create="createBrand"
