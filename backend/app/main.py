@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.v1.router import api_router
 from app.core.config import get_settings
+from app.core.competition_guard import CompetitionGuardMiddleware
 from app.core.exceptions import LexAdError
 from app.core.logging import setup_logging
 from app.services.review_service import recover_interrupted_reviews
@@ -65,6 +66,8 @@ def create_app() -> FastAPI:
         version=settings.APP_VERSION,
         lifespan=lifespan,
     )
+
+    app.add_middleware(CompetitionGuardMiddleware)
 
     # ── CORS 跨域配置 ────────────────────────────────────────────────────────
     origins = [settings.FRONTEND_ORIGIN]

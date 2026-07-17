@@ -24,8 +24,9 @@
 ### 开发者
 
 1. [本地开发指南](guides/local-development.md)：安装、启动、数据库模式、验证和排错。
-2. [技术参考](architecture/technical-reference.md)：架构、模块、API、迁移与部署约束。
-3. [主要工程设计记录](superpowers/README.md)：各大版本的主设计和实施计划，不作为普通用户说明。
+2. [Render + Neon 竞赛部署指南](guides/render-neon-deployment.md)：公开演示、环境变量、限流与竞赛保护模式。
+3. [技术参考](architecture/technical-reference.md)：架构、模块、API、迁移与部署约束。
+4. [主要工程设计记录](superpowers/README.md)：各大版本的主设计和实施计划，不作为普通用户说明。
 
 ## 当前文档结构
 

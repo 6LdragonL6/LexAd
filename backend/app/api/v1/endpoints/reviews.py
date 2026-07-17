@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.deps import ensure_material_visible, get_current_user, require_legal, require_marketing
@@ -6,6 +6,7 @@ from app.models.user import User
 from app.models.material import Material
 from app.schemas.review import AIReviewRequest, ReviewOut, LegalDecisionRequest, ReviewQueueItem
 from app.services import review_service
+from app.core.rate_limit import enforce_ai_request_limit
 
 router = APIRouter()
 
@@ -13,6 +14,7 @@ router = APIRouter()
 @router.post("/ai-review", response_model=ReviewOut, status_code=202)
 def trigger_ai_review(
     body: AIReviewRequest,
+    request: Request,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     user: User = Depends(require_marketing),
@@ -23,6 +25,7 @@ def trigger_ai_review(
             raise ValueError("Material not found")
         if user.role.value != "admin" and material.submitter_id != user.id:
             raise HTTPException(status_code=403, detail="只能审查自己提交的物料")
+        enforce_ai_request_limit(request, user.id)
         review, created = review_service.create_ai_review(db, body.material_id)
         if created:
             background_tasks.add_task(review_service.execute_ai_review, review.id)

@@ -2,9 +2,11 @@ from app.db.session import SessionLocal
 from app.models.user import User, UserRole
 from app.models.brand import Brand, BrandStatus
 from app.services.knowledge_bootstrap import bootstrap_builtin_knowledge
+from app.core.config import get_settings
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+settings = get_settings()
 
 SEED_USERS = [
     ("admin", "admin123", "管理员", UserRole.admin, "管理员"),
@@ -42,30 +44,84 @@ def seed_brands(db):
 
 def seed():
     db = SessionLocal()
-    existing = db.query(User).count()
-    if existing > 0:
-        print(f"Database already has {existing} users, skipping seed.")
-        seed_brands(db)
-        summary = bootstrap_builtin_knowledge(db)
+    users = _seed_user_specs()
+    if not users:
         db.close()
-        print(f"Builtin knowledge baseline: {summary}")
+        print("Production demo seed is disabled; skipping user and knowledge seed.")
         return
 
-    for username, password, display_name, role, dept_name in SEED_USERS:
-        user = User(
-            username=username,
-            password=pwd_context.hash(password),
-            display_name=display_name,
-            role=role,
-            dept_name=dept_name,
-        )
-        db.add(user)
+    if settings.APP_ENV != "production":
+        existing = db.query(User).count()
+        if existing > 0:
+            print(f"Database already has {existing} users, skipping seed.")
+            seed_brands(db)
+            summary = bootstrap_builtin_knowledge(db)
+            db.close()
+            print(f"Builtin knowledge baseline: {summary}")
+            return
+
+    created = 0
+    updated = 0
+    for username, password, display_name, role, dept_name in users:
+        user = db.query(User).filter(User.username == username).first()
+        if user is None:
+            db.add(
+                User(
+                    username=username,
+                    password=pwd_context.hash(password),
+                    display_name=display_name,
+                    role=role,
+                    dept_name=dept_name,
+                )
+            )
+            created += 1
+        elif settings.APP_ENV == "production":
+            # Render 环境变量是竞赛账号凭据的唯一来源，每次部署都恢复预期角色和密码。
+            user.password = pwd_context.hash(password)
+            user.display_name = display_name
+            user.role = role
+            user.dept_name = dept_name
+            user.is_active = True
+            updated += 1
     db.commit()
 
     seed_brands(db)
     summary = bootstrap_builtin_knowledge(db)
     db.close()
-    print(f"Seeded {len(SEED_USERS)} users and {len(DEMO_BRANDS)} brands. Builtin knowledge baseline: {summary}")
+    print(
+        f"Seeded users created={created} updated={updated}; "
+        f"brands={len(DEMO_BRANDS)}. Builtin knowledge baseline: {summary}"
+    )
+
+
+def _seed_user_specs():
+    if settings.APP_ENV != "production":
+        return SEED_USERS
+    if not settings.DEMO_SEED_ENABLED:
+        return []
+    return [
+        (
+            "admin",
+            settings.DEMO_ADMIN_PASSWORD.get_secret_value(),
+            "管理员",
+            UserRole.admin,
+            "管理员",
+        ),
+        (
+            "market01",
+            settings.DEMO_MARKETING_PASSWORD.get_secret_value(),
+            "市场演示账号",
+            UserRole.marketing,
+            "市场部",
+        ),
+        (
+            "legal01",
+            settings.DEMO_LEGAL_PASSWORD.get_secret_value(),
+            "法务演示账号",
+            UserRole.legal,
+            "法务部",
+        ),
+    ]
 
 if __name__ == "__main__":
     seed()

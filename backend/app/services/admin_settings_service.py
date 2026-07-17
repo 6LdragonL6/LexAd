@@ -25,13 +25,28 @@ class SecureSettingError(RuntimeError):
 
 
 def get_api_key(db: Session) -> str:
+    settings = get_settings()
+    if settings.COMPETITION_MODE:
+        # 竞赛部署必须由 Render 环境变量单向控制，忽略数据库中的旧配置。
+        return settings.DEEPSEEK_API_KEY.strip()
     record = _get_record(db)
     if record:
         return _decrypt(record.encrypted_value)
-    return get_settings().DEEPSEEK_API_KEY.strip()
+    return settings.DEEPSEEK_API_KEY.strip()
 
 
 def get_ai_config_status(db: Session) -> AiConfigStatus:
+    settings = get_settings()
+    if settings.COMPETITION_MODE:
+        env_key = settings.DEEPSEEK_API_KEY.strip()
+        return AiConfigStatus(
+            configured=bool(env_key),
+            base_url=FIXED_BASE_URL,
+            model=FIXED_MODEL,
+            masked_key=_masked(env_key[-4:]) if env_key else "",
+            source="environment" if env_key else "none",
+            validation_status="competition_environment" if env_key else "unconfigured",
+        )
     record = _get_record(db)
     if record:
         return AiConfigStatus(
@@ -46,7 +61,7 @@ def get_ai_config_status(db: Session) -> AiConfigStatus:
             validated_at=record.validated_at,
             updated_by_id=record.updated_by_id,
         )
-    env_key = get_settings().DEEPSEEK_API_KEY.strip()
+    env_key = settings.DEEPSEEK_API_KEY.strip()
     return AiConfigStatus(
         configured=bool(env_key),
         base_url=FIXED_BASE_URL,

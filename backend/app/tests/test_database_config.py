@@ -91,3 +91,27 @@ class TestProductionRequiresNeon:
                 APP_ENV="production",
                 DATABASE_MODE="local",
             )
+
+    def test_production_demo_seed_rejects_default_passwords(self):
+        with pytest.raises(ValueError, match="至少 12 位"):
+            Settings(
+                APP_ENV="production",
+                DATABASE_MODE="neon",
+                DATABASE_URL="postgresql://user:pass@host/db",
+                DEMO_SEED_ENABLED=True,
+                DEMO_ADMIN_PASSWORD="admin123",
+                DEMO_MARKETING_PASSWORD="test1234",
+                DEMO_LEGAL_PASSWORD="test1234",
+            )
+
+    def test_production_demo_seed_accepts_distinct_strong_admin_password(self):
+        settings = Settings(
+            APP_ENV="production",
+            DATABASE_MODE="neon",
+            DATABASE_URL="postgresql://user:pass@host/db",
+            DEMO_SEED_ENABLED=True,
+            DEMO_ADMIN_PASSWORD="admin-strong-password-2026",
+            DEMO_MARKETING_PASSWORD="market-strong-password-2026",
+            DEMO_LEGAL_PASSWORD="legal-strong-password-2026",
+        )
+        assert settings.DEMO_SEED_ENABLED is True

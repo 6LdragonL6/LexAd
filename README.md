@@ -210,7 +210,7 @@ npm run build
 | 项目评估人员 | [项目概览](docs/project/project-overview.md) · [演示与评测指南](docs/project/demo-evaluation-guide.md) |
 | 企业用户 | [用户指南](docs/guides/user-guide.md) · [审查方法论](docs/architecture/review-methodology.md) |
 | 管理员 | [管理员指南](docs/guides/admin-guide.md) |
-| 开发者 | [本地开发指南](docs/guides/local-development.md) · [技术参考](docs/architecture/technical-reference.md) |
+| 开发者 | [本地开发指南](docs/guides/local-development.md) · [Render + Neon 竞赛部署指南](docs/guides/render-neon-deployment.md) · [技术参考](docs/architecture/technical-reference.md) |
 | 版本评估 | [v0.7.2 发布说明](docs/releases/v0.7.2-release-notes.md) · [历史归档](docs/archive/) |
 
 完整导航见 [文档中心](docs/README.md)。

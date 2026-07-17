@@ -61,6 +61,29 @@ def test_api_key_is_encrypted_and_never_returned(monkeypatch):
     db.close()
 
 
+def test_competition_mode_forces_environment_key_over_database_record(monkeypatch):
+    factory = _session_factory()
+    db = factory()
+    admin = _admin()
+    db.add(admin)
+    db.commit()
+    monkeypatch.setattr(deepseek_gateway, "validate_api_key", lambda _key: None)
+    admin_settings_service.save_api_key(db, "database-key-must-be-ignored", admin)
+
+    competition_settings = SimpleNamespace(
+        COMPETITION_MODE=True,
+        DEEPSEEK_API_KEY="render-environment-key-2026",
+    )
+    monkeypatch.setattr(admin_settings_service, "get_settings", lambda: competition_settings)
+
+    assert admin_settings_service.get_api_key(db) == "render-environment-key-2026"
+    status = admin_settings_service.get_ai_config_status(db)
+    assert status.source == "environment"
+    assert status.validation_status == "competition_environment"
+    assert status.masked_key.endswith("2026")
+    db.close()
+
+
 def test_failed_validation_does_not_replace_existing_key(monkeypatch):
     factory = _session_factory()
     db = factory()

@@ -6,7 +6,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # 路径常量 —— 必须在 Settings 类之前定义，因为字段默认值依赖它们
@@ -45,6 +45,17 @@ class Settings(BaseSettings):
     # ── 安全 ───────────────────────────────────────────────────────────────
     SECRET_KEY: str = "change-me-in-production"  # JWT 签名密钥（生产环境务必修改）
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # JWT 令牌过期时间（分钟）
+    COMPETITION_MODE: bool = False  # 竞赛保护模式：资料中心只读，AI Key 仅由环境变量控制
+    LOGIN_RATE_LIMIT_ATTEMPTS: int = 5  # 同一来源或用户名在窗口内允许的失败次数
+    LOGIN_RATE_LIMIT_WINDOW_SECONDS: int = 600
+    AI_RATE_LIMIT_REQUESTS: int = 10  # 同一来源或账号在窗口内允许触发的 AI 任务数
+    AI_RATE_LIMIT_WINDOW_SECONDS: int = 600
+
+    # ── 生产演示账号 ───────────────────────────────────────────────────────
+    DEMO_SEED_ENABLED: bool = False
+    DEMO_ADMIN_PASSWORD: SecretStr = SecretStr("")
+    DEMO_MARKETING_PASSWORD: SecretStr = SecretStr("")
+    DEMO_LEGAL_PASSWORD: SecretStr = SecretStr("")
 
     # ── DeepSeek AI ───────────────────────────────────────────────────────
     DEEPSEEK_API_KEY: str = ""  # DeepSeek API 密钥
@@ -74,6 +85,25 @@ class Settings(BaseSettings):
     def validate_database_mode(self) -> "Settings":
         if self.APP_ENV == "production" and self.DATABASE_MODE == "local":
             raise ValueError("production 环境必须使用 DATABASE_MODE=neon")
+        if self.LOGIN_RATE_LIMIT_ATTEMPTS < 1 or self.LOGIN_RATE_LIMIT_WINDOW_SECONDS < 1:
+            raise ValueError("登录限流次数和时间窗口必须为正整数")
+        if self.AI_RATE_LIMIT_REQUESTS < 1 or self.AI_RATE_LIMIT_WINDOW_SECONDS < 1:
+            raise ValueError("AI 限流次数和时间窗口必须为正整数")
+        if self.APP_ENV == "production" and self.DEMO_SEED_ENABLED:
+            passwords = {
+                "DEMO_ADMIN_PASSWORD": self.DEMO_ADMIN_PASSWORD.get_secret_value(),
+                "DEMO_MARKETING_PASSWORD": self.DEMO_MARKETING_PASSWORD.get_secret_value(),
+                "DEMO_LEGAL_PASSWORD": self.DEMO_LEGAL_PASSWORD.get_secret_value(),
+            }
+            weak_passwords = {"admin123", "test1234", "password", "12345678"}
+            for key, password in passwords.items():
+                if len(password) < 12 or password.lower() in weak_passwords:
+                    raise ValueError(f"production 演示账号要求 {key} 至少 12 位且不能使用默认密码")
+            if passwords["DEMO_ADMIN_PASSWORD"] in {
+                passwords["DEMO_MARKETING_PASSWORD"],
+                passwords["DEMO_LEGAL_PASSWORD"],
+            }:
+                raise ValueError("管理员演示密码不能与评委账号密码相同")
         return self
 
 

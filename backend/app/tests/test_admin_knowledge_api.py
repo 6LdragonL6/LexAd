@@ -15,6 +15,7 @@ from app.models.knowledge import PublicOpinionEvent, PublicOpinionEventVersion
 from app.models.user import User, UserRole
 from app.services import admin_knowledge_service
 from app.services.public_opinion_case_service import BUILTIN_CASES_PATH
+from app.core.config import get_settings
 
 
 def _session_factory():
@@ -73,6 +74,51 @@ def test_admin_required_for_knowledge_center():
         assert client.get("/api/v1/admin/settings/ai").status_code == 403
         assert client.get("/api/v1/admin/settings/recycle-bin").status_code == 403
     finally:
+        _clear_overrides()
+
+
+def test_competition_mode_makes_admin_knowledge_and_ai_settings_read_only():
+    client, _ = _client(UserRole.admin)
+    settings = get_settings()
+    original_mode = settings.COMPETITION_MODE
+    settings.COMPETITION_MODE = True
+    try:
+        listed = client.get("/api/v1/admin/knowledge/public-opinion/events")
+        assert listed.status_code == 200
+
+        create_blocked = client.post(
+            "/api/v1/admin/knowledge/public-opinion/events",
+            json={
+                "external_id": "blocked-case",
+                "title": "不应创建",
+                "source_text": "竞赛保护模式测试",
+                "consequence_text": "无",
+                "source_meta": {},
+            },
+        )
+        assert create_blocked.status_code == 403
+        assert create_blocked.json()["code"] == "competition_mode_read_only"
+
+        ai_settings_blocked = client.put(
+            "/api/v1/admin/settings/ai",
+            json={"api_key": "unit-test-key-should-not-be-saved"},
+        )
+        assert ai_settings_blocked.status_code == 403
+        assert ai_settings_blocked.json()["code"] == "competition_mode_read_only"
+
+        recycle_bin_blocked = client.post(
+            "/api/v1/admin/settings/recycle-bin",
+            json={
+                "target_type": "material",
+                "target_id": "protected-material",
+                "display_name": "不应创建",
+                "snapshot": {},
+            },
+        )
+        assert recycle_bin_blocked.status_code == 403
+        assert recycle_bin_blocked.json()["code"] == "competition_mode_read_only"
+    finally:
+        settings.COMPETITION_MODE = original_mode
         _clear_overrides()
 
 

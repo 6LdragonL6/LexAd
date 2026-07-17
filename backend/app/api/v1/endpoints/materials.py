@@ -2,7 +2,7 @@ import asyncio
 import json
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, File, Form, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, UploadFile, File, Form, Request, Response
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.deps import ensure_material_visible, get_current_user, require_marketing
@@ -16,6 +16,7 @@ from app.services import material_service, review_service
 from app.services.file_extraction import FileExtractionService, ExtractionError
 from app.storage import save_upload_temp, cleanup_temp
 from app.core.config import get_settings
+from app.core.rate_limit import enforce_ai_request_limit
 
 router = APIRouter()
 _extraction_svc = FileExtractionService()
@@ -135,6 +136,7 @@ def list_materials(db: Session = Depends(get_db), user: User = Depends(get_curre
 def resubmit_material(
     material_id: str,
     body: MaterialResubmit,
+    request: Request,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     user: User = Depends(require_marketing),
@@ -144,6 +146,7 @@ def resubmit_material(
         raise HTTPException(status_code=404, detail="Material not found")
     if user.role.value != "admin" and material.submitter_id != user.id:
         raise HTTPException(status_code=403, detail="只能重新提交自己的物料")
+    enforce_ai_request_limit(request, user.id)
     try:
         review = material_service.create_resubmission(db, material, body)
     except ValueError as exc:

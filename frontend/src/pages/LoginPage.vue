@@ -108,10 +108,10 @@ async function handleLogin() {
         </button>
       </form>
       <div class="login-test-accounts">
-        <p class="text-xs text-gray-400 font-semibold mb-2">测试账号</p>
-        <p class="text-xs text-gray-600 dark:text-gray-300">market01 / test1234（市场部）</p>
-        <p class="text-xs text-gray-600 dark:text-gray-300">legal01 / test1234（法务部）</p>
-        <p class="text-xs text-gray-600 dark:text-gray-300">admin / admin123（管理员）</p>
+        <p class="text-xs text-gray-400 font-semibold mb-2">竞赛演示账号</p>
+        <p class="text-xs text-gray-600 dark:text-gray-300">market01（市场部）</p>
+        <p class="text-xs text-gray-600 dark:text-gray-300">legal01（法务部）</p>
+        <p class="text-xs text-gray-400 mt-1">密码请查看评审说明；管理员账号不公开</p>
       </div>
     </div>
   </div>

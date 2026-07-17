@@ -2,7 +2,8 @@ import axios from 'axios'
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1',
-  timeout: 20_000,
+  // Render 免费实例冷启动可能接近一分钟，首个登录请求需要更长容忍时间。
+  timeout: 90_000,
 })
 
 client.interceptors.request.use((config) => {
