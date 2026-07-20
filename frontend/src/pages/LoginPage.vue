@@ -111,7 +111,7 @@ async function handleLogin() {
         <p class="text-xs text-gray-400 font-semibold mb-2">竞赛演示账号</p>
         <p class="text-xs text-gray-600 dark:text-gray-300">market01（市场部）</p>
         <p class="text-xs text-gray-600 dark:text-gray-300">legal01（法务部）</p>
-        <p class="text-xs text-gray-400 mt-1">密码请查看评审说明；管理员账号不公开</p>
+        <p class="text-xs text-gray-400 mt-1">密码请查看评审说明</p>
       </div>
     </div>
   </div>
